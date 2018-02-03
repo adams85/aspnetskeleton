@@ -1,0 +1,63 @@
+﻿@model AspNetSkeleton.UI.Areas.Dashboard.Models.ChangePasswordModel
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">@T["Change Password"]</h3>
+    </div>
+    <div class="panel-body">
+@if (Model.Success == true)
+{
+        <p class="text-info">
+            @T["Your password has been successfully changed."]
+        </p>
+}
+else if (Model.Success == false)
+{
+        <p class="text-danger">
+            @T["Your password could not be changed."]
+        </p>
+}    
+
+@using (Html.BeginForm(null, null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+        @Html.AntiForgeryToken();
+                                
+        <div class="row">
+            <div class="col-sm-offset-2 col-sm-4">
+                @Html.ValidationSummary(excludePropertyErrors: true)
+            </div>
+        </div>                                
+        
+        <div class="row form-group">
+            <label for="@Html.IdFor(m => m.CurrentPassword)" class="col-sm-2 control-label">@Html.DisplayNameFor(m => m.CurrentPassword)</label>
+            <div class="col-sm-4">
+                @Html.PasswordFor(m => m.CurrentPassword, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.CurrentPassword)
+            </div>
+        </div>
+                                        
+        <div class="row form-group">
+            <label for="@Html.IdFor(m => m.NewPassword)" class="col-sm-2 control-label">@Html.DisplayNameFor(m => m.NewPassword)</label>
+            <div class="col-sm-4">
+                @Html.PasswordFor(m => m.NewPassword, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.NewPassword)
+            </div>
+        </div>
+
+        <div class="row form-group">
+            <label for="@Html.IdFor(m => m.ConfirmPassword)" class="col-sm-2 control-label">@Html.DisplayNameFor(m => m.ConfirmPassword)</label>
+            <div class="col-sm-4">
+                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.ConfirmPassword)
+            </div>
+        </div>
+
+        <div class="row form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">@T["Change password"]</button>
+            </div>
+        </div>
+}
+    </div>
+</div>
+

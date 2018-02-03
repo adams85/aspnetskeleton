@@ -1,0 +1,81 @@
+﻿@using AspNetSkeleton.Common.Utils
+@using AspNetSkeleton.UI.Models
+@using AspNetSkeleton.UI.Helpers
+
+@{
+    var title = ViewData["Title"] as string;
+    title = !string.IsNullOrEmpty(title) ? " - " + title : null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    @RenderSection("metas", required: false)
+    <title>AspNetSkeleton@(title)</title>
+
+    <link rel="icon" type="image/png" href="@Url.Content("~/Static/Images/favicon.png")">
+
+    @* stylesheets *@
+    @Styles.Render("~/Static/Stylesheets/Site/" + ThemeManager.CurrentTheme)
+    @RenderSection("stylesheets", required: false)
+
+    @* scripts *@
+    @Scripts.Render("~/Static/Scripts/jquery")
+    @Scripts.Render("~/Static/Scripts/Site")
+<!--[if lte IE 9]>
+    @Scripts.Render("~/Static/Scripts/iefix")
+<![endif]-->
+    @RenderSection("scripts", required: false)
+
+    <script type="text/javascript">
+        page.confirmDeleteMessage = '@T["Do you really want to delete this item?"]';
+        page.errorText = '@T["Error"]';
+    </script>
+</head>
+<body>
+    <div id="page-wrapper">
+        @* header *@
+        <div id="page-header" class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-main-navbar-collapse" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                    <img src="@Url.Content("~/Static/Images/logo.png")" alt="Logo" class="navbar-logo pull-left" />
+                    <a href="@Url.Action("Index", "Home", new { area = "" })" class="navbar-brand">AspNetSkeleton</a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="bs-main-navbar-collapse">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li class="@(ViewBag.ActiveMenuItem == "Page1" ? "active" : null)"><a href="javascript:void(0)">@T["Page 1"]</a></li>
+                        <li class="@(ViewBag.ActiveMenuItem == "Page2" ? "active" : null)"><a href="javascript:void(0)">@T["Page 2"]</a></li>
+                    </ul>
+
+                    @{ Html.RenderAction("VaryingMenu", "Layout", new { area = "", ViewBag.ActiveMenuItem }, excludeFromParentCache: true); }
+                </div>
+            </div>
+        </div>
+        @* content *@
+        <section id="page-content" class="container">
+            @RenderBody()
+        </section>
+        @* footer *@
+        <footer id="page-footer">
+            <div class="container">
+                <div class="col-xs-6 text-left">
+                    © 2017 Adam Simon
+                </div>
+                <div class="col-xs-6 text-right">
+                </div>
+            </div>
+        </footer>
+    </div>
+    <div class="overlay"></div>
+</body>
+</html>

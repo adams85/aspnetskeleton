@@ -1,0 +1,37 @@
+﻿@model bool?
+
+<div class="page-header">
+<h1>@T["Account Verification"]</h1>
+</div>
+
+@if (Model == null)
+{
+<p class="lead">
+    @T["Please read the message sent to your e-mail address in order to complete your registration."]
+</p>
+
+<p>
+    @T["If you don't receive this message in a few minutes, check your spam folder or {0}contact us{1}.",
+        $"<a href=\"{Url.Action("Contact", "Home", new {area = ""})}\">", "</a>"]
+</p>
+}
+else if (Model.Value)
+{
+<p class="lead text-info">
+    @T["Well done! Your account has been verified."]
+</p>
+<p>
+    @T["You can {0}login{1} now.",
+        $"<a href=\"{Url.Action("Login")}\">", "</a>"]
+</p>
+}
+else
+{
+<p class="lead text-danger">
+    @T["Your account could not be verified."]
+</p>
+<p>
+    @T["Please try again or {0}contact the system administrator{1} if the problem persists.",
+        $"<a href=\"mailto:{Settings.AdminMailTo[0]}\">", "</a>"]
+</p>
+}    

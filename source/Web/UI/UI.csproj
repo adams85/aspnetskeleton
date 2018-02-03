@@ -1,0 +1,470 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\..\packages\Microsoft.Net.Compilers.2.3.2\build\Microsoft.Net.Compilers.props" Condition="Exists('..\..\packages\Microsoft.Net.Compilers.2.3.2\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3407EAD2-3AC9-47C4-A13A-44A45EF4028F}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AspNetSkeleton.UI</RootNamespace>
+    <AssemblyName>AspNetSkeleton.UI</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>false</UseIISExpress>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Monolithic|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
+    <Architecture>Monolithic</Architecture>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Monolithic|AnyCPU' ">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
+    <Architecture>Monolithic</Architecture>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_Distributed|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;DISTRIBUTED</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Architecture>Distributed</Architecture>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release_Distributed|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;DISTRIBUTED</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Architecture>Distributed</Architecture>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac, Version=4.6.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Autofac.4.6.1\lib\net45\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Integration.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Autofac.Mvc5.4.0.2\lib\net45\Autofac.Integration.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="DataAnnotationsExtensions, Version=5.0.1.20, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DataAnnotationsExtensions.5.0.1.20\lib\NETFramework40\DataAnnotationsExtensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevTrends.MvcDonutCaching, Version=1.3.0.0, Culture=neutral, PublicKeyToken=73c58d802958a09f, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MvcDonutCaching.1.3.0\lib\net40\DevTrends.MvcDonutCaching.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="dotless.Core, Version=1.5.2.0, Culture=neutral, PublicKeyToken=96b446c9e63eae34, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\dotless.1.5.2\lib\dotless.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Hime.Redist, Version=3.2.2.0, Culture=neutral, PublicKeyToken=984dd3a5d55ca89c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Hime.Redist.3.2.2\lib\net20\Hime.Redist.dll</HintPath>
+    </Reference>
+    <Reference Include="Karambolo.Common, Version=2.0.0.0, Culture=neutral, PublicKeyToken=496b38436bb9edeb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Karambolo.Common.2.0.0\lib\net45\Karambolo.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Karambolo.PO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=496b38436bb9edeb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Karambolo.PO.1.0.0\lib\net45\Karambolo.PO.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList">
+      <HintPath>..\..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList.Mvc">
+      <HintPath>..\..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Optimization.Less, Version=1.3.0.0, Culture=neutral, PublicKeyToken=9b7581e0240fe480, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Web.Optimization.Less.1.3.4\lib\net40\System.Web.Optimization.Less.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Infrastructure\Localization\LocalizationProvider.cs" />
+    <Compile Include="Infrastructure\Theming\ThemeProvider.cs" />
+    <Compile Include="Infrastructure\UIMvcHandler.cs" />
+    <Compile Include="Infrastructure\UIRoute.cs" />
+    <Compile Include="Infrastructure\UIRouteHandler.cs" />
+    <Compile Include="Helpers\HttpContextUtils.cs" />
+    <Compile Include="Infrastructure\Localization\LocalizationManager.cs" />
+    <Compile Include="Infrastructure\Models\FluentModelAttributesProvider.cs" />
+    <Compile Include="Infrastructure\Models\NullModelAttributesProvider.cs" />
+    <Compile Include="Infrastructure\Models\XmlModelAttributesProvider.cs" />
+    <Compile Include="Infrastructure\Security\AccountManager.cs" />
+    <Compile Include="Infrastructure\Security\UIPrincipal.cs" />
+    <Compile Include="Infrastructure\Theming\ThemeManager.cs" />
+    <Compile Include="StaticResources.cs" />
+    <Compile Include="UIConstants.cs" />
+    <Compile Include="Areas\Dashboard\Controllers\AccountController.cs" />
+    <Compile Include="Areas\Dashboard\Controllers\HomeController.cs" />
+    <Compile Include="Areas\Dashboard\Models\AccountModels.cs" />
+    <Compile Include="Areas\Dashboard\Models\HomeModels.cs" />
+    <Compile Include="Controllers\LayoutController.cs" />
+    <Compile Include="Infrastructure\Models\DynamicModelMetadataProvider.cs" />
+    <Compile Include="Filters\AnonymousOnlyAttribute.cs" />
+    <Compile Include="Filters\ExceptionHandlingAttribute.cs" />
+    <Compile Include="Infrastructure\WebEnvironment.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Filters\AjaxOnlyAttribute.cs" />
+    <Compile Include="Infrastructure\UIModule.cs" />
+    <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="UISettings.cs" />
+    <Compile Include="Infrastructure\Security\UIMembershipProvider.cs" />
+    <Compile Include="Infrastructure\Security\UIRoleProvider.cs" />
+    <Compile Include="Helpers\MvcUtils.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebViewPage.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Dashboard\Views\Web.config" />
+    <Content Include="Areas\Dashboard\Views\Home\Index.cshtml" />
+    <Content Include="Areas\Dashboard\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Dashboard\Views\Account\Index.cshtml" />
+    <Content Include="Files\web.config" />
+    <Compile Include="Filters\CultureHandlerAttribute.cs" />
+    <Content Include="App_Data\Cultures\en-US\texts.po" />
+    <None Include="Static\Scripts\jquery-3.1.1.intellisense.js" />
+    <Content Include="Static\Scripts\jquery-3.1.1.js" />
+    <Content Include="Static\Scripts\jquery-3.1.1.min.js" />
+    <Content Include="Static\Scripts\jquery-3.1.1.slim.js" />
+    <Content Include="Static\Scripts\jquery-3.1.1.slim.min.js" />
+    <Content Include="UISettings.config" />
+    <Content Include="ConnectionStrings.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <None Include="Properties\PublishProfiles\Release.pubxml" />
+    <Content Include="Global.asax" />
+    <Content Include="Static\Fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Static\Images\favicon.png" />
+    <Content Include="Static\Images\loading.gif" />
+    <Content Include="Static\Images\logo.png" />
+    <Content Include="Static\Scripts\bootstrap-validation.js" />
+    <Content Include="Static\Scripts\bootstrap.js" />
+    <Content Include="Static\Scripts\bootstrap.min.js" />
+    <Content Include="Static\Scripts\iefix.js" />
+    <Content Include="Static\Scripts\jquery-3.1.1.slim.min.map" />
+    <Content Include="Static\Scripts\jquery-3.1.1.min.map" />
+    <None Include="Static\Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Static\Scripts\jquery.validate.js" />
+    <Content Include="Static\Scripts\jquery.validate.min.js" />
+    <Content Include="Static\Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Static\Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Static\Scripts\site.js" />
+    <None Include="Static\Stylesheets\home-index.less" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Areas\Dashboard\Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Layout\VaryingMenu.cshtml" />
+    <Content Include="Views\Account\Verify.cshtml" />
+    <Content Include="Views\Account\ResetPassword.cshtml" />
+    <Content Include="Views\Account\SetPassword.cshtml" />
+    <Content Include="Static\Fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Static\Fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Static\Fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Static\Fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="Static\Stylesheets\Bootstrap\alerts.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\badges.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\bootstrap.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\breadcrumbs.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\button-groups.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\buttons.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\carousel.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\close.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\code.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\component-animations.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\dropdowns.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\forms.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\glyphicons.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\grid.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\input-groups.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\jumbotron.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\labels.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\list-group.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\media.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\alerts.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\background-variant.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\border-radius.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\buttons.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\center-block.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\clearfix.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\forms.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\gradients.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\grid-framework.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\grid.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\hide-text.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\image.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\labels.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\list-group.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\nav-divider.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\nav-vertical-align.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\opacity.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\pagination.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\panels.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\progress-bar.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\reset-filter.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\reset-text.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\resize.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\responsive-visibility.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\size.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\tab-focus.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\table-row.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\text-emphasis.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\text-overflow.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\mixins\vendor-prefixes.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\modals.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\navbar.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\navs.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\normalize.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\pager.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\pagination.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\panels.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\popovers.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\print.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\progress-bars.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\responsive-embed.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\responsive-utilities.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\scaffolding.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\tables.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\theme.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\thumbnails.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\tooltip.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\type.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\utilities.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\variables.less" />
+    <Content Include="Static\Stylesheets\Bootstrap\wells.less" />
+    <Content Include="Static\Stylesheets\page.less" />
+    <Content Include="Static\Stylesheets\common.less" />
+    <Content Include="Static\Stylesheets\Themes\Dark\bootstrap.less" />
+    <Content Include="Static\Stylesheets\Themes\Dark\bootswatch.less" />
+    <Content Include="Static\Stylesheets\Themes\Dark\site.less" />
+    <Content Include="Static\Stylesheets\Themes\Dark\variables.less" />
+    <Content Include="Static\Stylesheets\callouts.less" />
+    <Content Include="Static\Stylesheets\sidebar.less" />
+    <None Include="Web.Base.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web.Base.Monolithic.xdt">
+      <DependentUpon>Web.Base.config</DependentUpon>
+    </None>
+    <None Include="Web.Base.Distributed.xdt">
+      <DependentUpon>Web.Base.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Logs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common\Common.csproj">
+      <Project>{327796a5-a6c9-48fe-bad8-a81d7b91886c}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{66527cc6-70a0-4a1c-9cb0-d497df4b8ffe}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Service.Contract\Service.Contract.csproj">
+      <Project>{7742EC1D-7831-4779-BE4A-1A31465EDBAD}</Project>
+      <Name>Service.Contract</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup Condition="$(Architecture) == 'Monolithic'">
+    <Compile Include="Infrastructure\WebServiceHostEnvironment.cs" />
+    <Compile Include="Infrastructure\BackgroundWork\CountdownEvent.cs" />
+    <Compile Include="Infrastructure\BackgroundWork\BackgroundTaskManager.cs" />
+    <Compile Include="UIServiceHostSettings.cs" />
+    <Content Include="Templates\**\*.cshtml" />
+    <ProjectReference Include="..\Api\Api.csproj">
+      <Project>{7c66f453-432f-4a0f-96c5-f5772db6a29b}</Project>
+      <Name>Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj">
+      <Project>{587c376a-3646-4388-9cc1-55d83b92ca34}</Project>
+      <Name>DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Service\Service.csproj">
+      <Project>{2e16c067-9360-466b-a4eb-af7bba3f6206}</Project>
+      <Name>Service</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Service.Host.Core\Service.Host.Core.csproj">
+      <Project>{BA91595A-51A4-484F-86EF-3B04AA4BAA56}</Project>
+      <Name>Service.Host.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">15.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v15.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>False</AutoAssignPort>
+          <DevelopmentServerPort>10801</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <Target Name="BeforeBuild">
+    <ItemGroup>
+      <TemplateFile Include="$(ProjectDir)..\Service.Host.Core\Templates\**\*.cshtml" />
+    </ItemGroup>
+    <Copy Condition="$(Architecture) == 'Monolithic'" SourceFiles="@(TemplateFile)" DestinationFolder="$(ProjectDir)Templates\%(RecursiveDir)" />
+    <TransformXml Source="$(ProjectDir)Web.Base.config" Transform="$(ProjectDir)Web.Base.$(Architecture).xdt" Destination="Web.config" />
+  </Target>
+  <Target Name="AfterBuild">
+    <MSBuild Condition="$(Make) == 'true' AND $(DeployOnBuild) != 'true'" Projects="$(MSBuildThisFileFullPath)" Properties="DeployOnBuild=true;PublishProfile=Release;BuildingInsideVisualStudio=False" />
+  </Target>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Microsoft.Net.Compilers.2.3.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Net.Compilers.2.3.2\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+</Project>

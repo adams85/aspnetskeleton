@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2E16C067-9360-466B-A4EB-AF7BBA3F6206}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AspNetSkeleton.Service</RootNamespace>
+    <AssemblyName>AspNetSkeleton.Service</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=4.6.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Autofac.4.6.1\lib\net45\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Karambolo.Common, Version=2.0.0.0, Culture=neutral, PublicKeyToken=496b38436bb9edeb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Karambolo.Common.2.0.0\lib\net45\Karambolo.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CommandContext.cs" />
+    <Compile Include="Commands\Notifications\MarkNotificationsCommandHandler.cs" />
+    <Compile Include="Commands\Notifications\DeleteNotificationCommandHandler.cs" />
+    <Compile Include="Commands\Notifications\CreateNotificationCommandHandler.cs" />
+    <Compile Include="Commands\Roles\RemoveUsersFromRolesCommandHandler.cs" />
+    <Compile Include="Commands\Roles\AddUsersToRolesCommandHandler.cs" />
+    <Compile Include="Commands\Roles\DeleteRoleCommandHandler.cs" />
+    <Compile Include="Commands\Roles\CreateRoleCommandHandler.cs" />
+    <Compile Include="Commands\Users\DisconnectDeviceCommandHandler.cs" />
+    <Compile Include="Commands\Users\ConnectDeviceCommandHandler.cs" />
+    <Compile Include="Commands\Users\LockUserCommandHandler.cs" />
+    <Compile Include="Commands\Users\UnlockUserCommandHandler.cs" />
+    <Compile Include="Commands\Users\RegisterUserActivityCommandHandler.cs" />
+    <Compile Include="Commands\Users\ChangePasswordCommandHandler.cs" />
+    <Compile Include="Commands\Users\ResetPasswordCommandHandler.cs" />
+    <Compile Include="Commands\Users\ApproveUserCommandHandler.cs" />
+    <Compile Include="Commands\Users\DeleteUserCommandHandler.cs" />
+    <Compile Include="Commands\Users\CreateUserCommandHandler.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queries\Notifications\ListNotificationsQueryHandler.cs" />
+    <Compile Include="Queries\Roles\IsUserInRoleQueryHandler.cs" />
+    <Compile Include="Queries\Roles\ListRolesQueryHandler.cs" />
+    <Compile Include="Queries\Roles\GetRoleQueryHandler.cs" />
+    <Compile Include="Queries\Users\GetAccountInfoQueryHandler.cs" />
+    <Compile Include="Queries\Users\AuthenticateUserQueryHandler.cs" />
+    <Compile Include="Queries\Users\GetOnlineUserCountQueryHandler.cs" />
+    <Compile Include="Queries\Users\ListUserQueryHandler.cs" />
+    <Compile Include="Queries\Users\GetUserQueryHandler.cs" />
+    <Compile Include="CommandHandler.cs" />
+    <Compile Include="QueryContext.cs" />
+    <Compile Include="QueryHandler.cs" />
+    <Compile Include="ServiceConstants.cs" />
+    <Compile Include="Transforms\NotificationTransforms.cs" />
+    <Compile Include="Transforms\RoleTransforms.cs" />
+    <Compile Include="Transforms\UserTransforms.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common\Common.csproj">
+      <Project>{327796a5-a6c9-48fe-bad8-a81d7b91886c}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Base\Base.csproj">
+      <Project>{9ABFA602-74B6-44F8-87AB-5EE9BA53907A}</Project>
+      <Name>Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj">
+      <Project>{587c376a-3646-4388-9cc1-55d83b92ca34}</Project>
+      <Name>DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Service.Contract\Service.Contract.csproj">
+      <Project>{7742ec1d-7831-4779-be4a-1a31465edbad}</Project>
+      <Name>Service.Contract</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Projections\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

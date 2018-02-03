@@ -1,0 +1,27 @@
+﻿@using AspNetSkeleton.UI.Helpers
+
+@model string
+
+@{ 
+    var accountInfo = ViewContext.HttpContext.CurrentAccountInfo();
+}
+   
+                <ul class="nav navbar-nav navbar-right">
+@if (accountInfo == null)
+{
+                    <li class="@(Model == "Login" ? "active" : null)"><a href="@Url.Action("Login", "Account", new { area = "" })"><span class="glyphicon glyphicon-log-in"></span> @T["Login"]</a></li>
+                    <li class="@(Model == "Register" ? "active" : null)"><a href="@Url.Action("Register", "Account", new { area = "" })"><span class="glyphicon glyphicon-pencil"></span> @T["Register"]</a></li>
+}
+else
+{
+                    <li class="@(Model == "Dashboard" ? "active" : null)"><a href="@Url.Action("Index", "Home", new { area = "Dashboard" })"><span class="glyphicon glyphicon-cog"></span> @T["Dashboard"]</a></li>
+                    <li><a href="@Url.Action("Logout", "Account", new { area = "" })"><span class="glyphicon glyphicon-off"></span> @T["Logout"]</a></li>
+}
+                </ul>
+
+@if (accountInfo != null)
+{
+                <div class="navbar-right hidden-sm hidden-xs">
+                    <p class="navbar-text">@T["Welcome, {0}!", accountInfo.FirstName]</p>
+                </div>
+}

@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- For more information on using Web.config transformation visit http://go.microsoft.com/fwlink/?LinkId=125889 -->
+
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <configSections>
+    <section xdt:Transform="Insert" name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+  </configSections>
+
+  <connectionStrings xdt:Transform="Insert" configSource="ConnectionStrings.config" />
+
+  <runtime>
+    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+      <dependentAssembly xdt:Transform="Insert">
+        <assemblyIdentity name="System.Web.Http" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-5.2.3.0" newVersion="5.2.3.0" />
+      </dependentAssembly>
+      <dependentAssembly xdt:Transform="Insert">
+        <assemblyIdentity name="System.Net.Http.Formatting" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-5.2.3.0" newVersion="5.2.3.0" />
+      </dependentAssembly>
+    </assemblyBinding>
+  </runtime>
+
+  <system.diagnostics>
+    <sources>
+      <source xdt:Transform="Insert" name="AspNetSkeleton.Api" switchName="sourceSwitch" switchType="System.Diagnostics.SourceSwitch">
+        <listeners>
+          <add name="ApiWriterListener" />
+        </listeners>
+      </source>
+    </sources>
+    <sharedListeners>
+      <add xdt:Transform="Insert" name="ApiWriterListener" type="System.Diagnostics.TextWriterTraceListener" traceOutputOptions="DateTime,Callstack" initializeData="Logs\api.log" />
+    </sharedListeners>
+  </system.diagnostics>
+
+  <entityFramework xdt:Transform="Insert" codeConfigurationType="AspNetSkeleton.DataAccess.MySql.MySqlDbConfiguration, AspNetSkeleton.DataAccess">
+    <providers>
+      <provider invariantName="MySql.Data.MySqlClient" type="MySql.Data.MySqlClient.MySqlProviderServices, MySql.Data.Entity.EF6, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d"></provider>
+    </providers>
+  </entityFramework>
+
+  <system.data xdt:Transform="Insert">
+    <DbProviderFactories>
+      <remove invariant="MySql.Data.MySqlClient" />
+      <add name="MySQL Data Provider" invariant="MySql.Data.MySqlClient" description=".Net Framework Data Provider for MySQL" type="MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d" />
+    </DbProviderFactories>
+  </system.data>
+</configuration>
