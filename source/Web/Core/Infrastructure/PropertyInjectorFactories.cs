@@ -3,10 +3,11 @@ using System.Linq;
 using Autofac;
 using Karambolo.Common;
 using System.Reflection;
-using Karambolo.Common.Logging;
+using Microsoft.Extensions.Logging;
 using Karambolo.Common.Localization;
 using System.Collections.Concurrent;
 using AspNetSkeleton.Common.Infrastructure;
+using Microsoft.Extensions.Localization;
 
 namespace AspNetSkeleton.Core.Infrastructure
 {
@@ -28,11 +29,11 @@ namespace AspNetSkeleton.Core.Infrastructure
                     return null;
 
                 var loggerOptionsAttribute = property.GetAttributes<LoggerOptionsAttribute>(true).SingleOrDefault();
-                var loggerSource = loggerOptionsAttribute?.SourceName ?? t.Assembly.GetName().Name;
+                var loggerSource = loggerOptionsAttribute?.SourceName ?? t.FullName;
 
                 Action<object, IComponentContext> injector = (inst, ctx) =>
                 {
-                    var logger = ctx.Resolve<Func<string, ILogger>>()(loggerSource);
+                    var logger = ctx.Resolve<ILoggerFactory>().CreateLogger(loggerSource);
                     property.SetValue(inst, logger, null);
                 };
 
@@ -49,14 +50,14 @@ namespace AspNetSkeleton.Core.Infrastructure
         {
             return _injectors.GetOrAdd(type, t =>
             {
-                var property = t.GetProperty("T", BindingFlags.Instance | BindingFlags.Public, null, typeof(ITextLocalizer), Type.EmptyTypes, null);
+                var property = t.GetProperty("T", BindingFlags.Instance | BindingFlags.Public, null, typeof(IStringLocalizer), Type.EmptyTypes, null);
                 if (property == null)
                     return null;
 
                 Action<object, IComponentContext> injector = (inst, ctx) =>
                 {
-                    var localizer = ctx.Resolve<ITextLocalizer>();
-                    property.SetValue(inst, localizer, null);
+                    var localizerFactory = ctx.Resolve<IStringLocalizerFactory>();
+                    property.SetValue(inst, localizerFactory.Create(t), null);
                 };
 
                 return injector;

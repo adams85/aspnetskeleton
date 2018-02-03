@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Data.Entity;
+using System.Linq;
+using AspNetSkeleton.DataAccess;
 using AspNetSkeleton.Common;
 using AspNetSkeleton.Service.Contract.Commands;
 using AspNetSkeleton.Service.Contract.DataObjects;
@@ -30,8 +31,17 @@ namespace AspNetSkeleton.Service.Commands.Users
 
             using (var scope = _commandContext.CreateDataAccessScope())
             {
-                var user = await scope.Context.QueryTracking<User>().Include(u => u.Profile).GetByNameAsync(command.UserName, cancellationToken).ConfigureAwait(false);
-                this.RequireExisting(user, c => c.UserName);
+                var userWithProfile = await 
+                (
+                    from u in scope.Context.Query<User>().FilterByName(command.UserName)
+                    select new { User = u, Profile = u.Profile }
+                ).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+
+                this.RequireExisting(userWithProfile, c => c.UserName);
+
+                var user = userWithProfile.User;
+
+                scope.Context.Track(user);
 
                 user.Password = string.Empty;
                 user.PasswordVerificationToken = Guid.NewGuid().ToString("N");
@@ -41,7 +51,7 @@ namespace AspNetSkeleton.Service.Commands.Users
 
                 await _commandDispatcher.DispatchAsync(new PasswordResetNotificationArgs
                 {
-                    Name = user.Profile?.FirstName,
+                    Name = userWithProfile.Profile?.FirstName,
                     UserName = user.UserName,
                     Email = user.Email,
                     VerificationToken = user.PasswordVerificationToken,

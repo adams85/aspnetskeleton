@@ -26,16 +26,6 @@ namespace AspNetSkeleton.Service
 
                 public override IReadWriteDbContext Context => _context;
 
-                public override int SaveChanges()
-                {
-                    if (_owner._changesHasSaved)
-                        throw new InvalidOperationException();
-
-                    _owner._changesHasSaved = true;
-
-                    return _context.SaveChanges();
-                }
-
                 public override Task<int> SaveChangesAsync(CancellationToken cancellationToken)
                 {
                     if (_owner._changesHasSaved)
@@ -49,11 +39,11 @@ namespace AspNetSkeleton.Service
                 public override DataAccessScope CreateChildScope(IKeyedProvider<IDbContext> contextProvider)
                 {
                     return new Nested(this);
-                }                
+                }
 
                 protected override void DisposeCore()
                 {
-                    _context?.Dispose();
+                    _context.Dispose();
                 }
             }
 
@@ -62,11 +52,6 @@ namespace AspNetSkeleton.Service
                 public Nested(DataAccessScope parent) : base(parent) { }
 
                 public override IReadWriteDbContext Context => _parent.Context;
-
-                public override int SaveChanges()
-                {
-                    return -1;
-                }
 
                 public override Task<int> SaveChangesAsync(CancellationToken cancellationToken)
                 {
@@ -110,11 +95,6 @@ namespace AspNetSkeleton.Service
                     DisposeCore();
                     _isDisposed = true;
                 }
-            }
-
-            public virtual int SaveChanges()
-            {
-                throw new InvalidOperationException();
             }
 
             public virtual Task<int> SaveChangesAsync(CancellationToken cancellationToken)

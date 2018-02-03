@@ -1,6 +1,5 @@
 ﻿using AspNetSkeleton.Common.DataTransfer;
 using AspNetSkeleton.Common.Utils;
-using System.ComponentModel.DataAnnotations;
 
 namespace AspNetSkeleton.Service.Contract
 {
@@ -8,13 +7,13 @@ namespace AspNetSkeleton.Service.Contract
     {
         Unknown = ServiceErrorCode.Unknown,
 
-        [Display(Name = "Value for parameter {0} was not specified.")]
+        [DisplayText("Value for parameter {0} was not specified.")]
         ParamNotSpecified = ServiceErrorCode.ParamNotSpecified,
 
-        [Display(Name = "Value of parameter {0} is not valid.")]
+        [DisplayText("Value of parameter {0} is not valid.")]
         ParamNotValid = ServiceErrorCode.ParamNotValid,
 
-        [Display(Name = "Entity identified by parameter {0} was not found.")]
+        [DisplayText("Entity identified by parameter {0} was not found.")]
         EntityNotFound = ServiceErrorCode.EntityNotFound,
     }
 

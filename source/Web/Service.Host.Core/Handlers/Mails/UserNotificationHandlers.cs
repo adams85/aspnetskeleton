@@ -1,21 +1,21 @@
 ﻿using System.Collections.Generic;
-using RazorEngine.Templating;
 using Karambolo.Common;
 using AspNetSkeleton.Common.Infrastructure;
 using AspNetSkeleton.Service.Contract.DataObjects;
-using AspNetSkeleton.Service.Host.Core.Infrastructure;
+using RazorLight;
+using Microsoft.Extensions.Options;
 
 namespace AspNetSkeleton.Service.Host.Core.Handlers.Mails
 {
     [HandlerFor(UnapprovedUserCreatedNotificationArgs.Code)]
     public class UnapprovedUserCreatedNotificationHandler : NotificationHandler<UnapprovedUserCreatedNotificationArgs>
     {
-        readonly IServiceHostCoreSettings _settings;
+        readonly ServiceHostCoreSettings _settings;
 
-        public UnapprovedUserCreatedNotificationHandler(IServiceHostEnvironment hostEnvironment, IRazorEngineService razorEngine, IServiceHostCoreSettings settings)
-            : base(hostEnvironment, razorEngine)
+        public UnapprovedUserCreatedNotificationHandler(IRazorLightEngine razorEngine, IOptions<ServiceHostCoreSettings> settings)
+            : base(razorEngine)
         {
-            _settings = settings;
+            _settings = settings.Value;
         }
 
         protected override UnapprovedUserCreatedNotificationArgs CreateModel(string data)
@@ -46,12 +46,12 @@ namespace AspNetSkeleton.Service.Host.Core.Handlers.Mails
     [HandlerFor(PasswordResetNotificationArgs.Code)]
     public class PasswordResetNotificationHandler : NotificationHandler<PasswordResetNotificationArgs>
     {
-        readonly IServiceHostCoreSettings _settings;
+        readonly ServiceHostCoreSettings _settings;
 
-        public PasswordResetNotificationHandler(IServiceHostEnvironment hostEnvironment, IRazorEngineService razorEngine, IServiceHostCoreSettings settings)
-            : base(hostEnvironment, razorEngine)
+        public PasswordResetNotificationHandler(IRazorLightEngine razorEngine, IOptions<ServiceHostCoreSettings> settings)
+            : base(razorEngine)
         {
-            _settings = settings;
+            _settings = settings.Value;
         }
 
         protected override PasswordResetNotificationArgs CreateModel(string data)
@@ -82,12 +82,12 @@ namespace AspNetSkeleton.Service.Host.Core.Handlers.Mails
     [HandlerFor(UserLockedOutNotificationArgs.Code)]
     public class UserLockedOutNotificationHandler : NotificationHandler<UserLockedOutNotificationArgs>
     {
-        readonly IServiceHostCoreSettings _settings;
+        readonly ServiceHostCoreSettings _settings;
 
-        public UserLockedOutNotificationHandler(IServiceHostEnvironment hostEnvironment, IRazorEngineService razorEngine, IServiceHostCoreSettings settings)
-            : base(hostEnvironment, razorEngine)
+        public UserLockedOutNotificationHandler(IRazorLightEngine razorEngine, IOptions<ServiceHostCoreSettings> settings)
+            : base(razorEngine)
         {
-            _settings = settings;
+            _settings = settings.Value;
         }
 
         protected override UserLockedOutNotificationArgs CreateModel(string data)

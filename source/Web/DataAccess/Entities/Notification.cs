@@ -1,22 +1,26 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using AspNetSkeleton.Service.Contract.DataObjects;
+using LinqToDB.Mapping;
+using LinqToDB;
 
 namespace AspNetSkeleton.DataAccess.Entities
 {
+    [Table]
     public class Notification
     {
-        public int Id { get; set; }
+        [Column, PrimaryKey, Identity]
+        public IdentityKey<int> Id { get; set; }
 
+        [Column]
         public NotificationState State { get; set; }
 
+        [Column]
         public DateTime CreatedAt { get; set; }
 
-        [StringLength(64)]
-        [Required]
+        [Column(Length = 64), NotNull]
         public string Code { get; set; }
 
-        [Required]
+        [Column(DataType = DataType.Text), NotNull]
         public string Data { get; set; }
     }
 }

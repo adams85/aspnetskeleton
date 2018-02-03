@@ -1,7 +1,9 @@
 ﻿@model bool?
 
+@inject Microsoft.Extensions.Options.IOptions<CoreSettings> CoreSettings
+
 <div class="page-header">
-<h1>@T["Account Verification"]</h1>
+    <h1>@T["Account Verification"]</h1>
 </div>
 
 @if (Model == null)
@@ -11,8 +13,8 @@
 </p>
 
 <p>
-    @T["If you don't receive this message in a few minutes, check your spam folder or {0}contact us{1}.",
-        $"<a href=\"{Url.Action("Contact", "Home", new {area = ""})}\">", "</a>"]
+    @T["If you don't receive this message in a few minutes, check your spam folder or <a href=\"{0}\">contact us</a>.",
+        Url.Action("Contact", "Home", new { area = "" })]
 </p>
 }
 else if (Model.Value)
@@ -21,8 +23,8 @@ else if (Model.Value)
     @T["Well done! Your account has been verified."]
 </p>
 <p>
-    @T["You can {0}login{1} now.",
-        $"<a href=\"{Url.Action("Login")}\">", "</a>"]
+    @T["You can <a href=\"{0}\">login</a> now.",
+        Url.Action("Login")]
 </p>
 }
 else
@@ -31,7 +33,7 @@ else
     @T["Your account could not be verified."]
 </p>
 <p>
-    @T["Please try again or {0}contact the system administrator{1} if the problem persists.",
-        $"<a href=\"mailto:{Settings.AdminMailTo[0]}\">", "</a>"]
+    @T["Please try again or <a href=\"mailto:{0}\">contact the system administrator</a> if the problem persists.",
+        CoreSettings.Value.AdminMailTo[0]]
 </p>
-}    
+}

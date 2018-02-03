@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using AspNetSkeleton.Common.Infrastructure;
 using AspNetSkeleton.Common.Cli;
-using AspNetSkeleton.DataAccess;
+using System.Threading;
+using Karambolo.Common;
+using System;
+using System.Linq;
 
 namespace AspNetSkeleton.DeployTools.Operations
 {
@@ -18,24 +19,42 @@ namespace AspNetSkeleton.DeployTools.Operations
 
         protected override void ExecuteCore()
         {
-            if (!OptionalArgs.TryGetValue("m", out string migrationName))
-                migrationName = null;
+            if (!OptionalArgs.TryGetValue("m", out string migration))
+                migration = null;
 
-            using (var conn = CreateConnection())
-                if (!Database.Exists(conn))
+            int result;
+            using (var dataContext = CreateDataContext())
+            {
+                var dbManager = CreateDbManager(dataContext);
+                if (!dbManager.ExistsAsync(CancellationToken.None).WaitAndUnwrap())
                     throw new OperationErrorException("Database doesn't exist.");
-            
-            Database.SetInitializer<DataContext>(null);
 
-            var migrationConfiguration = new Migrations.Configuration(CreateConnectionInfo());
-            var migrator = new DbMigrator(migrationConfiguration);
+                if (migration == null)
+                {
+                    var migrations = dataContext.MigrationHistory;
+                    var migrationCount = migrations.Count;
+                    migration = migrations[migrationCount - 1];
+                }
+                else if (migration == string.Empty)
+                    migration = null;
 
-            if (string.IsNullOrEmpty(migrationName))
-                migrator.Update();
+                var currentMigration = dbManager.GetCurrentMigrationAsync(CancellationToken.None).WaitAndUnwrap();
+                if (currentMigration != null && !string.Equals(migration, currentMigration, StringComparison.OrdinalIgnoreCase))
+                {
+                    Context.Out.WriteLine($"Current migration is {currentMigration}.");
+                    if (!PromptForConfirmation())
+                        throw new OperationErrorException("Command cancelled.");
+                }
+
+                result = dbManager.MigrateAsync(migration, CreateDbMigrationProvider(dataContext), CancellationToken.None).WaitAndUnwrap();
+            }
+
+            if (result != 0)
+                Context.Out.WriteLine($"Database updated by {(result > 0 ? "committing" : "reverting")} {Math.Abs(result)} migrations.");
             else
-                migrator.Update(migrationName);
+                Context.Out.WriteLine($"Database is already up-to-date.");
 
-            Context.Out.WriteLine("Database updated.");
+            Context.Out.WriteLine($"Current migration is {(migration != null ? migration : "(none)")}.");
         }
 
         protected override IEnumerable<string> GetUsage()

@@ -1,5 +1,6 @@
 ﻿using AspNetSkeleton.Common.Utils;
 using Karambolo.Common;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -8,6 +9,8 @@ namespace AspNetSkeleton.Base.Utils
 {
     public static class SecurityUtils
     {
+        public static readonly RandomNumberGenerator Rng = RandomNumberGenerator.Create();
+
         // CRC8-ITU
         // http://www.sunshine2k.de/coding/javascript/crc/crc_js.html
         static class Crc8
@@ -43,40 +46,27 @@ namespace AspNetSkeleton.Base.Utils
         }
 
         #region Passwords
-        const int pbkdf2Count = 1000;
-        const int pbkdf2SubkeyLength = 256 / 8;
-        const int saltSize = 128 / 8;
 
-        /* =======================
-         * HASHED PASSWORD FORMATS
-         * =======================
-         * 
-         * Version 0:
-         * PBKDF2 with HMAC-SHA1, 128-bit salt, 256-bit subkey, 1000 iterations.
-         * (See also: SDL crypto guidelines v5.1, Part III)
-         * Format: { 0x00, salt, subkey }
-         */
+        const int pwdIterCount = 10000;
+        const int pwdSubkeyLength = 256 / 8;
+        const int pwdSaltSize = 128 / 8;
 
+        // based on: https://github.com/aspnet/Identity/blob/release/2.0.0/src/Microsoft.Extensions.Identity.Core/PasswordHasher.cs
         public static string HashPassword(string password)
         {
-            if (password == null)
-                throw new ArgumentNullException(nameof(password));
+            var salt = new byte[pwdSaltSize];
+            Rng.GetBytes(salt);
 
-            byte[] salt, subkey;
-            using (var deriveBytes = new Rfc2898DeriveBytes(password, saltSize, pbkdf2Count))
-            {
-                salt = deriveBytes.Salt;
-                subkey = deriveBytes.GetBytes(pbkdf2SubkeyLength);
-            }
+            var subkey = KeyDerivation.Pbkdf2(password, salt, KeyDerivationPrf.HMACSHA256, pwdIterCount, pwdSubkeyLength);
 
-            var outputBytes = new byte[1 + saltSize + pbkdf2SubkeyLength];
-            Buffer.BlockCopy(salt, 0, outputBytes, 1, saltSize);
-            Buffer.BlockCopy(subkey, 0, outputBytes, 1 + saltSize, pbkdf2SubkeyLength);
+            var outputBytes = new byte[salt.Length + subkey.Length];
+
+            Buffer.BlockCopy(salt, 0, outputBytes, 0, salt.Length);
+            Buffer.BlockCopy(subkey, 0, outputBytes, pwdSaltSize, subkey.Length);
 
             return Convert.ToBase64String(outputBytes);
         }
 
-        // hashedPassword must be of the format of HashWithPassword (salt + Hash(salt+input)
         public static bool VerifyHashedPassword(string hashedPassword, string password)
         {
             if (hashedPassword == null)
@@ -87,38 +77,27 @@ namespace AspNetSkeleton.Base.Utils
 
             var hashedPasswordBytes = Convert.FromBase64String(hashedPassword);
 
-            // Verify a version 0 (see comment above) password hash.
-            if (hashedPasswordBytes.Length != (1 + saltSize + pbkdf2SubkeyLength) || hashedPasswordBytes[0] != (byte)0x00)
-            {
-                // Wrong length or version header.
-                return false;
-            }
+            if (hashedPasswordBytes.Length != pwdSaltSize + pwdSubkeyLength)
+                throw new FormatException("Hashed password size is invalid.");
 
-            var salt = new byte[saltSize];
-            Buffer.BlockCopy(hashedPasswordBytes, 1, salt, 0, saltSize);
+            var salt = new byte[pwdSaltSize];
+            Buffer.BlockCopy(hashedPasswordBytes, 0, salt, 0, pwdSaltSize);
 
-            var storedSubkey = new byte[pbkdf2SubkeyLength];
-            Buffer.BlockCopy(hashedPasswordBytes, 1 + saltSize, storedSubkey, 0, pbkdf2SubkeyLength);
+            var storedSubkey = new byte[pwdSubkeyLength];
+            Buffer.BlockCopy(hashedPasswordBytes, pwdSaltSize, storedSubkey, 0, pwdSubkeyLength);
 
-            byte[] generatedSubkey;
-            using (var deriveBytes = new Rfc2898DeriveBytes(password, salt, pbkdf2Count))
-                generatedSubkey = deriveBytes.GetBytes(pbkdf2SubkeyLength);
+            var generatedSubkey = KeyDerivation.Pbkdf2(password, salt, KeyDerivationPrf.HMACSHA256, pwdIterCount, pwdSubkeyLength);
 
             return ArrayUtils.ContentEquals(storedSubkey, generatedSubkey);
         }
         #endregion
 
         #region Tokens
+
         public static string GenerateToken(int tokenSizeInBytes)
         {
-            using (var rng = new RNGCryptoServiceProvider())
-                return GenerateToken(rng, tokenSizeInBytes);
-        }
-
-        public static string GenerateToken(RandomNumberGenerator generator, int tokenSizeInBytes)
-        {
             var tokenBytes = new byte[tokenSizeInBytes];
-            generator.GetBytes(tokenBytes);
+            Rng.GetBytes(tokenBytes);
             return Convert.ToBase64String(tokenBytes);
         }
         #endregion
@@ -149,10 +128,22 @@ namespace AspNetSkeleton.Base.Utils
 
             if (randomPostfixLength != 0)
             {
-                var random = new Random();
                 var postfix = new char[randomPostfixLength];
+                var randomBytes = new byte[4];
                 for (var i = 0; i < randomPostfixLength; i++)
-                    postfix[i] = refNoPostfixChars[random.Next(refNoPostfixChars.Length)];
+                {                    
+                    Rng.GetBytes(randomBytes);
+
+                    var randomValue = 
+                        randomBytes[0] | 
+                        randomBytes[1] << 8 | 
+                        randomBytes[2] << 16 | 
+                        (randomBytes[3] & 0x7F) << 24;
+
+                    randomValue %= refNoPostfixChars.Length;
+
+                    postfix[i] = refNoPostfixChars[randomValue];
+                }
                 result += new string(postfix);
             }
 

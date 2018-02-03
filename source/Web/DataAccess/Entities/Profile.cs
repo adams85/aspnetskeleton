@@ -1,30 +1,30 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using LinqToDB.Mapping;
+using System.Collections.Generic;
 
 namespace AspNetSkeleton.DataAccess.Entities
 {
+    [Table]
     public class Profile
     {
-        public int UserId { get; set; }
+        [Column, PrimaryKey]
+        public IdentityKey<int> UserId { get; set; }
 
-        public virtual User User { get; set; }
-
-        [StringLength(100)]
+        [Column(Length = 100)]
         public string FirstName { get; set; }
 
-        [StringLength(100)]
+        [Column(Length = 100)]
         public string LastName { get; set; }
 
-        [StringLength(50)]
+        [Column(Length = 50)]
         public string PhoneNumber { get; set; }
 
+        [Column]
         public int DeviceLimit { get; set; }
 
-        ICollection<Device> _devices;
-        public virtual ICollection<Device> Devices
-        {
-            get => _devices ?? (_devices = new HashSet<Device>());
-            set => _devices = value;
-        }
+        [Association(ThisKey = nameof(UserId), OtherKey = nameof(Entities.User.UserId), CanBeNull = false, Relationship = Relationship.OneToOne, KeyName = "FK_Profile_User_UserId", BackReferenceName = nameof(Entities.User.Profile))]
+        public User User { get; set; }
+
+        [Association(OtherKey = nameof(Device.UserId), ThisKey = nameof(UserId), Relationship = Relationship.OneToMany, IsBackReference = true)]
+        public IEnumerable<Device> Devices { get; set; }
     }
 }

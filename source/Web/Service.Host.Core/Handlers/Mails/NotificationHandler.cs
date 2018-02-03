@@ -1,26 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
-using RazorEngine.Templating;
-using System.IO;
 using AspNetSkeleton.Service.Contract.DataObjects;
-using AspNetSkeleton.Service.Host.Core.Infrastructure;
+using RazorLight;
+using System.Threading.Tasks;
+using System.Threading;
+using Karambolo.Common;
 
 namespace AspNetSkeleton.Service.Host.Core.Handlers.Mails
 {
     public interface INotificationHandler
     {
-        MailMessage CreateMailMessage(NotificationData notification);
+        Task<MailMessage> CreateMailMessageAsync(NotificationData notification, CancellationToken cancellationToken);
     }
 
     public abstract class NotificationHandler<TModel> : INotificationHandler
     {
-        readonly IServiceHostEnvironment _hostEnvironment;
-        readonly IRazorEngineService _razorEngine;
+        readonly IRazorLightEngine _razorEngine;
 
-        protected NotificationHandler(IServiceHostEnvironment hostEnvironment, IRazorEngineService razorEngine)
+        protected NotificationHandler(IRazorLightEngine razorEngine)
         {
-            _hostEnvironment = hostEnvironment;
             _razorEngine = razorEngine;
         }
 
@@ -30,21 +29,15 @@ namespace AspNetSkeleton.Service.Host.Core.Handlers.Mails
 
         protected virtual string GetBodyTemplatePath(string code, TModel model)
         {
-            return $"~/Templates/Mails/{code}.cshtml";
+            return $"Mails/{code}.cshtml";
         }
 
-        protected virtual string GenerateBody(string code, TModel model)
+        protected virtual Task<string> GenerateBodyAsync(string code, TModel model, CancellationToken cancellationToken)
         {
             var modelType = model?.GetType();
             var templatePath = GetBodyTemplatePath(code, model);
-            if (!_razorEngine.IsTemplateCached(templatePath, modelType))
-            {
-                var templatePhysicalPath = _hostEnvironment.MapPath(templatePath);
-                var template = File.ReadAllText(templatePhysicalPath);
-                _razorEngine.Compile(template, templatePath, modelType);
-            }
-            var result = _razorEngine.Run(templatePath, modelType, model, null);
-            return result;
+
+            return _razorEngine.CompileRenderAsync(templatePath, model).AsCancellable(cancellationToken);
         }
 
         protected abstract string GetSender(TModel model);
@@ -74,7 +67,7 @@ namespace AspNetSkeleton.Service.Host.Core.Handlers.Mails
                 collection.Add(new MailAddress(address));
         }
 
-        public virtual MailMessage CreateMailMessage(NotificationData notification)
+        public async Task<MailMessage> CreateMailMessageAsync(NotificationData notification, CancellationToken cancellationToken)
         {
             var model = CreateModel(notification.Data);
 
@@ -88,9 +81,9 @@ namespace AspNetSkeleton.Service.Host.Core.Handlers.Mails
 
             result.Subject = GenerateSubject(model);
 
-            result.Body = GenerateBody(notification.Code, model);
+            result.Body = await GenerateBodyAsync(notification.Code, model, cancellationToken).ConfigureAwait(false);
             result.IsBodyHtml = IsBodyHtml;
-            
+
             return result;
         }
     }

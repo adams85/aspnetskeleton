@@ -1,18 +1,20 @@
 ﻿using Autofac;
-using AspNetSkeleton.Service.Host.Core.Infrastructure;
-using RazorEngine.Templating;
+using RazorLight;
+using AspNetSkeleton.Core.Infrastructure;
+using Microsoft.Extensions.Options;
+using System;
+using System.Globalization;
+using AspNetSkeleton.Core;
 
 namespace AspNetSkeleton.Service.Host.Core
 {
-    public class Template<T> : TemplateBase<T>
+    public abstract class Template<T> : TemplatePage<T>
     {
-        readonly IServiceHostCoreSettings _settings;
+        public CoreSettings CoreSettings => AppScope.Current.LifetimeScope.Resolve<IOptions<CoreSettings>>().Value;
 
-        public Template()
+        public string FormatDateTime(DateTime value)
         {
-            _settings = ServiceHostCoreModule.RootLifetimeScope.Resolve<IServiceHostCoreSettings>();
+            return string.Format(CultureInfo.InvariantCulture, "{0:d MMM yyyy} {0:HH:mm} (GMT)", value);
         }
-
-        public IServiceHostCoreSettings Settings => _settings;
     }
 }

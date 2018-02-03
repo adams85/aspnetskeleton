@@ -25,7 +25,7 @@ namespace AspNetSkeleton.Service.Commands.Users
 
             using (var scope = _commandContext.CreateDataAccessScope())
             {
-                var user = await scope.Context.QueryTracking<User>().GetByNameAsync(command.UserName, cancellationToken).ConfigureAwait(false);
+                var user = await scope.Context.Query<User>().GetByNameAsync(command.UserName, cancellationToken).ConfigureAwait(false);
                 this.RequireExisting(user, c => c.UserName);
 
                 if (user.IsApproved)
@@ -33,6 +33,8 @@ namespace AspNetSkeleton.Service.Commands.Users
 
                 if (command.Verify)
                     this.RequireValid(string.Equals(user.ConfirmationToken, command.VerificationToken, StringComparison.Ordinal), m => m.VerificationToken);
+
+                scope.Context.Track(user);
 
                 user.ConfirmationToken = null;
                 user.IsApproved = true;

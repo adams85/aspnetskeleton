@@ -4,7 +4,7 @@ using AspNetSkeleton.Service.Contract.Queries;
 using AspNetSkeleton.DataAccess.Entities;
 using System.Threading.Tasks;
 using System.Threading;
-using System.Data.Entity;
+using AspNetSkeleton.DataAccess;
 using Karambolo.Common;
 
 namespace AspNetSkeleton.Service.Queries.Roles

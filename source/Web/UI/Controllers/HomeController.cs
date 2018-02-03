@@ -1,16 +1,19 @@
-﻿using System.Web.Mvc;
+﻿using AspNetSkeleton.UI.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace AspNetSkeleton.UI.Controllers
 {
     public class HomeController : Controller
     {
-        [HttpGet]
-#if !DEBUG
-        [DevTrends.MvcDonutCaching.DonutOutputCache(Duration = UIConstants.DefaultOutputCacheDuration)]
-#endif
-        public ActionResult Index()
+        public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

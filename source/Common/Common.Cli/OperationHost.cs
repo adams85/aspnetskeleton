@@ -1,11 +1,12 @@
 ﻿using AspNetSkeleton.Common.Utils;
 using Karambolo.Common;
 using Karambolo.Common.Collections;
-using Karambolo.Common.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace AspNetSkeleton.Common.Cli
 {
@@ -16,7 +17,7 @@ namespace AspNetSkeleton.Common.Cli
 
     public abstract class OperationHost : IOperationHost, IOperationContext
     {
-        static readonly IReadOnlySet<string> helpArgs = new ReadOnlyEnabledHashSet<string>(StringComparer.OrdinalIgnoreCase) { "/?", "-?", "/h", "-h", "help" };        
+        static readonly IReadOnlySet<string> helpArgs = new ReadOnlyEnabledHashSet<string>(StringComparer.OrdinalIgnoreCase) { "/?", "-?", "/h", "-h", "help" };
 
         readonly IReadOnlyDictionary<string, OperationDescriptor> _operationDescriptors;
         readonly IOperationHostIO _io;
@@ -142,7 +143,7 @@ namespace AspNetSkeleton.Common.Cli
                 int resultCode;
                 if (!(ex is OperationErrorException))
                 {
-                    Logger.LogError("Unexpected error. Details: {0}", ex);
+                    Logger.LogError(ex, "Unexpected error.");
                     resultCode = -2;
                 }
                 else

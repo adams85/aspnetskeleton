@@ -6,16 +6,17 @@ using AspNetSkeleton.Service.Contract;
 using System.Threading;
 using Karambolo.Common;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 
 namespace AspNetSkeleton.Core.Infrastructure
 {
     public class ServiceProxyCommandDispatcher : WebApiInvoker, ICommandDispatcher
     {
-        readonly ICoreSettings _settings;
+        readonly CoreSettings _settings;
 
-        public ServiceProxyCommandDispatcher(ICoreSettings settings) : base(settings.ServiceBaseUrl)
+        public ServiceProxyCommandDispatcher(IOptions<CoreSettings> settings) : base(settings.Value.ServiceBaseUrl)
         {
-            _settings = settings;
+            _settings = settings.Value;
         }
 
         protected override WebApiErrorException CreateError(WebHeaderCollection headers, ErrorData error)

@@ -1,4 +1,5 @@
 ﻿using System;
+using AspNetSkeleton.Service.Contract;
 
 namespace AspNetSkeleton.DataAccess
 {

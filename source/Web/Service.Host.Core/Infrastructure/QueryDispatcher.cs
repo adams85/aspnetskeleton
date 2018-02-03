@@ -69,10 +69,10 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure
             var invokeHandlerMethod = invokeHandlerMethodDefinition.MakeGenericMethod(context.QueryType, context.ResultType);
             var getTaskResultMethod = getTaskResultMethodDefinition.MakeGenericMethod(context.ResultType);
 
-            var isNestedQuery = _lifetimeScope.Tag == ServiceHostCoreModule.QueryLifetimeScopeTag;
+            var isNestedQuery = _lifetimeScope.Tag == ServiceHostCoreAppConfiguration.QueryLifetimeScopeTag;
             var queryLifetimeScope =
                 !isNestedQuery ?
-                _lifetimeScope.BeginLifetimeScope(ServiceHostCoreModule.QueryLifetimeScopeTag) :
+                _lifetimeScope.BeginLifetimeScope(ServiceHostCoreAppConfiguration.QueryLifetimeScopeTag) :
                 _lifetimeScope;
 
             try

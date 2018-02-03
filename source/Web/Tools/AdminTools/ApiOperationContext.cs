@@ -7,7 +7,7 @@ namespace AspNetSkeleton.AdminTools
 {
     public interface IApiOperationContext : IOperationContext
     {        
-        IToolsSettings Settings { get; }
+        ToolsSettings Settings { get; }
         IApiService ApiService { get; }
         IQueryDispatcher QueryDispatcher { get; }
         ICommandDispatcher CommandDispatcher { get; }

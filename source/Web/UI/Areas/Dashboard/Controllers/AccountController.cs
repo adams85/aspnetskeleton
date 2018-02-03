@@ -1,12 +1,14 @@
-﻿using System.Web.Mvc;
-using AspNetSkeleton.UI.Areas.Dashboard.Models;
+﻿using AspNetSkeleton.UI.Areas.Dashboard.Models;
 using System.Threading.Tasks;
 using AspNetSkeleton.UI.Infrastructure.Security;
 using System.Threading;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AspNetSkeleton.UI.Areas.Dashboard.Controllers
 {
     [Authorize]
+    [Area("Dashboard")]
     public class AccountController : Controller
     {
         readonly IAccountManager _accountManager;
@@ -16,24 +18,24 @@ namespace AspNetSkeleton.UI.Areas.Dashboard.Controllers
             _accountManager = accountManager;
         }
 
-        public ActionResult Index()
+        public IActionResult Index()
         {           
             var model = new ChangePasswordModel();
             
-            ViewBag.ActiveMenuItem = "Dashboard";
-            ViewBag.ActiveSubMenuItem = "Account";
+            ViewData["ActiveMenuItem"] = "Dashboard";
+            ViewData["ActiveSubMenuItem"] = "Account";
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Index(ChangePasswordModel model, CancellationToken cancellationToken)
+        public async Task<IActionResult> Index(ChangePasswordModel model, CancellationToken cancellationToken)
         {
             model.UserName = HttpContext.User.Identity.Name;
             model.Success = ModelState.IsValid && await _accountManager.ChangePasswordAsync(model.CurrentPassword, model, cancellationToken);
-            
-            ViewBag.ActiveMenuItem = "Dashboard";
-            ViewBag.ActiveSubMenuItem = "Account";
+
+            ViewData["ActiveMenuItem"] = "Dashboard";
+            ViewData["ActiveSubMenuItem"] = "Account";
             return View(model);
         }
     }

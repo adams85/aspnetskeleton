@@ -1,7 +1,7 @@
-﻿using System.Collections;
+﻿using AspNetSkeleton.POTools.Extracting.Resources;
 using System.Collections.Generic;
 using System.IO;
-using System.Resources;
+using System.Linq;
 using System.Threading;
 
 namespace AspNetSkeleton.POTools.Extracting
@@ -10,13 +10,11 @@ namespace AspNetSkeleton.POTools.Extracting
     {
         public IEnumerable<LocalizableTextInfo> Extract(string content, CancellationToken cancellationToken = default(CancellationToken))
         {
-            ResXResourceReader resourceReader;
+            ResXFileReader resourceReader;
             using (var reader = new StringReader(content))
-            {
-                resourceReader = new ResXResourceReader(reader);
-                foreach (DictionaryEntry entry in resourceReader)
-                    yield return new LocalizableTextInfo { Id = entry.Value.ToString(), Comment = entry.Key.ToString() };
-            }
+                resourceReader = new ResXFileReader(reader);
+
+            return resourceReader.Select(kvp => new LocalizableTextInfo { Id = kvp.Value, Comment = kvp.Key });
         }
     }
 }

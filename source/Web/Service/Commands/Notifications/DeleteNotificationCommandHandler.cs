@@ -18,7 +18,7 @@ namespace AspNetSkeleton.Service.Commands.Notifications
         {
             using (var scope = _commandContext.CreateDataAccessScope())
             {
-                var notification = await scope.Context.GetByKeyTrackingAsync<Notification>(cancellationToken, command.Id).ConfigureAwait(false);
+                var notification = await scope.Context.GetByKeyAsync<Notification>(cancellationToken, command.Id).ConfigureAwait(false);
                 this.RequireExisting(notification, c => c.Id);
 
                 scope.Context.Delete(notification);

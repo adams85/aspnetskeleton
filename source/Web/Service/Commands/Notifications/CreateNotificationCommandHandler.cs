@@ -30,11 +30,11 @@ namespace AspNetSkeleton.Service.Commands.Notifications
                 notification.Code = command.Code;
                 notification.Data = command.Data;
 
-                scope.Context.Create(notification);
+                var key = scope.Context.Create(notification);
 
                 await scope.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-                command.OnKeyGenerated?.Invoke(command, notification.Id);
+                command.OnKeyGenerated?.Invoke(command, key.ValueObject);
             }
         }
     }

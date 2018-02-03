@@ -1,4 +1,7 @@
 ﻿using Karambolo.Common;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,6 +13,12 @@ using System.Xml.Linq;
 
 namespace AspNetSkeleton.UI.Infrastructure.Models
 {
+    public class XmlModelAttributesOptions
+    {
+        public IFileProvider FileProvider { get; set; }
+        public string[] ModelMetadataFilePaths { get; set; }
+    }
+
     public class XmlModelAttributesProvider : IModelAttributesProvider
     {
         enum WellKnownTypeKind
@@ -49,17 +58,22 @@ namespace AspNetSkeleton.UI.Infrastructure.Models
 
         readonly Dictionary<Type, Dictionary<string, Attribute[]>> _attributeCache = new Dictionary<Type, Dictionary<string, Attribute[]>>();
 
-        public XmlModelAttributesProvider(string[] modelMetadataFilePaths)
-        {
-            if (modelMetadataFilePaths == null)
-                throw new ArgumentNullException(nameof(modelMetadataFilePaths));
+        readonly IFileProvider _fileProvider;
 
-            Array.ForEach(modelMetadataFilePaths, LoadModelAttributes);
+        public XmlModelAttributesProvider(IHostingEnvironment hostingEnvironment, IOptions<XmlModelAttributesOptions> options)
+        {
+            var optionsUnwrapped = options.Value;
+            _fileProvider = optionsUnwrapped.FileProvider ?? hostingEnvironment.ContentRootFileProvider;
+
+            if (!ArrayUtils.IsNullOrEmpty(optionsUnwrapped.ModelMetadataFilePaths))
+                Array.ForEach(optionsUnwrapped.ModelMetadataFilePaths, LoadModelAttributes);
         }
 
         void LoadModelAttributes(string modelMetadataFilePath)
         {
-            var xml = XDocument.Load(modelMetadataFilePath);
+            XDocument xml;
+            using (var stream = _fileProvider.GetFileInfo(modelMetadataFilePath).CreateReadStream())
+                xml = XDocument.Load(stream);
 
             var root = xml.Root;
             CheckElementName(root, "types");

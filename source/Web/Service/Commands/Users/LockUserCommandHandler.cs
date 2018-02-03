@@ -24,11 +24,13 @@ namespace AspNetSkeleton.Service.Commands.Users
 
             using (var scope = _commandContext.CreateDataAccessScope())
             {
-                var user = await scope.Context.QueryTracking<User>().GetByNameAsync(command.UserName, cancellationToken).ConfigureAwait(false);
+                var user = await scope.Context.Query<User>().GetByNameAsync(command.UserName, cancellationToken).ConfigureAwait(false);
                 this.RequireExisting(user, c => c.UserName);
 
                 if (user.IsLockedOut)
                     return;
+
+                scope.Context.Track(user);
 
                 user.LastLockoutDate = _clock.UtcNow;
                 user.IsLockedOut = true;

@@ -3,7 +3,7 @@ using AspNetSkeleton.DataAccess.Entities;
 using AspNetSkeleton.Service.Transforms;
 using System.Threading.Tasks;
 using System.Threading;
-using System.Data.Entity;
+using AspNetSkeleton.DataAccess;
 
 namespace AspNetSkeleton.Service.Commands.Roles
 {
@@ -22,7 +22,7 @@ namespace AspNetSkeleton.Service.Commands.Roles
 
             using (var scope = _commandContext.CreateDataAccessScope())
             {
-                var role = await scope.Context.QueryTracking<Role>().GetByNameAsync(command.RoleName, cancellationToken).ConfigureAwait(false);
+                var role = await scope.Context.Query<Role>().GetByNameAsync(command.RoleName, cancellationToken).ConfigureAwait(false);
                 this.RequireExisting(role, c => c.RoleName);
 
                 if (!command.DeletePopulatedRole)

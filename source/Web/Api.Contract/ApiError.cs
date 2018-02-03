@@ -1,7 +1,6 @@
 ﻿using AspNetSkeleton.Common.DataTransfer;
 using AspNetSkeleton.Common.Utils;
 using AspNetSkeleton.Common;
-using System.ComponentModel.DataAnnotations;
 
 namespace AspNetSkeleton.Api.Contract
 {
@@ -9,10 +8,10 @@ namespace AspNetSkeleton.Api.Contract
     {
         Unknown,
 
-        [Display(Name = "Request had missing or invalid parameters. {0}")]
+        [DisplayText("Request had missing or invalid parameters. {0}")]
         InvalidRequest,
 
-        [Display(Name = "Device is not allowed.")]
+        [DisplayText("Device is not allowed.")]
         DeviceNotAllowed,
     }
 

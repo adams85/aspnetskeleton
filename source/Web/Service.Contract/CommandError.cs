@@ -1,6 +1,5 @@
 ﻿using AspNetSkeleton.Common.DataTransfer;
 using AspNetSkeleton.Common.Utils;
-using System.ComponentModel.DataAnnotations;
 
 namespace AspNetSkeleton.Service.Contract
 {
@@ -8,25 +7,25 @@ namespace AspNetSkeleton.Service.Contract
     {
         Unknown = ServiceErrorCode.Unknown,
 
-        [Display(Name = "Value for parameter {0} was not specified.")]
+        [DisplayText("Value for parameter {0} was not specified.")]
         ParamNotSpecified = ServiceErrorCode.ParamNotSpecified,
 
-        [Display(Name = "Value of parameter {0} is not valid.")]
+        [DisplayText("Value of parameter {0} is not valid.")]
         ParamNotValid = ServiceErrorCode.ParamNotValid,
 
-        [Display(Name = "Entity identified by parameter {0} was not found.")]
+        [DisplayText("Entity identified by parameter {0} was not found.")]
         EntityNotFound = ServiceErrorCode.EntityNotFound,
 
-        [Display(Name = "Entity identified by parameter {0} is not unique.")]
+        [DisplayText("Entity identified by parameter {0} is not unique.")]
         EntityNotUnique = ServiceErrorCode.EntityNotUnique,
 
-        [Display(Name = "Entity identified by parameter {0} has dependencies.")]
+        [DisplayText("Entity identified by parameter {0} has dependencies.")]
         EntityDependent = ServiceErrorCode.EntityDependent,
 
-        [Display(Name = "Limit of connected devices has been reached.")]
+        [DisplayText("Limit of connected devices has been reached.")]
         DeviceLimitExceeded = 0x10000,
 
-        [Display(Name = "Time required to disconnecting the device has not expired.")]
+        [DisplayText("Time required to disconnecting the device has not expired.")]
         DeviceDisconnectTimeNotExpired
     }
 

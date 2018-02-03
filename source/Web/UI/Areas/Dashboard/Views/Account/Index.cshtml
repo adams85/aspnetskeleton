@@ -18,46 +18,45 @@ else if (Model.Success == false)
         </p>
 }    
 
-@using (Html.BeginForm(null, null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-{
-        @Html.AntiForgeryToken();
-                                
-        <div class="row">
-            <div class="col-sm-offset-2 col-sm-4">
-                @Html.ValidationSummary(excludePropertyErrors: true)
+        <form method="post" class="form-horizontal" role="form">
+            <div class="row">
+                <div class="col-sm-offset-2 col-sm-4" asp-validation-summary="ModelOnly"></div>
             </div>
-        </div>                                
-        
-        <div class="row form-group">
-            <label for="@Html.IdFor(m => m.CurrentPassword)" class="col-sm-2 control-label">@Html.DisplayNameFor(m => m.CurrentPassword)</label>
-            <div class="col-sm-4">
-                @Html.PasswordFor(m => m.CurrentPassword, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.CurrentPassword)
-            </div>
-        </div>
-                                        
-        <div class="row form-group">
-            <label for="@Html.IdFor(m => m.NewPassword)" class="col-sm-2 control-label">@Html.DisplayNameFor(m => m.NewPassword)</label>
-            <div class="col-sm-4">
-                @Html.PasswordFor(m => m.NewPassword, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.NewPassword)
-            </div>
-        </div>
 
-        <div class="row form-group">
-            <label for="@Html.IdFor(m => m.ConfirmPassword)" class="col-sm-2 control-label">@Html.DisplayNameFor(m => m.ConfirmPassword)</label>
-            <div class="col-sm-4">
-                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.ConfirmPassword)
+            <div class="row form-group">
+                <label asp-for="CurrentPassword" class="col-sm-2 control-label"></label>
+                <div class="col-sm-4">
+                    <input type="password" asp-for="CurrentPassword" class="form-control" />
+                    <span asp-validation-for="CurrentPassword" />
+                </div>
             </div>
-        </div>
 
-        <div class="row form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-primary">@T["Change password"]</button>
+            <div class="row form-group">
+                <label asp-for="NewPassword" class="col-sm-2 control-label"></label>
+                <div class="col-sm-4">
+                    <input type="password" asp-for="NewPassword" class="form-control" />
+                    <span asp-validation-for="NewPassword" />
+                </div>
             </div>
-        </div>
-}
+
+            <div class="row form-group">
+                <label asp-for="ConfirmPassword" class="col-sm-2 control-label"></label>
+                <div class="col-sm-4">
+                    <input type="password" asp-for="ConfirmPassword" class="form-control" />
+                    <span asp-validation-for="ConfirmPassword" />
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-primary">@T["Change password"]</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 
+@section Scripts
+{
+    @Html.Partial("Partials/_ValidationScripts")
+}

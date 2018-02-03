@@ -24,7 +24,13 @@ namespace AspNetSkeleton.AdminTools
 
         public sealed override void Execute()
         {
-            try { ExecuteCore(); }
+            try
+            {
+                if (Context.Settings == null)
+                    throw new OperationErrorException("Cannot access API as settings were not provided.");
+
+                ExecuteCore();
+            }
             catch (ApiErrorException ex) { throw new OperationErrorException(ex.Message, ex); }
         }
 

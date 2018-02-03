@@ -1,10 +1,10 @@
-﻿using AspNetSkeleton.Service.Contract.DataObjects;
-using AspNetSkeleton.Service.Contract.Queries;
-using AspNetSkeleton.DataAccess.Entities;
-using AspNetSkeleton.Service.Transforms;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using System.Threading;
 using AspNetSkeleton.Base.Utils;
+using AspNetSkeleton.DataAccess.Entities;
+using AspNetSkeleton.Service.Contract.DataObjects;
+using AspNetSkeleton.Service.Contract.Queries;
+using AspNetSkeleton.Service.Transforms;
 
 namespace AspNetSkeleton.Service.Queries.Users
 {
@@ -32,7 +32,7 @@ namespace AspNetSkeleton.Service.Queries.Users
             if (user == null)
                 return result;
 
-            result.UserId = user.UserId;
+            result.UserId = user.UserId.Value;
             if (!user.IsApproved)
                 result.Status = AuthenticateUserStatus.Unapproved;
             else if (user.IsLockedOut)

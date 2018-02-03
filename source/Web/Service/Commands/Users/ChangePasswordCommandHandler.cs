@@ -36,7 +36,7 @@ namespace AspNetSkeleton.Service.Commands.Users
 
             using (var scope = _commandContext.CreateDataAccessScope())
             {
-                var user = await scope.Context.QueryTracking<User>().GetByNameAsync(command.UserName, cancellationToken).ConfigureAwait(false);
+                var user = await scope.Context.Query<User>().GetByNameAsync(command.UserName, cancellationToken).ConfigureAwait(false);
                 this.RequireExisting(user, c => c.UserName);
 
                 var now = _clock.UtcNow;
@@ -46,6 +46,8 @@ namespace AspNetSkeleton.Service.Commands.Users
                         now < user.PasswordVerificationTokenExpirationDate && string.Equals(user.PasswordVerificationToken, command.VerificationToken, StringComparison.Ordinal),
                         c => c.VerificationToken);
 
+                    scope.Context.Track(user);
+
                     user.PasswordVerificationToken = null;
                     user.PasswordVerificationTokenExpirationDate = null;
 
@@ -53,6 +55,8 @@ namespace AspNetSkeleton.Service.Commands.Users
                     user.LastPasswordFailureDate = null;
                     user.IsLockedOut = false;
                 }
+                else
+                    scope.Context.Track(user);
 
                 user.Password = SecurityUtils.HashPassword(command.NewPassword);
                 user.LastPasswordChangedDate = now;

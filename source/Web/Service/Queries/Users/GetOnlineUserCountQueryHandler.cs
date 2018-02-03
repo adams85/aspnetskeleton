@@ -2,7 +2,7 @@
 using AspNetSkeleton.DataAccess.Entities;
 using System.Threading.Tasks;
 using System.Threading;
-using System.Data.Entity;
+using AspNetSkeleton.DataAccess;
 
 namespace AspNetSkeleton.Service.Queries.Users
 {

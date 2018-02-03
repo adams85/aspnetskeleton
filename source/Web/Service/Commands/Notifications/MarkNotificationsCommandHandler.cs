@@ -3,7 +3,7 @@ using AspNetSkeleton.Service.Contract.Commands;
 using AspNetSkeleton.DataAccess.Entities;
 using System.Threading.Tasks;
 using System.Threading;
-using System.Data.Entity;
+using AspNetSkeleton.DataAccess;
 
 namespace AspNetSkeleton.Service.Commands.Notifications
 {
@@ -20,7 +20,7 @@ namespace AspNetSkeleton.Service.Commands.Notifications
         {
             using (var scope = _commandContext.CreateDataAccessScope())
             {
-                var linq = scope.Context.QueryTracking<Notification>().Where(m => m.State != command.State);
+                var linq = scope.Context.Query<Notification>().Where(m => m.State != command.State);
 
                 if (command.Count != null)
                     linq = linq.Take(command.Count.Value);
@@ -29,7 +29,10 @@ namespace AspNetSkeleton.Service.Commands.Notifications
 
                 foreach (var notification in notifications)
                 {
+                    scope.Context.Track(notification);
+
                     notification.State = command.State;
+
                     scope.Context.Update(notification);
                 }
 

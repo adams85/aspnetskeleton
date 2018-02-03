@@ -1,4 +1,6 @@
-﻿using Karambolo.Common;
+﻿using AspNetSkeleton.UI.Infrastructure.Localization;
+using Karambolo.Common;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +47,14 @@ namespace AspNetSkeleton.UI.Infrastructure.Models
     public interface IModelAttributesProviderConfigurer
     {
         void Configure(ModelAttributesProviderBuilder builder);
+    }
+
+    public abstract class ModelAttributesProviderConfigurer : IModelAttributesProviderConfigurer
+    {
+        // this is only for supporting POTools so that it can extract data annotation texts
+        protected static IStringLocalizer T { get; } = NullStringLocalizer.Instance;
+
+        public abstract void Configure(ModelAttributesProviderBuilder builder);
     }
 
     public class ModelAttributesProviderBuilder : IModelAttributesProviderBuilder

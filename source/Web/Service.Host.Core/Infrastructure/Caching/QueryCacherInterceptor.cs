@@ -5,6 +5,7 @@ using AspNetSkeleton.Common.Utils;
 using System.Threading.Tasks;
 using System.Threading;
 using Karambolo.Common;
+using AspNetSkeleton.Core.Infrastructure;
 using AspNetSkeleton.Core.Infrastructure.Caching;
 
 namespace AspNetSkeleton.Service.Host.Core.Infrastructure.Caching

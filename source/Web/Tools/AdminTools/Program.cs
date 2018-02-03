@@ -1,8 +1,12 @@
 ﻿using AspNetSkeleton.AdminTools.Infrastructure;
+using AspNetSkeleton.AdminTools.Operations;
 using AspNetSkeleton.Api.Contract;
 using AspNetSkeleton.Common.Cli;
 using AspNetSkeleton.Service.Contract;
-using Karambolo.Common.Logging;
+using Karambolo.Extensions.Logging.File;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.PlatformAbstractions;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -11,23 +15,47 @@ namespace AspNetSkeleton.AdminTools
 {
     class Program : OperationHost, IApiOperationContext
     {
-        public static readonly string AssemblyName = typeof(Program).Assembly.GetName().Name;
+        public static readonly ApplicationEnvironment Environment = PlatformServices.Default.Application;
+
+        public static IConfigurationRoot Configuration { get; private set; }
+
+        static ILoggerFactory CreateLoggerFactory()
+        {
+            var result = new LoggerFactory();
+
+            var config = Configuration.GetSection("Logging")?.GetSection(FileLoggerProvider.Alias);
+            if (config != null)
+                result.AddFile(new FileLoggerContext(Environment.ApplicationBasePath, "default.log"), config);
+
+            return result;
+        }
 
         static int Main(string[] args)
         {
-            return new Program().Execute(args);
+            Configuration = new ConfigurationBuilder()
+                .SetBasePath(Environment.ApplicationBasePath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+#if DISTRIBUTED
+                .AddJsonFile("appsettings.Distributed.json", optional: true, reloadOnChange: false)
+#else
+                .AddJsonFile("appsettings.Monolithic.json", optional: true, reloadOnChange: false)
+#endif
+                .Build();
+
+            using (var loggerFactory = CreateLoggerFactory())
+                return new Program(loggerFactory).Execute(args);
         }
 
         readonly Lazy<IApiService> _apiService;
         readonly Lazy<IQueryDispatcher> _queryDispatcher;
         readonly Lazy<ICommandDispatcher> _commandDispatcher;
 
-        public Program() 
+        public Program(ILoggerFactory loggerFactory)
             : base(OperationDescriptor.Scan(typeof(Program).Assembly.GetTypes()), ConsoleHostIO.Instance)
         {
-            Logger = new TraceSourceLogger(AppName);
+            Logger = loggerFactory.CreateLogger<Program>();
 
-            Settings = new ToolsSettings();
+            Settings = Configuration.GetSection(typeof(ToolsSettings).Name)?.Get<ToolsSettings>();
             _apiService = new Lazy<IApiService>(() => new ApiService(Settings.ApiUrl));
             _queryDispatcher = new Lazy<IQueryDispatcher>(() => new ApiProxyQueryDispatcher(_apiService.Value, this));
             _commandDispatcher = new Lazy<ICommandDispatcher>(() => new ApiProxyCommandDispatcher(_apiService.Value, this));
@@ -41,7 +69,7 @@ namespace AspNetSkeleton.AdminTools
             _commandDispatcher = prototype._commandDispatcher;
         }
 
-        public IToolsSettings Settings { get; }
+        public ToolsSettings Settings { get; }
 
         public IApiService ApiService => _apiService.Value;
 
@@ -49,7 +77,7 @@ namespace AspNetSkeleton.AdminTools
 
         public ICommandDispatcher CommandDispatcher => _commandDispatcher.Value;
 
-        public override string AppName => AssemblyName;
+        public override string AppName => Environment.ApplicationName;
 
         protected override IEnumerable<string> GetInstructions()
         {

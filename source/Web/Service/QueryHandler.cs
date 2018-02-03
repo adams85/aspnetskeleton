@@ -6,7 +6,7 @@ using AspNetSkeleton.Service.Contract;
 using AspNetSkeleton.Common.Utils;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Data.Entity;
+using AspNetSkeleton.DataAccess;
 using Karambolo.Common;
 
 namespace AspNetSkeleton.Service

@@ -1,80 +1,162 @@
-﻿using AspNetSkeleton.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using AspNetSkeleton.Base.Utils;
 using AspNetSkeleton.Common.Infrastructure;
+using AspNetSkeleton.Common.Cli;
+using AspNetSkeleton.Core.Hosting.Operations;
 using AspNetSkeleton.Service.Contract;
 using Autofac;
-using Karambolo.Common.Logging;
-using System;
-using System.Threading;
+using Autofac.Core;
+using Autofac.Extensions.DependencyInjection;
+using Autofac.Features.Metadata;
+using Karambolo.Common;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using AspNetSkeleton.Base;
+using AspNetSkeleton.Core.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Karambolo.Extensions.Logging.File;
+using Microsoft.AspNetCore.Hosting;
+using AspNetSkeleton.Core.Utils;
 
 namespace AspNetSkeleton.Core.Infrastructure
 {
-    public abstract class CoreModule : Module
+    public interface IContainerConfiguration
     {
-        class Mutex : IStartable, IDisposable
+        IConfigurationRoot Configuration { get; }
+
+        void RegisterCommonServices(IServiceCollection services);
+        void RegisterCommonComponents(ContainerBuilder builder);
+    }
+
+    public interface ICommonServicesAccessor
+    {
+        ServiceDescriptor[] Services { get; }
+    }
+
+    public class CoreModule : Module, IContainerConfiguration
+    {
+        class CommonServicesAccessor : ICommonServicesAccessor
         {
-            readonly ILifetimeScope _lifetimeScope;
-
-            public Mutex(ILifetimeScope lifetimeScope)
-            {
-                _lifetimeScope = lifetimeScope;
-            }
-
-            public void Start()
-            {
-                if (Interlocked.CompareExchange(ref rootLifetimeScope, _lifetimeScope, null) != null)
-                    throw new InvalidOperationException();
-            }
-
-            public void Dispose()
-            {
-                Interlocked.Exchange(ref rootLifetimeScope, null);
-            }
+            public ServiceDescriptor[] Services { get; set; }
         }
 
-        static ILifetimeScope rootLifetimeScope;
-        public static ILifetimeScope RootLifetimeScope => rootLifetimeScope;
+        readonly IHostConfiguration _hostConfiguration;
+        readonly IAppConfiguration[] _appConfigurations;
 
-        protected virtual bool IsServiceHost => false;
+        public CoreModule(IHostConfiguration hostConfiguration, params IAppConfiguration[] appConfigurations)
+        {
+            _hostConfiguration = hostConfiguration;
+            _appConfigurations = appConfigurations;
+        }
+
+        public IConfigurationRoot Configuration => _hostConfiguration.Configuration;
 
         protected virtual PropertyInjectorModule CreatePropertyInjectorModule()
         {
             return new PropertyInjectorModule();
         }
 
-        protected override void Load(ContainerBuilder builder)
+        protected virtual void ConfigureLogging(ILoggingBuilder builder)
         {
-            base.Load(builder);
+            var config = Configuration.GetSection("Logging");
+            if (config != null)
+                builder.AddConfiguration(config);
 
-            builder.RegisterModule(CreatePropertyInjectorModule());
+            config = Configuration.GetSection("Logging")?.GetSection(FileLoggerProvider.Alias);
+            if (config != null)
+            {
+                builder.Services.Configure<FileLoggerOptions>(config);
+                builder.AddFile(new FileLoggerContext(AppEnvironment.Instance.AppBasePath, "default.log"));
+            }
 
-            builder.RegisterType<Mutex>()
-                .As<IStartable>()
-                .SingleInstance();
+            if (ConfigurationHelper.EnvironmentName == EnvironmentName.Development)
+                builder.AddConsole();
+        }
 
+        public virtual void RegisterCommonServices(IServiceCollection services)
+        {
+            #region Core Infrastructure
+            services.AddOptions();
+            services.AddLogging(ConfigureLogging);
+
+            services.ConfigureByConvention<CoreSettings>(Configuration);
+            #endregion
+
+            _hostConfiguration.RegisterCommonServices(services);
+            Array.ForEach(_appConfigurations, cfg => cfg.RegisterCommonServices(services));
+        }
+
+        public virtual void RegisterCommonComponents(ContainerBuilder builder)
+        {
             #region Core Infrastructure
             builder
                 .RegisterGeneric(typeof(AutofacKeyedProvider<>))
                 .As(typeof(IKeyedProvider<>))
                 .InstancePerLifetimeScope();
 
-            builder.RegisterType<Clock>()
-                .As<IClock>()
+            builder.RegisterType<SystemClock>()
+                .AsImplementedInterfaces()
                 .SingleInstance();
 
-            builder.RegisterType<TraceSourceLogger>()
-                .As<ILogger>();
+            builder.RegisterInstance(AppEnvironment.Instance)
+                .As<IAppEnvironment>();
             #endregion
 
-            if (!IsServiceHost)
-            {
-                builder.RegisterType<ServiceProxyQueryDispatcher>()
-                    .As<IQueryDispatcher>()
-                    .SingleInstance();
+            #region Host
+            builder.RegisterType<HostScope>()
+                .As<IHostScope>()
+                .ExternallyOwned()
+                .SingleInstance();
 
-                builder.RegisterType<ServiceProxyCommandDispatcher>()
-                    .As<ICommandDispatcher>()
-                    .SingleInstance();
-            }
+            _hostConfiguration.RegisterCommonComponents(builder);
+
+            builder.RegisterInstance(_hostConfiguration)
+                .As<IHostConfiguration>();
+            #endregion
+
+            #region Apps
+            // app scope lives beside (not within) host scope (since configured as singleton)
+            // because app needs no components registered for host
+            builder.RegisterType<AppScope>()
+                .As<IAppScope>()
+                .ExternallyOwned()
+                .SingleInstance();
+
+            Array.ForEach(_appConfigurations, cfg => cfg.RegisterCommonComponents(builder));
+
+            Array.ForEach(_appConfigurations, cfg =>
+                builder.RegisterInstance(cfg)
+                    .As<IAppConfiguration>());
+            #endregion
+        }
+
+        protected sealed override void Load(ContainerBuilder builder)
+        {
+            base.Load(builder);
+
+            var propertyInjectorModule = CreatePropertyInjectorModule();
+
+            builder.RegisterModule(propertyInjectorModule);
+
+            builder.RegisterType<LifetimeScopeFactory>()
+                .WithParameter(TypedParameter.From(propertyInjectorModule))
+                .As<ILifetimeScopeFactory>()
+                .InstancePerLifetimeScope();
+
+            var services = new ServiceCollection();
+            RegisterCommonServices(services);
+            builder.Populate(services);
+
+            builder.RegisterInstance(new CommonServicesAccessor { Services = services.ToArray() })
+                .As<ICommonServicesAccessor>();
+
+            RegisterCommonComponents(builder);
         }
     }
 }

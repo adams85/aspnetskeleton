@@ -1,7 +1,4 @@
-﻿using System.Web.Mvc;
-using System.Web.Security;
-using AspNetSkeleton.UI.Filters;
-using AspNetSkeleton.UI.Models;
+﻿using AspNetSkeleton.UI.Models;
 using System;
 using Karambolo.Common.Localization;
 using Karambolo.Common;
@@ -10,6 +7,19 @@ using AspNetSkeleton.Service.Contract.Commands;
 using System.Threading.Tasks;
 using System.Threading;
 using AspNetSkeleton.UI.Infrastructure.Security;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using AspNetSkeleton.Service.Contract.DataObjects;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Options;
+using AspNetSkeleton.UI.Infrastructure.Localization;
+using AspNetSkeleton.Core.Infrastructure;
+using System.Collections.Generic;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using AspNetSkeleton.UI.Filters;
 
 namespace AspNetSkeleton.UI.Controllers
 {
@@ -17,70 +27,79 @@ namespace AspNetSkeleton.UI.Controllers
     public class AccountController : Controller
     {
         readonly IAccountManager _accountManager;
-        readonly IUISettings _settings;
+        readonly UISettings _settings;
 
-        public ITextLocalizer T { get; set; }
+        public IStringLocalizer T { get; set; }
 
-        public AccountController(IAccountManager accountManager, IUISettings settings)
+        public AccountController(IAccountManager accountManager, IOptions<UISettings> settings)
         {
-            T = NullTextLocalizer.Instance;
+            T = NullStringLocalizer.Instance;
 
             _accountManager = accountManager;
-            _settings = settings;
+            _settings = settings.Value;
         }
 
         async Task<bool> LoginCoreAsync(LoginModel model, CancellationToken cancellationToken)
         {
             if (await _accountManager.ValidateUserAsync(model, cancellationToken))
             {
-                FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
+                var claims = new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, model.UserName),
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = model.RememberMe
+                };
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), 
+                    authProperties);
+
                 return true;
             }
             else
                 return false;
         }
 
-        ////
-        //// GET: /Account/Login
-
+        [HttpGet]
         [AllowAnonymous]
         [AnonymousOnly]
-        public ActionResult Login(string returnUrl)
+        public IActionResult Login(string returnUrl = null)
         {
-            ViewBag.ReturnUrl = returnUrl;
-            ViewBag.ActiveMenuItem = "Login";
+            ViewData["ReturnUrl"] = returnUrl;
+            ViewData["ActiveMenuItem"] = "Login";
             return View();
         }
 
-        //
-        // POST: /Account/Login
-
         [HttpPost]
         [AllowAnonymous]
+        [AnonymousOnly]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginModel model, string returnUrl, CancellationToken cancellationToken)
+        public async Task<IActionResult> Login(LoginModel model, string returnUrl = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (ModelState.IsValid && await LoginCoreAsync(model, cancellationToken))
-                return string.IsNullOrEmpty(returnUrl) ? RedirectToAction("Index", "Dashboard") : RedirectToLocal(returnUrl);
+                return RedirectToLocal(returnUrl);
 
             // If we got this far, something failed, redisplay form
             ModelState.AddModelError("", T["The password specified is invalid."]);
 
-            ViewBag.ActiveMenuItem = "Login";
+            // If we got this far, something failed, redisplay form
+            ViewData["ReturnUrl"] = returnUrl;
+            ViewData["ActiveMenuItem"] = "Login";
             return View(model);
         }
 
-        // GET: /Account/LogOff
-        // POST: /Account/LogOff
-
-        public ActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            FormsAuthentication.SignOut();
+            await HttpContext.SignOutAsync();
 
-            return RedirectToAction("Index", "Home", new { area = "" });
+            return RedirectToAction(nameof(HomeController.Index), "Home", new { area = "" });
         }
 
-        Task<MembershipCreateStatus> RegisterCoreAsync(RegisterModel model, CancellationToken cancellationToken)
+        Task<CreateUserResult> RegisterCoreAsync(RegisterModel model, CancellationToken cancellationToken)
         {
             model.UserName = model.UserName.Trim();
             model.Email = model.UserName;
@@ -94,41 +113,37 @@ namespace AspNetSkeleton.UI.Controllers
             return _accountManager.CreateUserAsync(model, cancellationToken);
         }
 
-        //
-        // GET: /Account/Register
-
+        [HttpGet]
         [AllowAnonymous]
         [AnonymousOnly]
-        public ActionResult Register()
+        public IActionResult Register()
         {
-            ViewBag.ActiveMenuItem = "Register";
+            ViewData["ActiveMenuItem"] = "Register";
             return View();
         }
 
-        //
-        // POST: /Account/Register
 
         [HttpPost]
         [AllowAnonymous]
         [AnonymousOnly]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterModel model, CancellationToken cancellationToken)
+        public async Task<IActionResult> Register(RegisterModel model, CancellationToken cancellationToken)
         {
-            if (!_settings.IsRegistrationEnabled)
+            if (!_settings.EnableRegistration)
                 throw new InvalidOperationException();
 
-            var createStatus = MembershipCreateStatus.Success;
+            var createStatus = CreateUserResult.Success;
             if (ModelState.IsValid &&
-                (createStatus = await RegisterCoreAsync(model, cancellationToken)) == MembershipCreateStatus.Success)
+                (createStatus = await RegisterCoreAsync(model, cancellationToken)) == CreateUserResult.Success)
             {
-                return RedirectToAction("Verify");
+                return RedirectToAction(nameof(Verify));
             }
             else
             {
-                if (createStatus != MembershipCreateStatus.Success)
+                if (createStatus != CreateUserResult.Success)
                     ModelState.AddModelError("", ErrorCodeToString(createStatus));
 
-                ViewBag.ActiveMenuItem = "Register";
+                ViewData["ActiveMenuItem"] = "Register";
                 return View(model);
             }
         }
@@ -136,7 +151,7 @@ namespace AspNetSkeleton.UI.Controllers
         [HttpGet]
         [AllowAnonymous]
         [AnonymousOnly]
-        public async Task<ActionResult> Verify(string u, string v, CancellationToken cancellationToken)
+        public async Task<IActionResult> Verify(string u, string v, CancellationToken cancellationToken)
         {
             bool? model;
 
@@ -147,7 +162,7 @@ namespace AspNetSkeleton.UI.Controllers
                     {
                         UserName = u,
                         Verify = true,
-                        VerificationToken = v,                        
+                        VerificationToken = v,
                     }, cancellationToken);
                     model = true;
                 }
@@ -159,19 +174,20 @@ namespace AspNetSkeleton.UI.Controllers
                 model = null;
 
 
-            ViewBag.ActiveMenuItem = "Verification";
+            ViewData["ActiveMenuItem"] = "Verification";
             return View(model);
         }
 
+        [HttpGet]
         [AllowAnonymous]
         [AnonymousOnly]
-        public ActionResult ResetPassword(string s)
+        public IActionResult ResetPassword(string s)
         {
             var model = new ResetPasswordModel();
             if (s != null)
                 model.Success = Convert.ToBoolean(int.Parse(s));
 
-            ViewBag.ActiveMenuItem = "Password Reset";
+            ViewData["ActiveMenuItem"] = "Password Reset";
             return View(model);
         }
 
@@ -179,7 +195,7 @@ namespace AspNetSkeleton.UI.Controllers
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
         [AnonymousOnly]
-        public async Task<ActionResult> ResetPassword(ResetPasswordModel model, CancellationToken cancellationToken)
+        public async Task<IActionResult> ResetPassword(ResetPasswordModel model, CancellationToken cancellationToken)
         {
             if (ModelState.IsValid)
             {
@@ -202,20 +218,21 @@ namespace AspNetSkeleton.UI.Controllers
             }
             else
             {
-                ViewBag.ActiveMenuItem = "Password Reset";
+                ViewData["ActiveMenuItem"] = "Password Reset";
                 return View(model);
             }
         }
 
+        [HttpGet]
         [AllowAnonymous]
         [AnonymousOnly]
-        public ActionResult SetPassword(string s, string u, string v)
+        public IActionResult SetPassword(string s, string u, string v)
         {
             var model = new SetPasswordModel();
             if (s != null)
                 model.Success = Convert.ToBoolean(int.Parse(s));
 
-            ViewBag.ActiveMenuItem = "New Password";
+            ViewData["ActiveMenuItem"] = "New Password";
             return View(model);
         }
 
@@ -223,7 +240,7 @@ namespace AspNetSkeleton.UI.Controllers
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
         [AnonymousOnly]
-        public async Task<ActionResult> SetPassword(SetPasswordModel model, string u, string v, CancellationToken cancellationToken)
+        public async Task<IActionResult> SetPassword(SetPasswordModel model, string u, string v, CancellationToken cancellationToken)
         {
             if (ModelState.IsValid)
             {
@@ -245,45 +262,38 @@ namespace AspNetSkeleton.UI.Controllers
             }
             else
             {
-                ViewBag.ActiveMenuItem = "New Password";
+                ViewData["ActiveMenuItem"] = "New Password";
                 return View(model);
             }
         }
 
-        #region Helpers
-        private ActionResult RedirectToLocal(string returnUrl)
+        public IActionResult AccessDenied()
         {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home", new { area = "Dashboard" });
-            }
+            return View();
         }
 
-        private string ErrorCodeToString(MembershipCreateStatus createStatus)
+        #region Helpers
+        IActionResult RedirectToLocal(string returnUrl)
         {
-            // See http://go.microsoft.com/fwlink/?LinkID=177550 for
-            // a full list of status codes.
-            switch (createStatus)
+            if (Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
+            else
+                return RedirectToAction(nameof(HomeController.Index), "Home", new { area = "Dashboard" });
+        }
+
+        string ErrorCodeToString(CreateUserResult result)
+        {
+            switch (result)
             {
-                case MembershipCreateStatus.DuplicateUserName:
-                case MembershipCreateStatus.DuplicateEmail:
+                case CreateUserResult.DuplicateUserName:
+                case CreateUserResult.DuplicateEmail:
                     return T["The e-mail address specified is already linked to an existing account."];
 
-                case MembershipCreateStatus.InvalidPassword:
+                case CreateUserResult.InvalidPassword:
                     return T["The password specified is not formatted correctly. Please enter a valid password value."];
 
-                case MembershipCreateStatus.InvalidEmail:
+                case CreateUserResult.InvalidEmail:
                     return T["The e-mail address specified is not formatted correctly. Please enter a valid e-mail address."];
-
-                case MembershipCreateStatus.ProviderError:
-                    return T["The authentication specified returned an error. Please verify your entry and try again. If the problem persists, please contact the system administrator."];
-
-                case MembershipCreateStatus.UserRejected:
-                    return T["The user creation request has been canceled. Please verify your entry and try again. If the problem persists, please contact the system administrator."];
 
                 default:
                     return T["An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator."];

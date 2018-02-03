@@ -1,61 +1,55 @@
-﻿@model AspNetSkeleton.UI.Models.RegisterModel
+﻿@model RegisterModel
+
+@inject Microsoft.Extensions.Options.IOptions<UISettings> Settings
 
 <div class="page-header">
 <h1>@T["Create an Account"]</h1>
 </div>
 <div>
-@if (Settings.IsRegistrationEnabled)
+@if (Settings.Value.EnableRegistration)
 {
-    using (Html.BeginForm("Register", "Account", null, FormMethod.Post, new
-    {
-        @class = "form-horizontal",
-        role = "form" }))
-    {
-        @Html.AntiForgeryToken()
-
+    <form method="post" class="form-horizontal" role="form">
         <div class="row">
-            <div class="col-sm-offset-2 col-sm-4">
-                @Html.ValidationSummary(excludePropertyErrors: true)
+            <div class="col-sm-offset-2 col-sm-4" asp-validation-summary="ModelOnly"></div>
+        </div>
+
+        <div class="row form-group">
+            <label asp-for="FirstName" class="col-sm-2 control-label"></label>
+            <div class="col-sm-4">
+                <input type="text" asp-for="FirstName" class="form-control" autofocus />
+                <span asp-validation-for="FirstName" />
             </div>
         </div>
 
         <div class="row form-group">
-            <label for="@Html.IdFor(m => m.FirstName)" class="col-sm-2 control-label">@Html.DisplayNameFor(m => m.FirstName)</label>
+            <label asp-for="LastName" class="col-sm-2 control-label"></label>
             <div class="col-sm-4">
-                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", autofocus = "autofocus" })
-                @Html.ValidationMessageFor(m => m.FirstName)
+                <input type="text" asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" />
             </div>
         </div>
 
         <div class="row form-group">
-            <label for="@Html.IdFor(m => m.LastName)" class="col-sm-2 control-label">@Html.DisplayNameFor(m => m.LastName)</label>
+            <label asp-for="UserName" class="col-sm-2 control-label"></label>
             <div class="col-sm-4">
-                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.LastName)
+                <input type="text" asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" />
             </div>
         </div>
 
         <div class="row form-group">
-            <label for="@Html.IdFor(m => m.UserName)" class="col-sm-2 control-label">@Html.DisplayNameFor(m => m.UserName)</label>
+            <label asp-for="Password" class="col-sm-2 control-label"></label>
             <div class="col-sm-4">
-                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.UserName)
+                <input type="password" asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" />
             </div>
         </div>
 
         <div class="row form-group">
-            <label for="@Html.IdFor(m => m.Password)" class="col-sm-2 control-label">@Html.DisplayNameFor(m => m.Password)</label>
+            <label asp-for="ConfirmPassword" class="col-sm-2 control-label"></label>
             <div class="col-sm-4">
-                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.Password)
-            </div>
-        </div>
-
-        <div class="row form-group">
-            <label for="@Html.IdFor(m => m.ConfirmPassword)" class="col-sm-2 control-label">@Html.DisplayNameFor(m => m.ConfirmPassword)</label>
-            <div class="col-sm-4">
-                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.ConfirmPassword)
+                <input type="password" asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" />
             </div>
         </div>
 
@@ -63,8 +57,8 @@
             <div class="col-sm-offset-2 col-sm-10">
                 <button type="submit" class="btn btn-primary">@T["Create account"]</button>
             </div>
-        </div>                       
-    }
+        </div>    
+    </form>
 }
 else
 {
@@ -73,3 +67,8 @@ else
     </p>
 }
 </div>
+
+@section Scripts
+{
+    @Html.Partial("Partials/_ValidationScripts")
+}

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 
 namespace AspNetSkeleton.UI.Infrastructure.Theming
 {
@@ -26,9 +27,12 @@ namespace AspNetSkeleton.UI.Infrastructure.Theming
 
     public class ThemeManager : IThemeManager
     {
-        public ThemeManager(IThemeProvider provider)
+        readonly IHttpContextAccessor _httpContextAccessor;
+
+        public ThemeManager(IThemeProvider provider, IHttpContextAccessor httpContextAccessor)
         {
             Provider = provider;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IThemeProvider Provider { get; }
@@ -36,7 +40,7 @@ namespace AspNetSkeleton.UI.Infrastructure.Theming
         // TODO: implement if needed
         public string CurrentTheme
         {
-            get => throw new NotImplementedException();
+            get => Provider.Themes[0];
             set => throw new NotImplementedException();
         }
     }

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using AspNetSkeleton.Common.Infrastructure;
 using AspNetSkeleton.Common.Cli;
-using AspNetSkeleton.DataAccess;
+using System.Threading;
+using Karambolo.Common;
 
 namespace AspNetSkeleton.DeployTools.Operations
 {
@@ -18,18 +17,28 @@ namespace AspNetSkeleton.DeployTools.Operations
 
         protected override void ExecuteCore()
         {
-            using (var conn = CreateConnection())
-                if (Database.Exists(conn))
+            string migration;
+            using (var dataContext = CreateDataContext())
+            {
+                var dbManager = CreateDbManager(dataContext);
+                if (dbManager.ExistsAsync(CancellationToken.None).WaitAndUnwrap())
                     throw new OperationErrorException("Database already exists.");
 
-            Database.SetInitializer<DataContext>(null);
+                dbManager.CreateAsync(CancellationToken.None).WaitAndUnwrap();
 
-            var migrationConfiguration = new Migrations.Configuration(CreateConnectionInfo());
-            var migrator = new DbMigrator(migrationConfiguration);
-
-            migrator.Update();
+                var migrations = dataContext.MigrationHistory;
+                var migrationCount = migrations.Count;
+                if (migrationCount > 0)
+                {
+                    migration = migrations[migrationCount - 1];
+                    dbManager.MigrateAsync(migration, CreateDbMigrationProvider(dataContext), CancellationToken.None).WaitAndUnwrap();
+                }
+                else
+                    migration = null;
+            }
 
             Context.Out.WriteLine("Database created.");
+            Context.Out.WriteLine($"Current migration is {(migration != null ? migration : "(none)")}.");
         }
 
         protected override IEnumerable<string> GetUsage()

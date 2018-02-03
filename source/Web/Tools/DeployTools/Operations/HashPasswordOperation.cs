@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using AspNetSkeleton.Base.Utils;
 using AspNetSkeleton.Common.Infrastructure;
 using AspNetSkeleton.Common.Cli;
+using AspNetSkeleton.Base.Utils;
 
 namespace AspNetSkeleton.DeployTools.Operations
 {

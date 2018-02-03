@@ -40,13 +40,22 @@ namespace AspNetSkeleton.Common.Utils
             }
         }
 
-        public static readonly JsonSerializerSettings DataTransferSerializerSettings = new JsonSerializerSettings
+        public static readonly JsonSerializerSettings DataTransferSerializerSettings = CreateDataTransferSerializerSettings();
+
+        public static void ConfigureDataTransferSerializerSettings(JsonSerializerSettings settings)
         {
-            DefaultValueHandling = DefaultValueHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.Auto,
-            TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
-            ContractResolver = new ExcludeDelegatesResolver(),
-        };
+            settings.DefaultValueHandling = DefaultValueHandling.Ignore;
+            settings.TypeNameHandling = TypeNameHandling.Auto;
+            settings.TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple;
+            settings.ContractResolver = new ExcludeDelegatesResolver();
+        }
+
+        public static JsonSerializerSettings CreateDataTransferSerializerSettings()
+        {
+            var settings = new JsonSerializerSettings();
+            ConfigureDataTransferSerializerSettings(settings);
+            return settings;
+        }
 
         public static readonly JsonSerializer DataPersistenceSerializer = new JsonSerializer { ContractResolver = new WritablePropertiesOnlyResolver() };
 

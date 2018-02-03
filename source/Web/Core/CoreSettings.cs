@@ -2,11 +2,12 @@
 
 namespace AspNetSkeleton.Core
 {     
-    public interface ICoreSettings
+    public class CoreSettings
     {
-        TimeSpan ServiceTimeOut { get; }
-        string ServiceBaseUrl { get; }
-        string UIBaseUrl { get; }
-        string[] AdminMailTo { get; }
+        public TimeSpan ShutDownTimeOut { get; set; } = TimeSpan.FromMinutes(1);
+        public TimeSpan ServiceTimeOut { get; set; } = TimeSpan.FromMinutes(1);
+        public string ServiceBaseUrl { get; set; }
+        public string UIBaseUrl { get; set; }
+        public string[] AdminMailTo { get; set; }
     }
 }

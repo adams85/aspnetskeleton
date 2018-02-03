@@ -3,6 +3,10 @@ using System.IO;
 using System.Linq;
 using Autofac;
 using Karambolo.Common;
+using Microsoft.AspNetCore.Hosting;
+using AspNetSkeleton.Common.Infrastructure;
+using AspNetSkeleton.Core;
+using Microsoft.Extensions.Options;
 
 namespace AspNetSkeleton.UI.Infrastructure.Theming
 {
@@ -13,26 +17,32 @@ namespace AspNetSkeleton.UI.Infrastructure.Theming
 
     public class NullThemeProvider : IThemeProvider
     {
-        public string[] Themes { get; } = ArrayUtils.FromElement(UIConstants.DefaultTheme);
+        public NullThemeProvider(IOptions<UISettings> settings)
+        {
+            Themes = new[] { settings.Value.DefaultTheme };
+        }
+
+        public string[] Themes { get; }
     }
 
-    public class ThemeProvider : IThemeProvider, IStartable
+    public class ThemeProvider : IThemeProvider, IAppBranchInitializer
     {
-        public const string BaseUrl = "~/Static/Stylesheets/Themes";
+        public const string BasePath = "/css/themes";
 
-        readonly IEnvironment _environment;
+        readonly IHostingEnvironment _env;
 
-        public ThemeProvider(IEnvironment environment)
+        public ThemeProvider(IHostingEnvironment env)
         {
-            _environment = environment;
+            _env = env;
         }
 
         public string[] Themes { get; private set; }
 
-        public void Start()
+        public void Initialize()
         {
-            Themes = Directory.EnumerateDirectories(_environment.MapPath(BaseUrl), "*", SearchOption.TopDirectoryOnly)
-                .Select(p => Path.GetFileName(p))
+            Themes = _env.WebRootFileProvider.GetDirectoryContents(BasePath)
+                .Where(fi => fi.IsDirectory)
+                .Select(fi => fi.Name)
                 .ToArray();
         }
     }

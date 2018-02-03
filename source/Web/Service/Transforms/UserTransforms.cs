@@ -3,9 +3,9 @@ using System.Linq;
 using AspNetSkeleton.DataAccess.Entities;
 using System.Linq.Expressions;
 using AspNetSkeleton.Service.Contract.DataObjects;
-using System.Data.Entity;
 using System.Threading;
 using System.Threading.Tasks;
+using AspNetSkeleton.DataAccess;
 
 namespace AspNetSkeleton.Service.Transforms
 {
@@ -13,7 +13,7 @@ namespace AspNetSkeleton.Service.Transforms
     {
         static readonly Expression<Func<User, UserData>> toDataExpr = u => new UserData
         {
-            UserId = u.UserId,
+            UserId = u.UserId.Value,
             UserName = u.UserName,
             Email = u.Email,
             IsLockedOut = u.IsLockedOut,

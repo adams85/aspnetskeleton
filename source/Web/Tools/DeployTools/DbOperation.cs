@@ -1,66 +1,85 @@
 ﻿using System;
-using System.Configuration;
-using System.Data.Common;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
+using System.Collections.Generic;
 using System.IO;
-using System.Runtime.ExceptionServices;
+using AspNetSkeleton.Base;
+using AspNetSkeleton.Base.Utils;
 using AspNetSkeleton.Common.Cli;
 using AspNetSkeleton.DataAccess;
 using AspNetSkeleton.DataAccess.MySql;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace AspNetSkeleton.DeployTools
 {
     public abstract class DbOperation : Operation
     {
+        class DbServicesFactory
+        {
+            public Func<DbContext, IOperationContext, IDbManager> DbManagerFactory { get; set; }
+            public Func<string, IDbMigrationProvider> DbMigrationProviderFactory { get; set; }
+        }
+
         public const string ServiceHostPathOption = "host-path";
 
+        static readonly string migrationScriptsBasePath = Path.Combine(AppEnvironment.Instance.AppBasePath, "Migrations");
+
+        static readonly Dictionary<string, DbServicesFactory> dbServicesRegistry = new Dictionary<string, DbServicesFactory>
+        {
+            {
+                DataAccessContants.MySqlProviderName, new DbServicesFactory
+                {
+                    DbManagerFactory = (dc, ctx) => new MySqlDbManager(dc, ctx.As<IDbOperationContext>().Clock),
+                    DbMigrationProviderFactory = bp => new ScriptFileMigrationProvider(bp),
+                }
+            },
+        };
+
 #if DISTRIBUTED
-        const string serviceHostAssemblyFileName = "AspNetSkeleton.Service.Host.exe";
-        const string serviceHostConfigFileName = "app.config";
+        const string serviceHostAssemblyFileName = "AspNetSkeleton.Service.Host.dll";
+        const string serviceHostConfigFileName = "appsettings.json";
         const string serviceHostRelativeBinPath = @"..\..\..\Service.Host\bin";
 #else
         const string serviceHostAssemblyFileName = "AspNetSkeleton.UI.dll";
-        const string serviceHostConfigFileName = "web.config";
+        const string serviceHostConfigFileName = "appsettings.Monolithic.json";
         const string serviceHostRelativeBinPath = @"..\..\..\UI\bin";
 #endif
 
-        static void RegisterDbProviders(string providerName)
-        {
-            var systemDataSection = ConfigurationManager.GetSection("system.data") as System.Data.DataSet;
-            systemDataSection.Tables[0].Clear();
-            if (providerName == MySqlDbConfiguration.ProviderName)
-            {
-                systemDataSection.Tables[0].Rows.Add("MySQL Data Provider", ".Net Framework Data Provider for MySQL", providerName, MySqlDbConfiguration.SqlClientFactoryType.AssemblyQualifiedName);
-                DbConfiguration.SetConfiguration(new MySqlDbConfiguration());
-            }
-            else
-                throw new NotSupportedException();
-        }
-
-        readonly ConnectionStringSettings _connString;
+        readonly IDbConfigurationProvider _dbConfigurationProvider;
 
         protected DbOperation(string[] args, IOperationContext context) : base(args, context)
         {
             ServiceHostPath = GetServiceHostPath();
             if (ServiceHostPath != null)
             {
-                var configFilePath = Path.Combine(ServiceHostPath, serviceHostConfigFileName);
-                var configMap = new ExeConfigurationFileMap
-                {
-                    ExeConfigFilename = configFilePath
-                };
-                var config = ConfigurationManager.OpenMappedExeConfiguration(configMap, ConfigurationUserLevel.None);
-                _connString = config.ConnectionStrings.ConnectionStrings[typeof(DataContext).Name];
+                var config = new ConfigurationBuilder()
+                    .SetBasePath(ServiceHostPath)
+                    .AddJsonFile(serviceHostConfigFileName)
+                    .Build();
 
-                if (_connString == null)
-                    throw new InvalidOperationException($"Connection string not found in {configFilePath}.");
+                var dbConfiguration = config.GetByConvention<DbConfiguration>();
 
-                RegisterDbProviders(_connString.ProviderName);
+                var dbConfigurationProvider = new DbConfigurationProvider(new OptionsWrapper<DbConfiguration>(dbConfiguration));
+                dbConfigurationProvider.Initialize();
+                _dbConfigurationProvider = dbConfigurationProvider;
             }
         }
 
-        protected string ServiceHostPath { get; private set; }
+        protected string ServiceHostPath { get; }
+
+        protected DataContext CreateDataContext()
+        {
+            return new DataContext(_dbConfigurationProvider);
+        }
+
+        protected IDbManager CreateDbManager(DbContext dbContext)
+        {
+            return dbServicesRegistry[dbContext.ProviderName].DbManagerFactory(dbContext, Context);
+        }
+
+        protected IDbMigrationProvider CreateDbMigrationProvider(DbContext dbContext)
+        {
+            return dbServicesRegistry[dbContext.ProviderName].DbMigrationProviderFactory(migrationScriptsBasePath);
+        }
 
         protected abstract void ExecuteCore();
 
@@ -76,39 +95,14 @@ namespace AspNetSkeleton.DeployTools
         {
             if (!OptionalArgs.TryGetValue(ServiceHostPathOption, out string serviceHostPath))
             {
-                string serviceHostBinPath;
-                var toolsAppPath = Program.AssemblyPath;
+                var toolsAppPath = AppEnvironment.Instance.AppBasePath;
                 if (File.Exists(Path.Combine(toolsAppPath, serviceHostAssemblyFileName)))
-                    serviceHostBinPath = toolsAppPath;
-                else if (!File.Exists(Path.Combine(serviceHostBinPath = Path.GetFullPath(Path.Combine(toolsAppPath, serviceHostRelativeBinPath)), serviceHostAssemblyFileName)))
-                    serviceHostBinPath = null;
-
-                serviceHostPath = Path.GetDirectoryName(serviceHostBinPath);
+                    serviceHostPath = toolsAppPath;
+                else if (!File.Exists(Path.Combine(serviceHostPath = Path.GetFullPath(Path.Combine(toolsAppPath, serviceHostRelativeBinPath)), serviceHostAssemblyFileName)))
+                    serviceHostPath = null;
             }
 
             return serviceHostPath;
-        }
-        
-        protected DbConnection CreateConnection()
-        {
-            var result = DbProviderFactories.GetFactory(_connString.ProviderName).CreateConnection();
-            try 
-	        {                
-                result.ConnectionString = _connString.ConnectionString;
-                return result;
-	        }
-	        catch (Exception ex)
-	        {
-	            result?.Dispose();
-
-	            ExceptionDispatchInfo.Capture(ex).Throw();
-                throw;
-	        }
-        }
-
-        protected DbConnectionInfo CreateConnectionInfo()
-        {
-            return new DbConnectionInfo(_connString.ConnectionString, _connString.ProviderName);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace AspNetSkeleton.Service.Commands.Users
                 var profile = await scope.Context.GetByKeyAsync<Profile>(cancellationToken, command.UserId).ConfigureAwait(false);
                 this.RequireExisting(profile, c => c.UserId);
 
-                var device = await scope.Context.GetByKeyTrackingAsync<Device>(cancellationToken, command.UserId, command.DeviceId).ConfigureAwait(false);
+                var device = await scope.Context.GetByKeyAsync<Device>(cancellationToken, command.UserId, command.DeviceId).ConfigureAwait(false);
                 this.RequireExisting(device, c => c.DeviceId);
 
                 this.Require(_clock.UtcNow - device.ConnectedAt >= command.DisconnectTimeSpan, CommandErrorCode.DeviceDisconnectTimeNotExpired);

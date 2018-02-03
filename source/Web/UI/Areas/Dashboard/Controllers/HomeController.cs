@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Web.Mvc;
 using AspNetSkeleton.Common;
 using AspNetSkeleton.UI.Areas.Dashboard.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetSkeleton.UI.Areas.Dashboard.Controllers
 {
     [Authorize]
+    [Area("Dashboard")]
     public class HomeController : Controller
     {
         readonly IClock _clock;
@@ -15,7 +17,7 @@ namespace AspNetSkeleton.UI.Areas.Dashboard.Controllers
             _clock = clock;
         }
 
-        public ActionResult Index()
+        public IActionResult Index()
         {
             var model = new HomeIndexModel();
 
@@ -24,8 +26,8 @@ namespace AspNetSkeleton.UI.Areas.Dashboard.Controllers
 
             model.TimeToMidnight = midnight - now;
 
-            ViewBag.ActiveMenuItem = "Dashboard";
-            ViewBag.ActiveSubMenuItem = "Overview";
+            ViewData["ActiveMenuItem"] = "Dashboard";
+            ViewData["ActiveSubMenuItem"] = "Overview";
             return View(model);
         }
     }

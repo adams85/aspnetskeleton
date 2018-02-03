@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using AspNetSkeleton.Service.Contract.DataObjects;
 using System.Threading.Tasks;
 using System.Threading;
-using System.Data.Entity;
+using AspNetSkeleton.DataAccess;
 
 namespace AspNetSkeleton.Service.Transforms
 {
@@ -13,7 +13,7 @@ namespace AspNetSkeleton.Service.Transforms
     {
         static readonly Expression<Func<Role, RoleData>> toDataExpr = r => new RoleData
         {
-            RoleId = r.RoleId,
+            RoleId = r.RoleId.Value,
             RoleName = r.RoleName,
             Description = r.Description,
         };

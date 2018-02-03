@@ -31,7 +31,7 @@ namespace AspNetSkeleton.Service
 
                 protected override void DisposeCore()
                 {
-                    _context?.Dispose();
+                    _context.Dispose();
                 }
             }
 
@@ -99,7 +99,7 @@ namespace AspNetSkeleton.Service
 
         public IReadOnlyDataAccessScope CreateDataAccessScope()
         {
-            return _currentDataAccessScope =_currentDataAccessScope.CreateChildScope(_dbContextProvider);
+            return _currentDataAccessScope = _currentDataAccessScope.CreateChildScope(_dbContextProvider);
         }
     }
 }

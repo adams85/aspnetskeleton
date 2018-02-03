@@ -1,27 +1,56 @@
-﻿using AspNetSkeleton.Common.Cli;
-using Karambolo.Common.Logging;
-using System.IO;
+﻿using System;
 using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
+using AspNetSkeleton.Base;
+using AspNetSkeleton.Base.Utils;
+using AspNetSkeleton.Common;
+using AspNetSkeleton.Common.Cli;
+using AspNetSkeleton.DeployTools.Operations;
+using Karambolo.Extensions.Logging.File;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace AspNetSkeleton.DeployTools
 {
-    class Program : OperationHost
+    class Program : OperationHost, IDbOperationContext
     {
-        public static readonly string AssemblyName = typeof(Program).Assembly.GetName().Name;
-        public static readonly string AssemblyPath = Path.GetDirectoryName(typeof(Program).Assembly.Location);
+        public static IConfigurationRoot Configuration { get; private set; }
+
+        static ILoggerFactory CreateLoggerFactory()
+        {
+            var result = new LoggerFactory();
+
+            var config = Configuration.GetSection("Logging")?.GetSection(FileLoggerProvider.Alias);
+            if (config != null)
+                result.AddFile(new FileLoggerContext(AppEnvironment.Instance.AppBasePath, "default.log"), config);
+
+            return result;
+        }
 
         static int Main(string[] args)
         {
-            return new Program().Execute(args);
+            Configuration = new ConfigurationBuilder()
+                .SetBasePath(AppEnvironment.Instance.AppBasePath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+                .Build();
+
+            using (var loggerFactory = CreateLoggerFactory())
+               return new Program(loggerFactory).Execute(args);
         }
 
-        public Program()
+        public Program(ILoggerFactory loggerFactory)
             : base(OperationDescriptor.Scan(typeof(Program).Assembly.GetTypes()), ConsoleHostIO.Instance)
         {
-            Logger = new TraceSourceLogger(AppName);
+            Logger = loggerFactory.CreateLogger<Program>();
+
+            Clock = new Clock();
         }
 
-        public override string AppName => AssemblyName;
+        public override string AppName => AppEnvironment.Instance.AppName;
+
+        public IClock Clock { get; }
 
         protected override IEnumerable<string> GetInstructions()
         {

@@ -5,13 +5,23 @@ using System.Collections.Generic;
 using Karambolo.PO;
 using Karambolo.Common;
 using System.Threading.Tasks;
-using Karambolo.Common.Logging;
 using Autofac;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Logging;
 using System;
+using AspNetSkeleton.Common.Infrastructure;
+using AspNetSkeleton.Core;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
+using AspNetSkeleton.UI.Helpers;
+using Microsoft.Extensions.Options;
+using System.Globalization;
 
 namespace AspNetSkeleton.UI.Infrastructure.Localization
 {
-    public interface ILocalizationProvider
+    public interface ILocalizationProvider : IRequestCultureProvider
     {
         string[] Cultures { get; }
         IReadOnlyDictionary<string, POCatalog> TextCatalogs { get; }
@@ -19,48 +29,53 @@ namespace AspNetSkeleton.UI.Infrastructure.Localization
 
     public class NullLocalizationProvider : ILocalizationProvider
     {
-        public string[] Cultures { get; } = ArrayUtils.FromElement(UIConstants.DefaultCulture.Name);
-
-        public IReadOnlyDictionary<string, POCatalog> TextCatalogs { get; } = new Dictionary<string, POCatalog>();
-    }
-
-    public class LocalizationProvider : ILocalizationProvider, IStartable
-    {
-        struct CatalogInfo
+        public NullLocalizationProvider(IOptions<UISettings> settings)
         {
-            public string FileName;
-            public string Culture;
-            public POCatalog Catalog;
+            Cultures = new[] { settings.Value.DefaultCulture };
         }
 
-        public const string BaseUrl = "~/App_Data/Localization";
+        public string[] Cultures { get; }
+
+        public IReadOnlyDictionary<string, POCatalog> TextCatalogs { get; } = new Dictionary<string, POCatalog>();
+
+        public Task<ProviderCultureResult> DetermineProviderCultureResult(HttpContext httpContext)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    public class LocalizationProvider : ILocalizationProvider, IAppBranchInitializer
+    {
+        public const string BasePath = "/App_Data/Localization";
 
         public ILogger Logger { get; set; }
 
-        readonly IEnvironment _environment;
+        readonly IHostingEnvironment _env;
 
-        public LocalizationProvider(IEnvironment environment)
+        public LocalizationProvider(IHostingEnvironment env)
         {
             Logger = NullLogger.Instance;
 
-            _environment = environment;
+            _env = env;
         }
 
         public string[] Cultures { get; private set; }
 
         public IReadOnlyDictionary<string, POCatalog> TextCatalogs { get; private set; }
 
-        public void Start()
+        public void Initialize()
         {
-            var cultures = Directory.EnumerateDirectories(_environment.MapPath(BaseUrl), "*", SearchOption.TopDirectoryOnly)
-                .Select(p => Path.GetFileName(p))
+            var cultures = _env.ContentRootFileProvider.GetDirectoryContents(BasePath)
+                .Where(fi => fi.IsDirectory)
+                .Select(fi => fi.Name)
                 .ToArray();
 
             var textCatalogFiles = cultures.SelectMany(
-                c => Directory.EnumerateFiles(Path.Combine(_environment.MapPath(BaseUrl), c), "*.po", SearchOption.TopDirectoryOnly),
-                (c, p) => new KeyValuePair<string, string>(c, p));
+                c => _env.ContentRootFileProvider.GetDirectoryContents(Path.Combine(BasePath, c))
+                    .Where(fi => !fi.IsDirectory && ".po".Equals(Path.GetExtension(fi.Name), StringComparison.OrdinalIgnoreCase)),
+                (c, f) => (Culture: c, FileInfo: f));
 
-            var textCatalogs = new List<CatalogInfo>();
+            var textCatalogs = new List<(string FileName, string Culture, POCatalog Catalog)>();
 
             var parserSettings = new POParserSettings
             {
@@ -73,16 +88,16 @@ namespace AspNetSkeleton.UI.Infrastructure.Localization
                 (it, s, p) =>
                 {
                     POParseResult result;
-                    using (var reader = new StreamReader(it.Value))
-                        result = p.Parse(reader);
+                    using (var stream = it.FileInfo.CreateReadStream())
+                        result = p.Parse(new StreamReader(stream));
 
                     if (result.Success)
                     {
                         lock (textCatalogs)
-                            textCatalogs.Add(new CatalogInfo { FileName = it.Value, Culture = it.Key, Catalog = result.Catalog });
+                            textCatalogs.Add((it.FileInfo.Name, it.Culture, result.Catalog));
                     }
                     else
-                        Logger.LogWarning($"Translation file \"{it.Value}\" has errors.");
+                        Logger.LogWarning("Translation file \"{FILE}\" has errors.", Path.Combine(BasePath, it.Culture, it.FileInfo.Name));
 
                     return p;
                 },
@@ -90,7 +105,7 @@ namespace AspNetSkeleton.UI.Infrastructure.Localization
 
             Cultures = cultures;
             TextCatalogs = textCatalogs
-                .GroupBy(it => it.Culture, Identity<CatalogInfo>.Func)
+                .GroupBy(it => it.Culture, it => (it.FileName, it.Catalog))
                 .ToDictionary(g => g.Key, g =>
                 {
                     var catalogs = g.OrderBy(it => it.FileName).Select(it => it.Catalog).ToArray();
@@ -98,11 +113,25 @@ namespace AspNetSkeleton.UI.Infrastructure.Localization
                     {
                         foreach (var entry in src)
                             try { acc.Add(entry); }
-                            catch (ArgumentException) { Logger.LogWarning("Multiple translations for key {KEY}.", LocalizationManager.FormatKey(entry.Key)); }
+                            catch (ArgumentException) { Logger.LogWarning("Multiple translations for key {KEY}.", POStringLocalizer.FormatKey(entry.Key)); }
 
                         return acc;
                     });
-                });
+                });                           
+        }
+
+        public Task<ProviderCultureResult> DetermineProviderCultureResult(HttpContext httpContext)
+        {
+            var prefix = UrlUtils.GetPrefix(httpContext.Request.Path);
+
+            StringSegment culture;
+            if (!prefix.HasValue || Array.IndexOf(Cultures, (culture = prefix.Substring(1)).ToString()) < 0)
+                return Task.FromResult<ProviderCultureResult>(null);
+
+            httpContext.Request.Path = new StringSegment(prefix.Buffer).Substring(prefix.Length);
+            httpContext.Request.PathBase += prefix;
+
+            return Task.FromResult(new ProviderCultureResult(culture));
         }
     }
 }

@@ -3,6 +3,8 @@ using AspNetSkeleton.Service.Contract.Commands;
 using System.Threading.Tasks;
 using System.Threading;
 using Karambolo.Common;
+using AspNetSkeleton.Core.Infrastructure;
+using AspNetSkeleton.Service.Contract;
 using AspNetSkeleton.Core.Infrastructure.Caching;
 
 namespace AspNetSkeleton.Service.Host.Core.Infrastructure.Caching
@@ -46,6 +48,24 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure.Caching
 
         protected string[] GetAffectedUserNames(CommandInterceptorContext context)
         {
+            if (context.TryGet(out ApproveUserCommand approveUserCommand))
+                return ArrayUtils.FromElement(approveUserCommand.UserName);
+
+            if (context.TryGet(out LockUserCommand lockUserCommand))
+                return ArrayUtils.FromElement(lockUserCommand.UserName);
+
+            if (context.TryGet(out UnlockUserCommand unlockUserCommand))
+                return ArrayUtils.FromElement(unlockUserCommand.UserName);
+
+            if (context.TryGet(out ChangePasswordCommand changePasswordCommand))
+                return changePasswordCommand.Verify ? ArrayUtils.FromElement(changePasswordCommand.UserName) : null;
+
+            if (context.TryGet(out RegisterUserActivityCommand registerUserActivityCommand))
+                return registerUserActivityCommand.SuccessfulLogin == false ? ArrayUtils.FromElement(registerUserActivityCommand.UserName) : null;
+
+            if (context.TryGet(out DeleteUserCommand deleteUserCommand))
+                return ArrayUtils.FromElement(deleteUserCommand.UserName);
+
             if (context.TryGet(out AddUsersToRolesCommand addUsersToRolesCommand))
                 return addUsersToRolesCommand.UserNames;
 

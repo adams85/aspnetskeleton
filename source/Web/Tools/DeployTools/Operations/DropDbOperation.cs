@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Data.Entity;
 using AspNetSkeleton.Common.Infrastructure;
 using AspNetSkeleton.Common.Cli;
+using System.Threading;
+using Karambolo.Common;
 
 namespace AspNetSkeleton.DeployTools.Operations
 {
@@ -16,18 +17,19 @@ namespace AspNetSkeleton.DeployTools.Operations
 
         protected override void ExecuteCore()
         {
-            using (var conn = CreateConnection())
+            if (!PromptForConfirmation())
+                throw new OperationErrorException("Command cancelled.");
+
+            using (var dataContext = CreateDataContext())
             {
-                if (!Database.Exists(conn))
+                var dbManager = CreateDbManager(dataContext);
+                if (!dbManager.ExistsAsync(CancellationToken.None).WaitAndUnwrap())
                     throw new OperationErrorException("Database doesn't exist.");
 
-                if (!PromptForConfirmation())
-                    throw new OperationErrorException("Command cancelled.");
-
-                Database.Delete(conn);
-
-                Context.Out.WriteLine("Database dropped.");
+                dbManager.DropAsync(CancellationToken.None).WaitAndUnwrap();
             }
+
+            Context.Out.WriteLine("Database dropped.");
         }
 
         protected override IEnumerable<string> GetUsage()

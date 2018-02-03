@@ -1,57 +1,28 @@
 ﻿using System;
-using System.Net;
-using System.Web.Mvc;
-using Karambolo.Common.Logging;
-using System.Net.Mime;
-using System.Web;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AspNetSkeleton.Service.Contract;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace AspNetSkeleton.UI.Filters
 {
-    public class ExceptionHandlingAttribute : HandleErrorAttribute
+    public class ExceptionHandlingAttribute : ExceptionFilterAttribute
     {
-        public override void OnException(ExceptionContext filterContext)
+        public override void OnException(ExceptionContext context)
         {
-            var exception = filterContext.Exception;
+            var exception = context.Exception;
 
             if (exception is ServiceErrorException serviceErrorEx)
                 switch (serviceErrorEx.ErrorCode)
                 {
                     case ServiceErrorCode.EntityNotFound:
-                        exception = new HttpException((int)HttpStatusCode.NotFound, "Entity was not found.", exception);
-                        break;
+                        context.ExceptionHandled = true;
+                        context.Result = new StatusCodeResult(StatusCodes.Status404NotFound);
+                        return;
                 }
-
-            if (filterContext.Exception == exception)
-            {
-                var loggerFactory = DependencyResolver.Current.GetService<Func<string, ILogger>>();
-                var logger = loggerFactory(typeof(MvcApplication).Assembly.GetName().Name);
-                logger.LogError("Unexpected error. Details: {0}", exception);
-            }
-
-            // custom error handling in case of an ajax request
-            if (filterContext.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
-                string message;
-                int statusCode;
-
-                if (exception is HttpException httpEx)
-                {
-                    statusCode = httpEx.GetHttpCode();
-                    message = httpEx.Message;
-                }
-                else
-                {
-                    statusCode = (int)HttpStatusCode.InternalServerError;
-                    message = "A server error occurred. Try again or contact the system administrator if the problem persists.";
-                }
-
-                filterContext.ExceptionHandled = true;
-                filterContext.HttpContext.Response.StatusCode = statusCode;
-                filterContext.Result = new ContentResult { Content = message, ContentType = MediaTypeNames.Text.Plain };
-            }
-            else if (filterContext.Exception != exception)
-                throw exception;
         }
     }
 }

@@ -1,5 +1,6 @@
-﻿using System.Web.Mvc;
-using System.Web.Routing;
+﻿using AspNetSkeleton.UI.Areas.Dashboard.Controllers;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace AspNetSkeleton.UI.Filters
 {
@@ -8,12 +9,7 @@ namespace AspNetSkeleton.UI.Filters
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             if (filterContext.HttpContext.User.Identity.IsAuthenticated)
-                filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary 
-                {
-                    { "controller", "Dashboard" },
-                    { "action", "Index" },
-                    { "id", null },
-                });
+                filterContext.Result = new RedirectToActionResult(nameof(HomeController.Index), "Home", new { area = "Dashboard", id = (object)null });
         }
     }
 }

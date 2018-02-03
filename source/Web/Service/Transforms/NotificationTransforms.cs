@@ -10,7 +10,7 @@ namespace AspNetSkeleton.Service.Transforms
     {
         static readonly Expression<Func<Notification, NotificationData>> toDataExpr = n => new NotificationData
         {
-            Id = n.Id,
+            Id = n.Id.Value,
             State = n.State,
             Code = n.Code,
             CreatedAt = n.CreatedAt,

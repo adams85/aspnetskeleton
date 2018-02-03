@@ -1,17 +1,23 @@
-﻿using System.Web.Http;
-using AspNetSkeleton.Api.Infrastructure.Security;
-using AspNetSkeleton.Common;
+﻿using AspNetSkeleton.Common;
 using AspNetSkeleton.Service.Contract;
 using AspNetSkeleton.Service.Contract.Commands;
 using AspNetSkeleton.Api.Contract;
 using AspNetSkeleton.Api.Contract.DataTransfer;
 using System.Threading.Tasks;
 using System.Threading;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using AspNetSkeleton.Core.DataTransfer;
+using AspNetSkeleton.Core;
+using AspNetSkeleton.Core.Infrastructure.Security;
+using AspNetSkeleton.Core.Utils;
 
 namespace AspNetSkeleton.Api.Controllers
 {
     [Authorize]
-    public class AccountController : ApiController
+    [Route("[controller]")]
+    public class AccountController : Controller
     {
         readonly IQueryDispatcher _queryDispatcher;
         readonly ICommandDispatcher _commandDispatcher;
@@ -24,14 +30,14 @@ namespace AspNetSkeleton.Api.Controllers
             _clock = clock;
         }
 
-        async Task CheckDeviceAsync(ApiPrincipal currentPrincipal, string deviceName, CancellationToken cancellationToken)
+        async Task CheckDeviceAsync(ClaimsPrincipal currentPrincipal, string deviceName, CancellationToken cancellationToken)
         {
             try
             {
                 await _commandDispatcher.DispatchAsync(new ConnectDeviceCommand
                 {
-                    UserId = currentPrincipal.AccountInfo.UserId,
-                    DeviceId = currentPrincipal.DeviceId,
+                    UserId = currentPrincipal.GetUserId().Value,
+                    DeviceId = currentPrincipal.GetDeviceId(),
                     DeviceName = deviceName
                 }, cancellationToken);
             }
@@ -41,10 +47,10 @@ namespace AspNetSkeleton.Api.Controllers
             }
         }
 
-        public async Task<AccountData> Get([FromUri] string deviceName, CancellationToken cancellationToken)
+        [HttpGet]
+        public async Task<AccountData> Get([FromQuery(Name = "d")] string deviceName, CancellationToken cancellationToken)
         {
-            var currentPrincipal = (ApiPrincipal)RequestContext.Principal;
-            await CheckDeviceAsync(currentPrincipal, deviceName, cancellationToken);
+            await CheckDeviceAsync(User, deviceName, cancellationToken);
 
             return new AccountData
             {

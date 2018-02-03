@@ -1,25 +1,49 @@
-﻿using Karambolo.Common;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Runtime.Caching;
-using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
-using AspNetSkeleton.Common;
+using Karambolo.Common;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Internal;
+using Microsoft.Extensions.Primitives;
 
 namespace AspNetSkeleton.Core.Infrastructure.Caching
 {
     public class InProcessCache : ICache
     {
-        class ScopeDependency
+        class ScopeTokenRegistration : IDisposable
+        {
+            readonly ScopeToken _owner;
+            readonly Action<object> _callback;
+            readonly object _state;
+
+            public ScopeTokenRegistration(ScopeToken owner, Action<object> callback, object state)
+            {
+                _owner = owner;
+                _callback = callback;
+                _state = state;
+            }
+
+            public void InvokeCallback()
+            {
+                _callback(_state);
+            }
+
+            public void Dispose()
+            {
+                _owner.UnregisterChangeCallback(this);
+            }
+        }
+
+        class ScopeToken : IChangeToken
         {
             readonly InProcessCache _owner;
             readonly string _key;
-            readonly List<ScopeMonitor> _monitors = new List<ScopeMonitor>();
+            readonly List<ScopeTokenRegistration> _registrations = new List<ScopeTokenRegistration>();
+            bool _hasChanged;
 
-            public ScopeDependency(InProcessCache owner, string key)
+            public ScopeToken(InProcessCache owner, string key)
             {
                 _owner = owner;
                 _key = key;
@@ -27,96 +51,56 @@ namespace AspNetSkeleton.Core.Infrastructure.Caching
 
             public void NotifyChanged()
             {
-                lock (_monitors)
+                _hasChanged = true;
+
+                lock (_registrations)
                 {
-                    var n = _monitors.Count;
+                    var n = _registrations.Count;
                     for (var i = 0; i < n; i++)
-                        _monitors[i].DependencyChanged();
+                        _registrations[i].InvokeCallback();
                 }
             }
 
-            public void Register(ScopeMonitor monitor)
+            public IDisposable RegisterChangeCallback(Action<object> callback, object state)
             {
-                lock (_monitors)
-                    _monitors.Add(monitor);
+                var registration = new ScopeTokenRegistration(this, callback, state);
+
+                lock (_registrations)
+                    _registrations.Add(registration);
+
+                return registration;
             }
 
-            public void Unregister(ScopeMonitor monitor)
+            public void UnregisterChangeCallback(ScopeTokenRegistration registration)
             {
-                lock (_monitors)
-                    if (_monitors.Remove(monitor) && _monitors.Count == 0)
-                        _owner.RemoveDependency(_key);
+                lock (_registrations)
+                    if (_registrations.Remove(registration) && _registrations.Count == 0)
+                        _owner.RemoveScopeToken(_key);
             }
+
+            public bool HasChanged => _hasChanged;
+
+            public bool ActiveChangeCallbacks => true;
         }
 
-        class ScopeMonitor : ChangeMonitor
+        readonly MemoryCache _cache;
+
+        readonly ConcurrentDictionary<string, ScopeToken> _scopeTokens = new ConcurrentDictionary<string, ScopeToken>();
+
+        public InProcessCache(ISystemClock clock)
         {
-            readonly ScopeDependency[] _dependencies;
-
-            public ScopeMonitor(ScopeDependency[] dependencies)
+            _cache = new MemoryCache(new MemoryCacheOptions
             {
-                var success = true;
-                try
-                {
-                    _dependencies = dependencies;
-                    var n = _dependencies.Length;
-                    for (var i = 0; i < n; i++)
-                        _dependencies[i].Register(this);
-
-                    UniqueId = Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture);
-                    success = false;
-                }
-                finally
-                {
-                    InitializationComplete();
-                    if (success)
-                        Dispose();
-                }
-            }
-            public override string UniqueId { get; }
-
-            public void DependencyChanged()
-            {
-                OnChanged(null);
-            }
-
-            protected override void Dispose(bool disposing)
-            {
-                var n = _dependencies.Length;
-                for (var i = 0; i < n; i++)
-                    _dependencies[i].Unregister(this);
-            }
+                Clock = clock,
+            });
         }
 
-        readonly ObjectCache _cache = MemoryCache.Default;
-
-        readonly IClock _clock;
-        readonly ConcurrentDictionary<string, ScopeDependency> _dependencies = new ConcurrentDictionary<string, ScopeDependency>();
-
-        public InProcessCache(IClock clock)
+        void RemoveScopeToken(string scopeKey)
         {
-            _clock = clock;
+            _scopeTokens.TryRemove(scopeKey, out ScopeToken token);
         }
 
-        ScopeMonitor CreateMonitorFor(string[] scopes)
-        {
-            if (ArrayUtils.IsNullOrEmpty(scopes))
-                return null;
-
-            var n = scopes.Length;
-            var dependencies = new ScopeDependency[n];
-            for (var i = 0; i < n; i++)
-                dependencies[i] = _dependencies.GetOrAdd(scopes[i], s => new ScopeDependency(this, s));           
-
-            return new ScopeMonitor(dependencies);
-        }
-
-        void RemoveDependency(string scopeKey)
-        {
-            _dependencies.TryRemove(scopeKey, out ScopeDependency dependency);
-        }
-
-        public async Task<T> GetOrAddAsync<T>(string key, Func<string, CancellationToken, Task<T>> valueFactoryAsync, CacheOptions options,
+        public Task<T> GetOrAddAsync<T>(string key, Func<string, CancellationToken, Task<T>> valueFactoryAsync, CacheOptions options,
             CancellationToken cancellationToken, params string[] scopes)
         {
             if (key == null)
@@ -125,31 +109,22 @@ namespace AspNetSkeleton.Core.Infrastructure.Caching
             if (valueFactoryAsync == null)
                 throw new ArgumentNullException(nameof(valueFactoryAsync));
 
-            var policy = new CacheItemPolicy();
-
-            var monitor = CreateMonitorFor(scopes);
-            if (monitor != null)
-                policy.ChangeMonitors.Add(monitor);
-
-            if (options?.AbsoluteExpiration > TimeSpan.Zero)
-                policy.AbsoluteExpiration = _clock.UtcNow + options.AbsoluteExpiration;
-
-            if (options?.SlidingExpiration > TimeSpan.Zero)
-                policy.SlidingExpiration = options.SlidingExpiration;
-
-            var newValueTaskLazy = new Lazy<Task<T>>(() => valueFactoryAsync(key, cancellationToken));
-            var storedValueTaskLazy = (Lazy<Task<T>>)_cache.AddOrGetExisting(key, newValueTaskLazy, policy);
-
-            if (storedValueTaskLazy != null)
-                monitor?.Dispose();
-
-            try { return await (storedValueTaskLazy ?? newValueTaskLazy).Value.ConfigureAwait(false); }
-            catch (Exception ex)
+            return _cache.GetOrCreateAsync(key, ce =>
             {
-                _cache.Remove(key);
-                ExceptionDispatchInfo.Capture(ex).Throw();
-                throw;
-            }
+                if (options?.AbsoluteExpiration > TimeSpan.Zero)
+                    ce.AbsoluteExpirationRelativeToNow = options.AbsoluteExpiration;
+
+                if (options?.SlidingExpiration > TimeSpan.Zero)
+                    ce.SlidingExpiration = options.SlidingExpiration;
+
+                if (!ArrayUtils.IsNullOrEmpty(scopes))
+                {
+                    var tokens = Array.ConvertAll(scopes, s => _scopeTokens.GetOrAdd(s, k => new ScopeToken(this, k)));
+                    Array.ForEach(tokens, ce.ExpirationTokens.Add);
+                }
+
+                return valueFactoryAsync((string)ce.Key, cancellationToken);
+            });
         }
 
         public Task RemoveAsync(string key, CancellationToken cancellationToken)
@@ -161,15 +136,15 @@ namespace AspNetSkeleton.Core.Infrastructure.Caching
 
         public Task RemoveScopeAsync(string scope, CancellationToken cancellationToken)
         {
-            if (_dependencies.TryGetValue(scope, out ScopeDependency dependency))
-                dependency.NotifyChanged();
+            if (_scopeTokens.TryGetValue(scope, out ScopeToken token))
+                token.NotifyChanged();
 
             return Task.FromResult<object>(null);
         }
 
         public void Dispose()
         {
-            // NOTE: Memory.Default static instance should not be disposed
+            _cache?.Dispose();
         }
     }
 }

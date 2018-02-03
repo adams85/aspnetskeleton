@@ -1,24 +1,21 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using LinqToDB.Mapping;
+using System.Collections.Generic;
 
 namespace AspNetSkeleton.DataAccess.Entities
 {
+    [Table]
     public class Role
     {
-        public int RoleId { get; set; }
+        [Column, PrimaryKey, Identity]
+        public IdentityKey<int> RoleId { get; set; }
 
-        [Required]
-        [StringLength(32)]
+        [Column(Length = 32), NotNull]
         public string RoleName { get; set; }
 
-        [StringLength(256)]
+        [Column(Length = 256)]
         public string Description { get; set; }
 
-        ICollection<UserRole> _users;
-        public virtual ICollection<UserRole> Users
-        {
-            get => _users ?? (_users = new HashSet<UserRole>());
-            set => _users = value;
-        }
+        [Association(OtherKey = nameof(UserRole.RoleId), ThisKey = nameof(RoleId), Relationship = Relationship.OneToMany, IsBackReference = true)]
+        public IEnumerable<UserRole> Users { get; set; }
     }
 }

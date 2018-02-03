@@ -9,7 +9,7 @@ using AspNetSkeleton.Service.Contract;
 using AspNetSkeleton.Common.Utils;
 using System.Threading.Tasks;
 using System.Threading;
-using System.Data.Entity;
+using AspNetSkeleton.DataAccess;
 using AspNetSkeleton.Base.Utils;
 
 namespace AspNetSkeleton.Service.Commands.Users
@@ -72,16 +72,20 @@ namespace AspNetSkeleton.Service.Commands.Users
                 user.PasswordFailuresSinceLastSuccess = 0;
                 user.IsLockedOut = false;
 
+                var key = scope.Context.Create(user);
+
                 if (command.CreateProfile)
                 {
-                    user.Profile = new Profile();
-                    user.Profile.FirstName = command.FirstName;
-                    user.Profile.LastName = command.LastName;
-                    user.Profile.PhoneNumber = command.PhoneNumber;
-                    user.Profile.DeviceLimit = command.DeviceLimit;
-                }
+                    var profile = new Profile();
 
-                scope.Context.Create(user);
+                    profile.UserId = key.As<int>();
+                    profile.FirstName = command.FirstName;
+                    profile.LastName = command.LastName;
+                    profile.PhoneNumber = command.PhoneNumber;
+                    profile.DeviceLimit = command.DeviceLimit;
+
+                    scope.Context.Create(profile);
+                }
 
                 if (!command.IsApproved)
                     await _commandDispatcher.DispatchAsync(new UnapprovedUserCreatedNotificationArgs
@@ -94,7 +98,7 @@ namespace AspNetSkeleton.Service.Commands.Users
 
                 await scope.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-                command.OnKeyGenerated?.Invoke(command, user.UserId);
+                command.OnKeyGenerated?.Invoke(command, key.ValueObject);
             }            
         }
     }

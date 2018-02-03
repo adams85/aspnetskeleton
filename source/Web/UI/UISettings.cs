@@ -1,50 +1,28 @@
-﻿using System.Configuration;
-using System.Web.Configuration;
-using Karambolo.Common;
-using AspNetSkeleton.Common.Utils;
-using System;
-using System.Globalization;
-using AspNetSkeleton.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace AspNetSkeleton.UI
 {
-    public interface IUISettings : ICoreSettings
+    public class UISettings
     {
-        string[] ModelMetadataUrls { get; }
+        public string ListenUrl { get; set; }
 
-        int CurrentMajorVersion { get; }
+        public string[] ReverseProxies { get; set; }
+        public bool EnableResponseMinification { get; set; }
+        public bool EnableResponseCompression { get; set; }
+        public bool EnableResponseCaching { get; set; }
+        public TimeSpan CacheHeaderMaxAge { get; set; } = TimeSpan.FromDays(7);
 
-        byte[] EncryptionKey { get; }
+        public bool EnableLocalization { get; set; }
+        public string DefaultCulture { get; set; } = "en-US";
 
-        int DefaultPageSize { get; }
+        public bool EnableTheming { get; set; }
+        public string DefaultTheme { get; set; } = "Dark";
 
-        bool IsRegistrationEnabled { get; }
-        TimeSpan PasswordTokenExpiration { get; }
-        int DefaultDeviceLimit { get; }
-    }
+        public bool EnableRegistration { get; set; }
 
-    public class UISettings : IUISettings
-    {
-        public TimeSpan ServiceTimeOut { get; } = TimeSpan.Parse(WebConfigurationManager.AppSettings["ServiceTimeOut"], CultureInfo.InvariantCulture);
-
-        public string ServiceBaseUrl { get; } = WebConfigurationManager.AppSettings["ServiceBaseUrl"];
-
-        public string UIBaseUrl { get; } = WebConfigurationManager.AppSettings["UIBaseUrl"];
-
-        public string[] AdminMailTo { get; } = SerializationUtils.DeserializeArray(WebConfigurationManager.AppSettings["AdminMailTo"], Identity<string>.Func);
-
-        public string[] ModelMetadataUrls { get; } = SerializationUtils.DeserializeArray(WebConfigurationManager.AppSettings["ModelMetadataUrls"], Identity<string>.Func);
-
-        public int CurrentMajorVersion { get; } = int.Parse(WebConfigurationManager.AppSettings["CurrentMajorVersion"]);
-
-        public byte[] EncryptionKey { get; } = StringUtils.HexStringToByteArray(((MachineKeySection) ConfigurationManager.GetSection("system.web/machineKey")).DecryptionKey);
-
-        public int DefaultPageSize { get; } = int.Parse(WebConfigurationManager.AppSettings["DefaultPageSize"]);
-       
-        public bool IsRegistrationEnabled { get; } = bool.Parse(WebConfigurationManager.AppSettings["IsRegistrationEnabled"]);
-
-        public TimeSpan PasswordTokenExpiration { get; } = TimeSpan.FromDays(double.Parse(WebConfigurationManager.AppSettings["PasswordTokenExpirationDays"], CultureInfo.InvariantCulture));
-
-        public int DefaultDeviceLimit { get; } = int.Parse(WebConfigurationManager.AppSettings["DefaultDeviceLimit"]);
+        public TimeSpan PasswordTokenExpiration { get; set; } = TimeSpan.FromDays(1);
+        public int DefaultDeviceLimit { get; set; }
     }
 }

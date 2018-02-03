@@ -2,7 +2,7 @@
 using AspNetSkeleton.Service.Transforms;
 using AspNetSkeleton.Service.Contract.Commands;
 using AspNetSkeleton.DataAccess.Entities;
-using System.Data.Entity;
+using AspNetSkeleton.DataAccess;
 using System.Threading.Tasks;
 using System.Threading;
 using Karambolo.Common;
@@ -39,24 +39,28 @@ namespace AspNetSkeleton.Service.Commands.Roles
 
             using (var scope = _commandContext.CreateDataAccessScope())
             {
-                var users = await scope.Context.QueryTracking<User>().Where(userWhereBuilder.Build())
-                    .ToArrayAsync(cancellationToken).ConfigureAwait(false);
-                this.RequireValid(users.Length == command.UserNames.Length, c => c.UserNames);
+                var userIds = await
+                (
+                    from u in scope.Context.Query<User>().Where(userWhereBuilder.Build())
+                    select u.UserId
+                ).ToArrayAsync(cancellationToken).ConfigureAwait(false);
 
-                var roles = await scope.Context.QueryTracking<Role>().Include(r => r.Users).Where(roleWhereBuilder.Build())
-                    .ToArrayAsync(cancellationToken).ConfigureAwait(false);
-                this.RequireValid(roles.Length == command.RoleNames.Length, c => c.RoleNames);
+                this.RequireValid(userIds.Length == command.UserNames.Length, c => c.UserNames);
 
-                foreach (var role in roles)
-                    foreach (var user in users)
-                    {
-                        var userRole = role.Users.FirstOrDefault(ur => ur.UserId == user.UserId);
-                        if (userRole == null)
-                            role.Users.Add(new UserRole { User = user, Role = role });
-                    }
+                var roleIds = await
+                (
+                    from r in scope.Context.Query<Role>().Where(roleWhereBuilder.Build())
+                    from ur in r.Users.DefaultIfEmpty()
+                    group new UserRole { RoleId = r.RoleId, UserId = ur.UserId } by r.RoleId into g
+                    select g
+                ).ToArrayAsync(cancellationToken).ConfigureAwait(false);
 
-                foreach (var role in roles)
-                    scope.Context.Update(role);
+                this.RequireValid(roleIds.Length == command.RoleNames.Length, c => c.RoleNames);
+
+                foreach (var roleId in roleIds)
+                    foreach (var userId in userIds)
+                        if (!roleId.Any(r => r.UserId == userId))
+                            scope.Context.Create(new UserRole { UserId = userId, RoleId = roleId.Key });
 
                 await scope.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             }

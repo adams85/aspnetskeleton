@@ -1,18 +1,11 @@
-﻿using AspNetSkeleton.AdminTools.Properties;
-using System;
+﻿using System;
 
 namespace AspNetSkeleton.AdminTools
 {
-    public interface IToolsSettings
+    public class ToolsSettings
     {
-        string ApiUrl { get; }
-        TimeSpan ApiTimeout { get; }
-    }
+        public string ApiUrl { get; set; }
 
-    public class ToolsSettings : IToolsSettings
-    {
-        public string ApiUrl { get; } = Settings.Default.ApiUrl;
-
-        public TimeSpan ApiTimeout { get; } = Settings.Default.ApiTimeout;
+        public TimeSpan ApiTimeout { get; set; }
     }
 }

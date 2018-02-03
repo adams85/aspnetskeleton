@@ -1,51 +1,67 @@
-﻿using System;
+﻿using LinqToDB.Mapping;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace AspNetSkeleton.DataAccess.Entities
 {
+    [Table]
     public class User
     {
-        public int UserId { get; set; }
+        [Column, PrimaryKey, Identity]
+        public IdentityKey<int> UserId { get; set; }
 
-        [Required]
-        [StringLength(320)]
+        [Column(Length = 320), NotNull]
         public string UserName { get; set; }
 
-        [Required]
-        [StringLength(320)]
+        [Column(Length = 320), NotNull]
         public string Email { get; set; }
 
-        [Required(AllowEmptyStrings = true), DataType(DataType.Password)]
-        [StringLength(172)]
+        [Column(Length = 172), NotNull]
         public string Password { get; set; }
 
-        [DataType(DataType.MultilineText)]
-        [StringLength(200)]
+        [Column(Length = 200)]
         public string Comment { get; set; }
 
+        [Column]
         public bool IsApproved { get; set; }
+
+        [Column]
         public int PasswordFailuresSinceLastSuccess { get; set; }
+
+        [Column]
         public DateTime? LastPasswordFailureDate { get; set; }
+
+        [Column]
         public DateTime? LastActivityDate { get; set; }
+
+        [Column]
         public DateTime? LastLockoutDate { get; set; }
+
+        [Column]
         public DateTime? LastLoginDate { get; set; }
-        [StringLength(172)]
+
+        [Column(Length = 172)]
         public string ConfirmationToken { get; set; }
+
+        [Column]
         public DateTime CreateDate { get; set; }
+
+        [Column]
         public bool IsLockedOut { get; set; }
+
+        [Column]
         public DateTime LastPasswordChangedDate { get; set; }
-        [StringLength(172)]
+
+        [Column(Length = 172)]
         public string PasswordVerificationToken { get; set; }
+
+        [Column]
         public DateTime? PasswordVerificationTokenExpirationDate { get; set; }
 
-        ICollection<UserRole> _roles;
-        public virtual ICollection<UserRole> Roles
-        {
-            get => _roles ?? (_roles = new HashSet<UserRole>());
-            set => _roles = value;
-        }
+        [Association(OtherKey = nameof(UserRole.UserId), ThisKey = nameof(UserId), Relationship = Relationship.OneToMany, IsBackReference = true)]
+        public IEnumerable<UserRole> Roles { get; set; }
 
-        public virtual Profile Profile { get; set; }
+        [Association(OtherKey = nameof(Entities.Profile.UserId), ThisKey = nameof(UserId), Relationship = Relationship.OneToOne, IsBackReference = true)]
+        public Profile Profile { get; set; }
     }
 }

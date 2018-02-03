@@ -6,7 +6,6 @@ using Karambolo.Common;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web.Security;
 
 namespace AspNetSkeleton.UI.Infrastructure.Security
 {
@@ -15,11 +14,22 @@ namespace AspNetSkeleton.UI.Infrastructure.Security
         Task<AccountInfoData> GetAccountInfoAsync(string userName, bool registerActivity, CancellationToken cancellationToken);
 
         Task<bool> ValidateUserAsync(AuthenticateUserQuery query, CancellationToken cancellationToken);
-        Task<MembershipCreateStatus> CreateUserAsync(CreateUserCommand command, CancellationToken cancellationToken);
+        Task<CreateUserResult> CreateUserAsync(CreateUserCommand command, CancellationToken cancellationToken);
         Task<bool> ChangePasswordAsync(string oldPassword, ChangePasswordCommand command, CancellationToken cancellationToken);
         Task VerifyUserAsync(ApproveUserCommand command, CancellationToken cancellationToken);
         Task ResetPasswordAsync(ResetPasswordCommand command, CancellationToken cancellationToken);
         Task SetPasswordAsync(ChangePasswordCommand command, CancellationToken cancellationToken);
+    }
+
+    public enum CreateUserResult
+    {
+        Success,
+        UnexpectedError,
+        InvalidUserName,
+        DuplicateUserName,
+        InvalidEmail,
+        DuplicateEmail,
+        InvalidPassword,
     }
 
     public class AccountManager : IAccountManager
@@ -73,16 +83,16 @@ namespace AspNetSkeleton.UI.Infrastructure.Security
             return success;
         }
 
-        public async Task<MembershipCreateStatus> CreateUserAsync(CreateUserCommand command, CancellationToken cancellationToken)
+        public async Task<CreateUserResult> CreateUserAsync(CreateUserCommand command, CancellationToken cancellationToken)
         {
             if (command == null)
                 throw new ArgumentNullException(nameof(command));
 
-            MembershipCreateStatus status;
+            CreateUserResult status;
             try
             {
                 await _commandDispatcher.DispatchAsync(command, cancellationToken).ConfigureAwait(false);
-                status = MembershipCreateStatus.Success;
+                status = CreateUserResult.Success;
             }
             catch (CommandErrorException ex)
             {
@@ -93,20 +103,20 @@ namespace AspNetSkeleton.UI.Infrastructure.Security
                     case CommandErrorCode.ParamNotValid:
                         paramPath = (string)ex.Args[0];
                         status =
-                            paramPath == Lambda.PropertyPath((CreateUserCommand c) => c.UserName) ? MembershipCreateStatus.InvalidUserName :
-                            paramPath == Lambda.PropertyPath((CreateUserCommand c) => c.Email) ? MembershipCreateStatus.InvalidEmail :
-                            paramPath == Lambda.PropertyPath((CreateUserCommand c) => c.Password) ? MembershipCreateStatus.InvalidPassword :
-                            MembershipCreateStatus.ProviderError;
+                            paramPath == Lambda.PropertyPath((CreateUserCommand c) => c.UserName) ? CreateUserResult.InvalidUserName :
+                            paramPath == Lambda.PropertyPath((CreateUserCommand c) => c.Email) ? CreateUserResult.InvalidEmail :
+                            paramPath == Lambda.PropertyPath((CreateUserCommand c) => c.Password) ? CreateUserResult.InvalidPassword :
+                            CreateUserResult.UnexpectedError;
                         break;
                     case CommandErrorCode.EntityNotUnique:
                         paramPath = (string)ex.Args[0];
                         status =
-                            paramPath == Lambda.PropertyPath((CreateUserCommand c) => c.UserName) ? MembershipCreateStatus.DuplicateUserName :
-                            paramPath == Lambda.PropertyPath((CreateUserCommand c) => c.Email) ? MembershipCreateStatus.DuplicateEmail :
-                            MembershipCreateStatus.ProviderError;
+                            paramPath == Lambda.PropertyPath((CreateUserCommand c) => c.UserName) ? CreateUserResult.DuplicateUserName :
+                            paramPath == Lambda.PropertyPath((CreateUserCommand c) => c.Email) ? CreateUserResult.DuplicateEmail :
+                            CreateUserResult.UnexpectedError;
                         break;
                     default:
-                        status = MembershipCreateStatus.ProviderError;
+                        status = CreateUserResult.UnexpectedError;
                         break;
                 }
             }

@@ -5,7 +5,7 @@ using AspNetSkeleton.DataAccess.Entities;
 using AspNetSkeleton.Service.Transforms;
 using System.Threading.Tasks;
 using System.Threading;
-using System.Data.Entity;
+using AspNetSkeleton.DataAccess;
 
 namespace AspNetSkeleton.Service.Queries.Users
 {
@@ -28,11 +28,12 @@ namespace AspNetSkeleton.Service.Queries.Users
                     from u in scope.Context.Query<User>().FilterByName(query.UserName)
                     select new AccountInfoData
                     {
-                        UserId = u.UserId,
+                        UserId = u.UserId.Value,
                         UserName = u.UserName,
                         Email = u.Email,
                         FirstName = u.Profile != null ? u.Profile.FirstName : null,
                         LastName = u.Profile != null ? u.Profile.LastName : null,
+                        LoginAllowed = u.IsApproved && !u.IsLockedOut
                     };
 
                 var result = await linq.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
@@ -40,7 +41,7 @@ namespace AspNetSkeleton.Service.Queries.Users
                 if (result != null)
                 {
                     var rolesLinq =
-                        from u in scope.Context.Query<User>().Where(u => u.UserId == result.UserId)
+                        from u in scope.Context.Query<User>().Where(u => u.UserId.Value == result.UserId)
                         from ur in u.Roles
                         select ur.Role.RoleName;
 

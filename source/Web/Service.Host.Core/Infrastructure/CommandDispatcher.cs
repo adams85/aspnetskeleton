@@ -58,10 +58,10 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure
         {
             var invokeHandlerMethod = invokeHandlerMethodDefinition.MakeGenericMethod(context.CommandType);
 
-            var isNestedCommand = _lifetimeScope.Tag == ServiceHostCoreModule.CommandLifetimeScopeTag;
+            var isNestedCommand = _lifetimeScope.Tag == ServiceHostCoreAppConfiguration.CommandLifetimeScopeTag;
             var commandLifetimeScope =
                 !isNestedCommand ?
-                _lifetimeScope.BeginLifetimeScope(ServiceHostCoreModule.CommandLifetimeScopeTag) :
+                _lifetimeScope.BeginLifetimeScope(ServiceHostCoreAppConfiguration.CommandLifetimeScopeTag) :
                 _lifetimeScope;
 
             try

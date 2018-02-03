@@ -1,35 +1,37 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.8
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{1FD9ABD5-2E5F-4BD1-85CB-5D0615209E9D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{9FB0FE0C-5CBC-44D5-9A7C-BA25C4B3A3B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Web\Core\Core.csproj", "{66527CC6-70A0-4A1C-9CB0-D497DF4B8FFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Web\Core\Core.csproj", "{66527CC6-70A0-4A1C-9CB0-D497DF4B8FFE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "Web\DataAccess\DataAccess.csproj", "{587C376A-3646-4388-9CC1-55D83B92CA34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "Web\DataAccess\DataAccess.csproj", "{587C376A-3646-4388-9CC1-55D83B92CA34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Web\Service\Service.csproj", "{2E16C067-9360-466B-A4EB-AF7BBA3F6206}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service", "Web\Service\Service.csproj", "{2E16C067-9360-466B-A4EB-AF7BBA3F6206}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI", "Web\UI\UI.csproj", "{3407EAD2-3AC9-47C4-A13A-44A45EF4028F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI", "Web\UI\UI.csproj", "{3407EAD2-3AC9-47C4-A13A-44A45EF4028F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Web\Api\Api.csproj", "{7C66F453-432F-4A0F-96C5-F5772DB6A29B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Web\Api\Api.csproj", "{7C66F453-432F-4A0F-96C5-F5772DB6A29B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common\Common.csproj", "{327796A5-A6C9-48FE-BAD8-A81D7B91886C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common\Common.csproj", "{327796A5-A6C9-48FE-BAD8-A81D7B91886C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeployTools", "Web\Tools\DeployTools\DeployTools.csproj", "{619BB9EA-C678-4CEE-AB98-0335694CBDFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeployTools", "Web\Tools\DeployTools\DeployTools.csproj", "{619BB9EA-C678-4CEE-AB98-0335694CBDFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Contract", "Web\Api.Contract\Api.Contract.csproj", "{D151D61C-0411-4D78-931B-766592BB1315}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api.Contract", "Web\Api.Contract\Api.Contract.csproj", "{D151D61C-0411-4D78-931B-766592BB1315}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminTools", "Web\Tools\AdminTools\AdminTools.csproj", "{88A57502-B476-4F00-B483-A8CDD0BEC3FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminTools", "Web\Tools\AdminTools\AdminTools.csproj", "{88A57502-B476-4F00-B483-A8CDD0BEC3FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Cli", "Common\Common.Cli\Common.Cli.csproj", "{726CA786-CA98-4A65-A057-7510253120F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Cli", "Common\Common.Cli\Common.Cli.csproj", "{726CA786-CA98-4A65-A057-7510253120F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.Contract", "Web\Service.Contract\Service.Contract.csproj", "{7742EC1D-7831-4779-BE4A-1A31465EDBAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service.Contract", "Web\Service.Contract\Service.Contract.csproj", "{7742EC1D-7831-4779-BE4A-1A31465EDBAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base", "Web\Base\Base.csproj", "{9ABFA602-74B6-44F8-87AB-5EE9BA53907A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service.Host.Core", "Web\Service.Host.Core\Service.Host.Core.csproj", "{564A36AC-5DCD-44B5-A5F4-6F887EF25277}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Base", "Web\Base\Base.csproj", "{B65D2B6D-8095-4BE0-A861-A38B3016DE27}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,10 +83,14 @@ Global
 		{7742EC1D-7831-4779-BE4A-1A31465EDBAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7742EC1D-7831-4779-BE4A-1A31465EDBAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7742EC1D-7831-4779-BE4A-1A31465EDBAD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9ABFA602-74B6-44F8-87AB-5EE9BA53907A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9ABFA602-74B6-44F8-87AB-5EE9BA53907A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9ABFA602-74B6-44F8-87AB-5EE9BA53907A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9ABFA602-74B6-44F8-87AB-5EE9BA53907A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{564A36AC-5DCD-44B5-A5F4-6F887EF25277}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{564A36AC-5DCD-44B5-A5F4-6F887EF25277}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{564A36AC-5DCD-44B5-A5F4-6F887EF25277}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{564A36AC-5DCD-44B5-A5F4-6F887EF25277}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B65D2B6D-8095-4BE0-A861-A38B3016DE27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B65D2B6D-8095-4BE0-A861-A38B3016DE27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B65D2B6D-8095-4BE0-A861-A38B3016DE27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B65D2B6D-8095-4BE0-A861-A38B3016DE27}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,10 +1,12 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var activeSubMenuItem = (string)ViewData["ActiveSubMenuItem"];
 }
 
-@section scripts
+@section Scripts
 {
-    @RenderSection("scripts", required: false)
+    @RenderSection("Scripts", required: false)
 }
 
 @* https://www.jonathanbriehl.com/2014/01/17/vertical-menu-for-bootstrap-3/ *@
@@ -14,8 +16,8 @@
       <div class="navbar navbar-default" role="navigation">
         <div class="navbar-collapse sidebar-navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="@(ViewBag.ActiveSubMenuItem == "Overview" ? "active" : null)"><a href="@Url.Action("Index", "Home")">@T["Overview"]</a></li>
-            <li class="@(ViewBag.ActiveSubMenuItem == "Account" ? "active" : null)"><a href="@Url.Action("Index", "Account")">@T["Account Settings"]</a></li>
+            <li class="@(activeSubMenuItem == "Overview" ? "active" : null)"><a asp-controller="Home" asp-action="Index">@T["Overview"]</a></li>
+            <li class="@(activeSubMenuItem == "Account" ? "active" : null)"><a asp-controller="Account" asp-action="Index">@T["Account Settings"]</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>

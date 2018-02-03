@@ -3,7 +3,7 @@ using AspNetSkeleton.DataAccess.Entities;
 using AspNetSkeleton.Service.Transforms;
 using System.Threading.Tasks;
 using System.Threading;
-using System.Data.Entity;
+using AspNetSkeleton.DataAccess;
 
 namespace AspNetSkeleton.Service.Commands.Roles
 {
@@ -32,11 +32,11 @@ namespace AspNetSkeleton.Service.Commands.Roles
                     RoleName = command.RoleName
                 };
 
-                scope.Context.Create(role);
+                var key = scope.Context.Create(role);
 
                 await scope.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-                command.OnKeyGenerated?.Invoke(command, role.RoleId);
+                command.OnKeyGenerated?.Invoke(command, key.ValueObject);
             }
         }
     }

@@ -1,54 +1,56 @@
-﻿using AspNetSkeleton.Common.Infrastructure;
-using AspNetSkeleton.Service.Host.Core.Handlers.Mails;
-using AspNetSkeleton.Service.Contract;
-using AspNetSkeleton.Service.Contract.Commands;
-using AspNetSkeleton.Service.Contract.DataObjects;
-using AspNetSkeleton.Service.Contract.Queries;
-using Autofac.Features.Indexed;
-using Karambolo.Common.Logging;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
+using AspNetSkeleton.Base;
+using AspNetSkeleton.Common.Infrastructure;
+using AspNetSkeleton.Core;
+using AspNetSkeleton.Service.Contract;
+using AspNetSkeleton.Service.Contract.Commands;
+using AspNetSkeleton.Service.Contract.DataObjects;
+using AspNetSkeleton.Service.Contract.Queries;
+using AspNetSkeleton.Service.Host.Core.Handlers.Mails;
+using Autofac.Features.Indexed;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 
 namespace AspNetSkeleton.Service.Host.Core.Infrastructure.BackgroundWork
 {
     public class MailSenderProcess : IBackgroundProcess, IDisposable
     {
-        readonly CancellationToken _shutdownToken;
         readonly Func<string, INotificationHandler> _notificationHandlerFactory;
         readonly IQueryDispatcher _queryDispatcher;
         readonly ICommandDispatcher _commandDispatcher;
-        readonly IServiceHostCoreSettings _settings;
+        readonly ServiceHostCoreSettings _settings;
         readonly SmtpClient _smtpClient;
 
-        [LoggerOptions("AspNetSkeleton::MailSenderProcess")]
         public ILogger Logger { get; set; }
 
-        public MailSenderProcess(IShutDownTokenAccessor shutdownTokenAccessor, IIndex<string, INotificationHandler> notificationHandlers,
-            IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher, IServiceHostCoreSettings settings)
+        public MailSenderProcess(IIndex<string, INotificationHandler> notificationHandlers,
+            IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
+            IAppEnvironment environment, IOptions<ServiceHostCoreSettings> settings, IOptions<MailSettings> mailSettings)
         {
             Logger = NullLogger.Instance;
 
-            _shutdownToken = shutdownTokenAccessor.ShutDownToken;
             _notificationHandlerFactory = c => notificationHandlers.TryGetValue(c, out INotificationHandler result) ? result : null;
 
             _queryDispatcher = queryDispatcher;
             _commandDispatcher = commandDispatcher;
 
-            _settings = settings;
+            _settings = settings.Value;
 
             _smtpClient = new SmtpClient();
+            mailSettings.Value.Configure(_smtpClient, environment.AppBasePath);
         }
 
-        async Task HandleAsync(NotificationData notification)
+        async Task HandleAsync(NotificationData notification, CancellationToken shutDownToken)
         {
             var handler = _notificationHandlerFactory(notification.Code);
             if (handler != null)
             {
-                var mailMessage = handler.CreateMailMessage(notification);
-
+                var mailMessage = await handler.CreateMailMessageAsync(notification, shutDownToken).ConfigureAwait(false);
                 if (mailMessage != null)
                     await _smtpClient.SendMailAsync(mailMessage).ConfigureAwait(false);
             }
@@ -64,7 +66,7 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure.BackgroundWork
             }, CancellationToken.None).ConfigureAwait(false);
         }
 
-        public async Task ExecuteAsync()
+        public async Task ExecuteAsync(CancellationToken shutDownToken)
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
@@ -72,37 +74,37 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure.BackgroundWork
             while (true)
                 try
                 {
-                    _shutdownToken.ThrowIfCancellationRequested();
+                    shutDownToken.ThrowIfCancellationRequested();
 
                     // resetting state of notifications whose processing may have been interrupted
                     await _commandDispatcher.DispatchAsync(new MarkNotificationsCommand
                     {
                         State = NotificationState.Queued
-                    }, _shutdownToken);
+                    }, shutDownToken);
 
                     ListResult<NotificationData> batch;
                     do
                     {
-                        _shutdownToken.ThrowIfCancellationRequested();
+                        shutDownToken.ThrowIfCancellationRequested();
 
                         await _commandDispatcher.DispatchAsync(new MarkNotificationsCommand
                         {
                             State = NotificationState.Processing,
                             Count = _settings.MailSenderBatchSize,
-                        }, _shutdownToken);
+                        }, shutDownToken);
 
                         batch = await _queryDispatcher.DispatchAsync(new ListNotificationsQuery
                         {
                             State = NotificationState.Processing,
                             OrderColumns = new[] { nameof(NotificationData.CreatedAt) }
-                        }, _shutdownToken);
+                        }, shutDownToken);
 
                         // TODO: SmtpClient.SendAsync() is not thread-safe, simple parallelization won't work.
                         // If the application needs to send a large amount of mails,
                         // some kind of pooling or consumer/producer pattern should be implemented.
                         var n = batch.Rows.Length;
                         for (var i = 0; i < n; i++)
-                            await HandleAsync(batch.Rows[i]);
+                            await HandleAsync(batch.Rows[i], shutDownToken);
                     }
                     while (batch.Rows.Length >= _settings.MailSenderBatchSize);
 
@@ -114,7 +116,7 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure.BackgroundWork
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogCritical("{0}", ex);
+                    Logger.LogCritical(ex, "Critical error.");
 
                     await Task.Delay(_settings.WorkerIdleWaitTime);
                 }

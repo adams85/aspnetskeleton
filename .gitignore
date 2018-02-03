@@ -301,10 +301,6 @@ __pycache__/
 # Other
 .svn/
 NuGet.exe
-/release/*/
 
 # auto-generated files
-/source/Web/Tools/AdminTools/ToolsSettings.config
-/source/Web/UI/Web.config
-/source/Web/UI/Templates
-/source/Web/Service.Host/Templates
+/release/**

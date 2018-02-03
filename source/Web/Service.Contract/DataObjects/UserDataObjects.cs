@@ -23,6 +23,7 @@ namespace AspNetSkeleton.Service.Contract.DataObjects
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public bool LoginAllowed { get; set; }
         public string[] Roles { get; set; }
     }
 

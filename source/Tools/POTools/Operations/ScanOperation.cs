@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using AspNetSkeleton.Common.Infrastructure;
 using AspNetSkeleton.Common.Cli;
-using Karambolo.Common;
+using Buildalyzer;
 
 namespace AspNetSkeleton.POTools.Operations
 {
@@ -50,14 +50,24 @@ namespace AspNetSkeleton.POTools.Operations
             IEnumerable<string> filePaths;
             if (isMSBuildFile)
             {
-                var projectCollection = new Microsoft.Build.Evaluation.ProjectCollection();
-                var project = new Microsoft.Build.Evaluation.Project(path, null, null, projectCollection, Microsoft.Build.Evaluation.ProjectLoadSettings.IgnoreMissingImports);
+                var originalDirectory = Environment.CurrentDirectory;
+                Environment.CurrentDirectory = Path.GetDirectoryName(path);
+                try
+                {
+                    // https://daveaglick.com/posts/running-a-design-time-build-with-msbuild-apis
+                    var analyzerManager = new AnalyzerManager();
+                    var project = analyzerManager.GetProject(path).Load();
 
-                var basePath = Path.GetDirectoryName(path);
+                    var basePath = Path.GetDirectoryName(path);
 
-                filePaths = project.GetItemsIgnoringCondition("Compile").Where(pi => compileExtensionFilter.Contains(Path.GetExtension(pi.EvaluatedInclude)))
-                    .Concat(project.GetItemsIgnoringCondition("Content").Where(pi => contentExtensionFilter.Contains(Path.GetExtension(pi.EvaluatedInclude))))
-                    .Select(pi => Path.Combine(basePath, pi.EvaluatedInclude));
+                    filePaths = project.GetItemsIgnoringCondition("Compile").Where(pi => compileExtensionFilter.Contains(Path.GetExtension(pi.EvaluatedInclude)))
+                        .Concat(project.GetItemsIgnoringCondition("Content").Where(pi => contentExtensionFilter.Contains(Path.GetExtension(pi.EvaluatedInclude))))
+                        .Select(pi => Path.Combine(basePath, pi.EvaluatedInclude));
+                }
+                finally
+                {
+                    Environment.CurrentDirectory = originalDirectory;
+                }
             }
             else
                 filePaths = Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories)
@@ -71,8 +81,7 @@ namespace AspNetSkeleton.POTools.Operations
         {
             yield return $"{Context.AppName} {Name} [/p=<path>]";
             yield return Hint;
-            yield return "  path: A path to an MSBuild file or a directory to look for source files for. If omitted, the project file in the current directory or the current directory if no or multiple project files exist. " +
-                "(In the case of an MSBuild file, application should be run from a VS command prompt or VSINSTALLDIR and VisualStudioVersion environment variables must be set!)";
+            yield return "  path: A path to an MSBuild file or a directory to look for source files for. If omitted, the project file in the current directory or the current directory if no or multiple project files exist.";
         }
     }
 }
