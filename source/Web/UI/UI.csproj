@@ -34,12 +34,6 @@
     <Architecture>Distributed</Architecture>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="App_Data\Localization\hu-HU\**" />
-    <Content Remove="App_Data\Localization\hu-HU\**" />
-    <EmbeddedResource Remove="App_Data\Localization\hu-HU\**" />
-    <None Remove="App_Data\Localization\hu-HU\**" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Karambolo.AspNetCore.Bundling.Less" Version="1.0.0" />
     <PackageReference Include="Karambolo.AspNetCore.Bundling.WebMarkupMin" Version="1.0.0" />
     <PackageReference Include="Karambolo.PO" Version="1.0.0" />
