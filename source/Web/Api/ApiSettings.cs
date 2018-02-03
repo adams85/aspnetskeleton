@@ -1,5 +1,4 @@
-﻿using Karambolo.Common;
-using System;
+﻿using System;
 
 namespace AspNetSkeleton.Api
 {

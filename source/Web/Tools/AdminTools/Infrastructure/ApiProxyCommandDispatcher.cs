@@ -5,7 +5,6 @@ using System;
 using AspNetSkeleton.Service.Contract;
 using System.Threading.Tasks;
 using AspNetSkeleton.Api.Contract;
-using AspNetSkeleton.AdminTools.Operations;
 using System.Runtime.ExceptionServices;
 
 namespace AspNetSkeleton.AdminTools.Infrastructure

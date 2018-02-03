@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using AspNetSkeleton.Base;
-using AspNetSkeleton.Core;
 using AspNetSkeleton.Core.Hosting;
 using AspNetSkeleton.Core.Hosting.Operations;
 using DasMulli.Win32.ServiceUtils;

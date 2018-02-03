@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AspNetSkeleton.Service.Host
+﻿namespace AspNetSkeleton.Service.Host
 {
     public class ServiceHostSettings
     {

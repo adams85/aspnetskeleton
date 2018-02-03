@@ -2,7 +2,6 @@
 using AspNetSkeleton.Common.Cli;
 using System.Collections.Generic;
 using System.ComponentModel;
-using AspNetSkeleton.Core.Infrastructure;
 using System;
 using DasMulli.Win32.ServiceUtils;
 

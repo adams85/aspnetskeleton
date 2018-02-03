@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Runtime.ExceptionServices;
 using DasMulli.Win32.ServiceUtils;
 using Karambolo.Common;

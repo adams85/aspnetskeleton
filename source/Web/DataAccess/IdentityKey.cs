@@ -1,16 +1,10 @@
-﻿using AspNetSkeleton.DataAccess.Utils;
-using Karambolo.Common;
-using LinqToDB;
+﻿using LinqToDB;
 using LinqToDB.Data;
 using LinqToDB.Expressions;
 using LinqToDB.Mapping;
-using LinqToDB.Metadata;
 using LinqToDB.SqlQuery;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
 
 namespace AspNetSkeleton.DataAccess
 {

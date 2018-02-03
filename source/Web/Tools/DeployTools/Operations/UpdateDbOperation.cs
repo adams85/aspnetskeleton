@@ -4,7 +4,6 @@ using AspNetSkeleton.Common.Cli;
 using System.Threading;
 using Karambolo.Common;
 using System;
-using System.Linq;
 
 namespace AspNetSkeleton.DeployTools.Operations
 {

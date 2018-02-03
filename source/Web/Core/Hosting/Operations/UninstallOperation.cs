@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System;
 using DasMulli.Win32.ServiceUtils;
-using AspNetSkeleton.Core.Infrastructure;
 
 namespace AspNetSkeleton.Core.Hosting.Operations
 {

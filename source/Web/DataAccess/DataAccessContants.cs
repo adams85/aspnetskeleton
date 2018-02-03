@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AspNetSkeleton.DataAccess
+﻿namespace AspNetSkeleton.DataAccess
 {
     public static class DataAccessContants
     {

@@ -1,13 +1,6 @@
-﻿using AspNetSkeleton.Core;
-using AspNetSkeleton.Core.Infrastructure.Security;
-using AspNetSkeleton.Core.Utils;
-using AspNetSkeleton.Service.Contract;
-using AspNetSkeleton.Service.Contract.Commands;
-using AspNetSkeleton.Service.Contract.Queries;
+﻿using AspNetSkeleton.Core.Utils;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;

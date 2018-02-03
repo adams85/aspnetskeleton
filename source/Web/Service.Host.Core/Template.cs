@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using RazorLight;
-using AspNetSkeleton.Core.Infrastructure;
 using Microsoft.Extensions.Options;
 using System;
 using System.Globalization;

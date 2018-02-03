@@ -2,7 +2,6 @@
 using AspNetSkeleton.Service.Contract.Queries;
 using Autofac;
 using Microsoft.Extensions.Options;
-using System;
 
 namespace AspNetSkeleton.Service.Host.Core.Infrastructure.Caching
 {

@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.ExceptionServices;
+﻿using System.Collections.Generic;
 using AspNetSkeleton.Base;
-using AspNetSkeleton.Base.Utils;
 using AspNetSkeleton.Common;
 using AspNetSkeleton.Common.Cli;
-using AspNetSkeleton.DeployTools.Operations;
 using Karambolo.Extensions.Logging.File;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace AspNetSkeleton.DeployTools
 {

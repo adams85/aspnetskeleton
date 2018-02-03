@@ -3,7 +3,6 @@ using System;
 using AspNetSkeleton.Api.Contract;
 using System.Threading.Tasks;
 using AspNetSkeleton.Service.Contract;
-using System.Net;
 using System.Threading;
 using AspNetSkeleton.Base;
 using Microsoft.AspNetCore.Authorization;

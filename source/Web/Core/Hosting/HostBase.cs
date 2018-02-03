@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using AspNetSkeleton.Base;
-using AspNetSkeleton.Common;
 using AspNetSkeleton.Common.Cli;
 using AspNetSkeleton.Core.Hosting.Operations;
-using AspNetSkeleton.Core.Infrastructure;
 using Autofac;
-using Autofac.Core;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace AspNetSkeleton.Core.Hosting
 {

@@ -1,16 +1,10 @@
 ﻿using AspNetSkeleton.Core.DataTransfer;
-using AspNetSkeleton.Service.Contract;
-using AspNetSkeleton.Service.Contract.Commands;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace AspNetSkeleton.Core.Infrastructure.Security
 {

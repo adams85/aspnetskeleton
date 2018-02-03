@@ -2,12 +2,8 @@
 using System.Globalization;
 using System;
 using Karambolo.PO;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using AspNetSkeleton.Core.Infrastructure;
-using System.Collections.Generic;
-using Karambolo.Common;
 
 namespace AspNetSkeleton.UI.Infrastructure.Localization
 {

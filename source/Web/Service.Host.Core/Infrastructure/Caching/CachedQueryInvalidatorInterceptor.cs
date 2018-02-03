@@ -3,8 +3,6 @@ using AspNetSkeleton.Service.Contract.Commands;
 using System.Threading.Tasks;
 using System.Threading;
 using Karambolo.Common;
-using AspNetSkeleton.Core.Infrastructure;
-using AspNetSkeleton.Service.Contract;
 using AspNetSkeleton.Core.Infrastructure.Caching;
 
 namespace AspNetSkeleton.Service.Host.Core.Infrastructure.Caching

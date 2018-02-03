@@ -1,9 +1,7 @@
 ﻿using AspNetSkeleton.Common.Infrastructure;
 using AspNetSkeleton.Service.Contract.Commands;
 using AspNetSkeleton.UI.Infrastructure.Models;
-using Karambolo.Common;
 using System.ComponentModel.DataAnnotations;
-using Karambolo.Common.Localization;
 using AspNetSkeleton.UI.Infrastructure.Localization;
 
 namespace AspNetSkeleton.UI.Areas.Dashboard.Models

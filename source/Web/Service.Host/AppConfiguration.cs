@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using AspNetSkeleton.Base.Utils;
 using AspNetSkeleton.Common.Utils;
 using AspNetSkeleton.Core;
@@ -8,7 +6,6 @@ using AspNetSkeleton.Service.Host.Core;
 using AspNetSkeleton.Service.Host.Handlers;
 using Autofac;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,17 +1,6 @@
 ﻿using System.Globalization;
-using System.Web;
 using System;
-using System.Threading;
-using Karambolo.Common;
-using Microsoft.Extensions.Localization;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Localization;
-using AspNetSkeleton.Core.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Localization;
-using Karambolo.Common.Localization;
 using Karambolo.PO;
-using Microsoft.Extensions.Options;
 
 namespace AspNetSkeleton.UI.Infrastructure.Localization
 {

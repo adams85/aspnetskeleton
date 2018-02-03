@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Text;
 using AspNetSkeleton.Base;
 using AspNetSkeleton.Base.Utils;
 using AspNetSkeleton.Common.Infrastructure;
 using AspNetSkeleton.Core;
-using AspNetSkeleton.Core.Infrastructure;
 using AspNetSkeleton.Core.Infrastructure.Caching;
 using AspNetSkeleton.DataAccess;
 using AspNetSkeleton.Service.Contract;
@@ -17,10 +13,8 @@ using AspNetSkeleton.Service.Host.Core.Infrastructure.BackgroundWork;
 using AspNetSkeleton.Service.Host.Core.Infrastructure.Caching;
 using Autofac;
 using Karambolo.Common;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using RazorLight;
 
 namespace AspNetSkeleton.Service.Host.Core

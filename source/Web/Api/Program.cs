@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AspNetSkeleton.Api.Hosting;
-using AspNetSkeleton.Base;
-using AspNetSkeleton.Common.Cli;
-using AspNetSkeleton.Core;
+﻿using AspNetSkeleton.Api.Hosting;
 using AspNetSkeleton.Core.Hosting;
 using AspNetSkeleton.Core.Infrastructure;
 using AspNetSkeleton.Core.Utils;
 using Autofac;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace AspNetSkeleton.Api
 {

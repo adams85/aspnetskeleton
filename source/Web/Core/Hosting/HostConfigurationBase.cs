@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AspNetSkeleton.Base;
-using AspNetSkeleton.Base.Utils;
-using AspNetSkeleton.Common.Cli;
-using AspNetSkeleton.Core.Hosting;
+﻿using AspNetSkeleton.Common.Cli;
 using AspNetSkeleton.Core.Hosting.Operations;
 using AspNetSkeleton.Core.Infrastructure;
 using Autofac;
-using Karambolo.Extensions.Logging.File;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace AspNetSkeleton.Core.Hosting
 {

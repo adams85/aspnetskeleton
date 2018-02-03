@@ -1,5 +1,4 @@
-﻿using AspNetSkeleton.Core.Infrastructure;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using Karambolo.PO;
@@ -10,14 +9,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Logging;
 using System;
-using AspNetSkeleton.Common.Infrastructure;
 using AspNetSkeleton.Core;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using AspNetSkeleton.UI.Helpers;
 using Microsoft.Extensions.Options;
-using System.Globalization;
 
 namespace AspNetSkeleton.UI.Infrastructure.Localization
 {

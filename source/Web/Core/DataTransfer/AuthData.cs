@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using AspNetSkeleton.Base;
-using AspNetSkeleton.Common;
-using AspNetSkeleton.Service.Contract.DataObjects;
 
 namespace AspNetSkeleton.Core.DataTransfer
 {

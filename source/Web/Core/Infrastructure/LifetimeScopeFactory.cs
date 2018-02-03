@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Autofac;
 
 namespace AspNetSkeleton.Core.Infrastructure

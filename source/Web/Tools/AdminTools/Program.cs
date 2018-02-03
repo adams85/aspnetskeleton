@@ -1,5 +1,4 @@
 ﻿using AspNetSkeleton.AdminTools.Infrastructure;
-using AspNetSkeleton.AdminTools.Operations;
 using AspNetSkeleton.Api.Contract;
 using AspNetSkeleton.Common.Cli;
 using AspNetSkeleton.Service.Contract;

@@ -6,7 +6,6 @@ using DasMulli.Win32.ServiceUtils;
 using System.Runtime.InteropServices;
 using Karambolo.Common;
 using System.Runtime.Loader;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace AspNetSkeleton.Core.Hosting.Operations

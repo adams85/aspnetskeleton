@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AspNetSkeleton.Base.Utils;
 using AspNetSkeleton.Core.Infrastructure;
 using Autofac;
-using Karambolo.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

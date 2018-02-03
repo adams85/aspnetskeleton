@@ -8,9 +8,6 @@ using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using AspNetSkeleton.Core.DataTransfer;
-using AspNetSkeleton.Core;
-using AspNetSkeleton.Core.Infrastructure.Security;
 using AspNetSkeleton.Core.Utils;
 
 namespace AspNetSkeleton.Api.Controllers

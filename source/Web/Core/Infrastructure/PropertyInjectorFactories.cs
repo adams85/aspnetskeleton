@@ -4,7 +4,6 @@ using Autofac;
 using Karambolo.Common;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
-using Karambolo.Common.Localization;
 using System.Collections.Concurrent;
 using AspNetSkeleton.Common.Infrastructure;
 using Microsoft.Extensions.Localization;

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AspNetSkeleton.Base;
-using AspNetSkeleton.Common.Cli;
-using AspNetSkeleton.Core;
+﻿using AspNetSkeleton.Common.Cli;
 using AspNetSkeleton.Core.Hosting;
 using Autofac;
 using Microsoft.Extensions.Configuration;

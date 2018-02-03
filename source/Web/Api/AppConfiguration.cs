@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using AspNetSkeleton.Api.Handlers;
 using AspNetSkeleton.Base.Utils;
 using AspNetSkeleton.Common.Utils;
@@ -9,15 +7,12 @@ using AspNetSkeleton.Core.Infrastructure;
 using AspNetSkeleton.Core.Infrastructure.Security;
 using AspNetSkeleton.Service.Contract;
 using Autofac;
-using Karambolo.Common;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace AspNetSkeleton.Api

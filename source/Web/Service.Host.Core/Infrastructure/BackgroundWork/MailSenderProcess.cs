@@ -4,7 +4,6 @@ using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
 using AspNetSkeleton.Base;
-using AspNetSkeleton.Common.Infrastructure;
 using AspNetSkeleton.Core;
 using AspNetSkeleton.Service.Contract;
 using AspNetSkeleton.Service.Contract.Commands;

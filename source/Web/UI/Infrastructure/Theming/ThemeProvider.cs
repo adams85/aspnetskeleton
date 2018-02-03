@@ -1,10 +1,6 @@
-﻿using AspNetSkeleton.Core.Infrastructure;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using Autofac;
-using Karambolo.Common;
 using Microsoft.AspNetCore.Hosting;
-using AspNetSkeleton.Common.Infrastructure;
 using AspNetSkeleton.Core;
 using Microsoft.Extensions.Options;
 
