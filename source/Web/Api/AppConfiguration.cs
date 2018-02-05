@@ -3,9 +3,7 @@ using AspNetSkeleton.Api.Handlers;
 using AspNetSkeleton.Base.Utils;
 using AspNetSkeleton.Common.Utils;
 using AspNetSkeleton.Core;
-using AspNetSkeleton.Core.Infrastructure;
 using AspNetSkeleton.Core.Infrastructure.Security;
-using AspNetSkeleton.Service.Contract;
 using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -38,12 +36,12 @@ namespace AspNetSkeleton.Api
                 .As<IApp>()
                 .SingleInstance();
 
-            builder.RegisterType<ServiceProxyQueryDispatcher>()
-                .As<IQueryDispatcher>()
+            builder.RegisterType<Core.Infrastructure.ServiceProxyQueryDispatcher>()
+                .As<Service.Contract.IQueryDispatcher>()
                 .SingleInstance();
 
-            builder.RegisterType<ServiceProxyCommandDispatcher>()
-                .As<ICommandDispatcher>()
+            builder.RegisterType<Core.Infrastructure.ServiceProxyCommandDispatcher>()
+                .As<Service.Contract.ICommandDispatcher>()
                 .SingleInstance();
 #endif
         }

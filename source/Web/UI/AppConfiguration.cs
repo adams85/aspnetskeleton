@@ -5,8 +5,6 @@ using System.Linq;
 using System.Net;
 using AspNetSkeleton.Base.Utils;
 using AspNetSkeleton.Core;
-using AspNetSkeleton.Core.Infrastructure;
-using AspNetSkeleton.Service.Contract;
 using AspNetSkeleton.UI.Filters;
 using AspNetSkeleton.UI.Infrastructure.Localization;
 using AspNetSkeleton.UI.Infrastructure.Models;
@@ -59,12 +57,12 @@ namespace AspNetSkeleton.UI
                 .SingleInstance();
 
 #if DISTRIBUTED
-            builder.RegisterType<ServiceProxyQueryDispatcher>()
-                .As<IQueryDispatcher>()
+            builder.RegisterType<Core.Infrastructure.ServiceProxyQueryDispatcher>()
+                .As<Service.Contract.IQueryDispatcher>()
                 .SingleInstance();
 
-            builder.RegisterType<ServiceProxyCommandDispatcher>()
-                .As<ICommandDispatcher>()
+            builder.RegisterType<Core.Infrastructure.ServiceProxyCommandDispatcher>()
+                .As<Service.Contract.ICommandDispatcher>()
                 .SingleInstance();
 #endif
         }
@@ -240,7 +238,7 @@ namespace AspNetSkeleton.UI
 
                 return providerBuilder.Build();
             })
-            .As<IModelAttributesProvider>()
+            .As<IDynamicModelAttributesProvider>()
             .SingleInstance();
             #endregion
         }

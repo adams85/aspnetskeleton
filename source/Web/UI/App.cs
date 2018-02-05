@@ -7,6 +7,12 @@ using Microsoft.Extensions.Options;
 
 namespace AspNetSkeleton.UI
 {
+#if !DISTRIBUTED
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Service.Host.Core.Infrastructure.BackgroundWork;
+#endif
+
     public class App : AppBase
     {
         readonly string _listenUrl;
@@ -18,7 +24,7 @@ namespace AspNetSkeleton.UI
             _listenUrl = settings.ListenUrl;
 
 #if !DISTRIBUTED
-            _backgroundProcesses = context.Resolve<IEnumerable<Service.Host.Core.Infrastructure.BackgroundWork.IBackgroundProcess>>();
+            _backgroundProcesses = context.Resolve<IEnumerable<IBackgroundProcess>>();
 #endif
         }
 
@@ -31,7 +37,7 @@ namespace AspNetSkeleton.UI
         }
 
 #if !DISTRIBUTED
-        readonly IEnumerable<Service.Host.Core.Infrastructure.BackgroundWork.IBackgroundProcess> _backgroundProcesses;
+        readonly IEnumerable<IBackgroundProcess> _backgroundProcesses;
         Task[] _backgroundTasks;
 
         protected override Task StartUpCoreAsync()
