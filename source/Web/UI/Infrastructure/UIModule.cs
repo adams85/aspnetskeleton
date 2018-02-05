@@ -50,7 +50,7 @@ namespace AspNetSkeleton.UI.Infrastructure
 
                 return providerBuilder.Build();
             })
-            .As<IModelAttributesProvider>()
+            .As<IDynamicModelAttributesProvider>()
             .SingleInstance();
 
             builder.RegisterType<DynamicModelMetadataProvider>()

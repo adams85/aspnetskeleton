@@ -11,10 +11,8 @@ namespace AspNetSkeleton.UI.Areas.Dashboard.Models
     [HandledAs(typeof(ChangePasswordCommand))]
     public class ChangePasswordModel : ChangePasswordCommand
     {
-        public class Configurer : IModelAttributesProviderConfigurer
+        public class Configurer : ModelAttributesProviderConfigurer
         {
-            static ITextLocalizer T => DependencyResolver.Current.GetService<ITextLocalizer>();
-
             public static string CurrentPasswordDisplayName => T["Current password"];
             public static string NewPasswordDisplayName => T["New password"];
             public static string ConfirmPasswordDisplayName => T["Confirm password"];
@@ -22,7 +20,7 @@ namespace AspNetSkeleton.UI.Areas.Dashboard.Models
             public static string PasswordLengthErrorText => T["The {0} must be at least {2} characters long."];
             public static string ConfirmPasswordErrorText => T["The password and confirmation password do not match."];
 
-            public void Configure(ModelAttributesProviderBuilder builder)
+            public override void Configure(ModelAttributesProviderBuilder builder)
             {
                 builder.Model<ChangePasswordModel>().Property(m => m.CurrentPassword)
                     .Apply(new DisplayAttribute().Localize(() => CurrentPasswordDisplayName))

@@ -12,15 +12,13 @@ namespace AspNetSkeleton.UI.Models
     [HandledAs(typeof(AuthenticateUserQuery))]
     public class LoginModel : AuthenticateUserQuery
     {
-        public class Configurer : IModelAttributesProviderConfigurer
+        public class Configurer : ModelAttributesProviderConfigurer
         {
-            static ITextLocalizer T => DependencyResolver.Current.GetService<ITextLocalizer>();
-
             public static string UserNameDisplayName => T["E-mail address"];
             public static string PasswordDisplayName => T["Password"];
             public static string RememberMeDisplayName => T["Remember me?"];
 
-            public void Configure(ModelAttributesProviderBuilder builder)
+            public override void Configure(ModelAttributesProviderBuilder builder)
             {
                 builder.Model<LoginModel>().Property(m => m.UserName)
                     .Apply(new DisplayAttribute().Localize(() => UserNameDisplayName))
@@ -42,10 +40,8 @@ namespace AspNetSkeleton.UI.Models
     [HandledAs(typeof(CreateUserCommand))]
     public class RegisterModel : CreateUserCommand
     {
-        public class Configurer : IModelAttributesProviderConfigurer
+        public class Configurer : ModelAttributesProviderConfigurer
         {
-            static ITextLocalizer T => DependencyResolver.Current.GetService<ITextLocalizer>();
-
             public static string UserNameDisplayName => T["E-mail address"];
             public static string PasswordDisplayName => T["Password"];
             public static string ConfirmPasswordDisplayName => T["Confirm password"];
@@ -56,7 +52,7 @@ namespace AspNetSkeleton.UI.Models
             public static string PasswordLengthErrorText => T["The {0} must be at least {2} characters long."];
             public static string ConfirmPasswordErrorText => T["The password and confirmation password do not match."];
 
-            public void Configure(ModelAttributesProviderBuilder builder)
+            public override void Configure(ModelAttributesProviderBuilder builder)
             {
                 builder.Model<RegisterModel>().Property(m => m.UserName)
                     .Apply(new DisplayAttribute().Localize(() => UserNameDisplayName))
@@ -94,14 +90,12 @@ namespace AspNetSkeleton.UI.Models
     [HandledAs(typeof(ResetPasswordCommand))]
     public class ResetPasswordModel : ResetPasswordCommand
     {
-        public class Configurer : IModelAttributesProviderConfigurer
+        public class Configurer : ModelAttributesProviderConfigurer
         {
-            static ITextLocalizer T => DependencyResolver.Current.GetService<ITextLocalizer>();
-
             public static string UserNameDisplayName => T["E-mail address"];
             public static string InvalidEmailErrorText => T["Please enter a valid e-mail address."];
 
-            public void Configure(ModelAttributesProviderBuilder builder)
+            public override void Configure(ModelAttributesProviderBuilder builder)
             {
                 builder.Model<ResetPasswordModel>().Property(m => m.UserName)
                     .Apply(new DisplayAttribute().Localize(() => UserNameDisplayName))
@@ -118,17 +112,15 @@ namespace AspNetSkeleton.UI.Models
     [HandledAs(typeof(ChangePasswordCommand))]
     public class SetPasswordModel : ChangePasswordCommand
     {
-        public class Configurer : IModelAttributesProviderConfigurer
+        public class Configurer : ModelAttributesProviderConfigurer
         {
-            static ITextLocalizer T => DependencyResolver.Current.GetService<ITextLocalizer>();
-
             public static string NewPasswordDisplayName => T["New password"];
             public static string ConfirmPasswordDisplayName => T["Confirm password"];
 
             public static string PasswordLengthErrorText => T["The {0} must be at least {2} characters long."];
             public static string ConfirmPasswordErrorText => T["The password and confirmation password do not match."];
 
-            public void Configure(ModelAttributesProviderBuilder builder)
+            public override void Configure(ModelAttributesProviderBuilder builder)
             {
                 builder.Model<SetPasswordModel>().Property(m => m.NewPassword)
                     .Apply(new DisplayAttribute().Localize(() => NewPasswordDisplayName))

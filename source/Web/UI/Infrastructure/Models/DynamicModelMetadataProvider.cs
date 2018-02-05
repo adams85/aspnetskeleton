@@ -5,16 +5,11 @@ using System.Web.Mvc;
 
 namespace AspNetSkeleton.UI.Infrastructure.Models
 {
-    public interface IModelAttributesProvider
-    {
-        Attribute[] GetAttributes(Type containerType, string propertyName);
-    }
-
     public class DynamicModelMetadataProvider : CachedDataAnnotationsModelMetadataProvider
     {
-        readonly IModelAttributesProvider _modelAttributesProvider;
+        readonly IDynamicModelAttributesProvider _modelAttributesProvider;
 
-        public DynamicModelMetadataProvider(IModelAttributesProvider modelAttributesProvider)
+        public DynamicModelMetadataProvider(IDynamicModelAttributesProvider modelAttributesProvider)
         {
             _modelAttributesProvider = modelAttributesProvider;
         }
@@ -23,7 +18,7 @@ namespace AspNetSkeleton.UI.Infrastructure.Models
         {
             if (containerType != null && propertyName != null)
             {
-                var dynamicAttributes = _modelAttributesProvider.GetAttributes(containerType, propertyName);
+                var dynamicAttributes = _modelAttributesProvider.GetPropertyAttributes(containerType, propertyName);
 
                 if (dynamicAttributes.Length > 0)
                     attributes = attributes.Concat(dynamicAttributes);
@@ -35,9 +30,9 @@ namespace AspNetSkeleton.UI.Infrastructure.Models
 
     public class DynamicModelValidatorProvider : DataAnnotationsModelValidatorProvider
     {
-        readonly IModelAttributesProvider _modelAttributesProvider;
+        readonly IDynamicModelAttributesProvider _modelAttributesProvider;
 
-        public DynamicModelValidatorProvider(IModelAttributesProvider modelAttributesProvider)
+        public DynamicModelValidatorProvider(IDynamicModelAttributesProvider modelAttributesProvider)
         {
             _modelAttributesProvider = modelAttributesProvider;
         }
@@ -46,7 +41,7 @@ namespace AspNetSkeleton.UI.Infrastructure.Models
         {
             if (metadata.ContainerType != null && metadata.PropertyName != null)
             {
-                var dynamicAttributes = _modelAttributesProvider.GetAttributes(metadata.ContainerType, metadata.PropertyName);
+                var dynamicAttributes = _modelAttributesProvider.GetPropertyAttributes(metadata.ContainerType, metadata.PropertyName);
 
                 if (dynamicAttributes.Length > 0)
                     attributes = attributes.Concat(dynamicAttributes);

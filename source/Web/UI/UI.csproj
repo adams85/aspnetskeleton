@@ -179,6 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Infrastructure\Localization\LocalizationProvider.cs" />
+    <Compile Include="Infrastructure\Models\DynamicModelAttributesProvider.cs" />
     <Compile Include="Infrastructure\Theming\ThemeProvider.cs" />
     <Compile Include="Infrastructure\UIMvcHandler.cs" />
     <Compile Include="Infrastructure\UIRoute.cs" />
