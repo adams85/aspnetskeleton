@@ -7,25 +7,37 @@ using System.Linq;
 
 namespace AspNetSkeleton.UI.Infrastructure.Models
 {
-    public interface IModelAttributesProvider
-    {
-        Attribute[] GetAttributes(Type containerType, string propertyName);
-    }
-
     public class DynamicModelMetadataProvider : DefaultModelMetadataProvider
     {
-        readonly IModelAttributesProvider _modelAttributesProvider;
+        readonly IDynamicModelAttributesProvider _modelAttributesProvider;
 
-        public DynamicModelMetadataProvider(ICompositeMetadataDetailsProvider detailsProvider, IModelAttributesProvider modelAttributesProvider)
+        public DynamicModelMetadataProvider(ICompositeMetadataDetailsProvider detailsProvider, IDynamicModelAttributesProvider modelAttributesProvider)
             : base(detailsProvider)
         {
             _modelAttributesProvider = modelAttributesProvider;
         }
 
-        public DynamicModelMetadataProvider(ICompositeMetadataDetailsProvider detailsProvider, IOptions<MvcOptions> optionsAccessor, IModelAttributesProvider modelAttributesProvider)
+        public DynamicModelMetadataProvider(ICompositeMetadataDetailsProvider detailsProvider, IOptions<MvcOptions> optionsAccessor, IDynamicModelAttributesProvider modelAttributesProvider)
             : base(detailsProvider, optionsAccessor)
         {
             _modelAttributesProvider = modelAttributesProvider;
+        }
+
+        protected override DefaultMetadataDetails CreateTypeDetails(ModelMetadataIdentity key)
+        {
+            var result = base.CreateTypeDetails(key);
+
+            Attribute[] dynamicAttributes;
+            if (_modelAttributesProvider != null && // method is called from base constructor...
+                (dynamicAttributes = _modelAttributesProvider.GetTypeAttributes(result.Key.ModelType)).Length > 0)
+            {
+                var attributes = result.ModelAttributes;
+                attributes = new ModelAttributes(attributes.TypeAttributes.Concat(dynamicAttributes));
+
+                result = new DefaultMetadataDetails(result.Key, attributes);
+            }
+
+            return result;
         }
 
         protected override DefaultMetadataDetails[] CreatePropertyDetails(ModelMetadataIdentity key)
@@ -37,7 +49,7 @@ namespace AspNetSkeleton.UI.Infrastructure.Models
             {
                 var propertyEntry = result[i];
 
-                var dynamicAttributes = _modelAttributesProvider.GetAttributes(propertyEntry.Key.ContainerType, propertyEntry.Key.Name);
+                var dynamicAttributes = _modelAttributesProvider.GetPropertyAttributes(propertyEntry.Key.ContainerType, propertyEntry.Key.Name);
                 if (dynamicAttributes.Length > 0)
                 {
                     var attributes = propertyEntry.ModelAttributes;

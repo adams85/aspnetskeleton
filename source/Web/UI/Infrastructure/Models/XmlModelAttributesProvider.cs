@@ -19,7 +19,7 @@ namespace AspNetSkeleton.UI.Infrastructure.Models
         public string[] ModelMetadataFilePaths { get; set; }
     }
 
-    public class XmlModelAttributesProvider : IModelAttributesProvider
+    public class XmlModelAttributesProvider : DynamicModelAttributesProvider
     {
         enum WellKnownTypeKind
         {
@@ -56,7 +56,7 @@ namespace AspNetSkeleton.UI.Infrastructure.Models
             { WellKnownTypeKind.AttributeParam, new WellKnownTypeInfo(typeof(object), wellKnownAttributeParamNamespaces) },
         };
 
-        readonly Dictionary<Type, Dictionary<string, Attribute[]>> _attributeCache = new Dictionary<Type, Dictionary<string, Attribute[]>>();
+        readonly Dictionary<Type, DynamicModelMetadata> _attributeCache = new Dictionary<Type, DynamicModelMetadata>();
 
         readonly IFileProvider _fileProvider;
 
@@ -67,6 +67,138 @@ namespace AspNetSkeleton.UI.Infrastructure.Models
 
             if (!ArrayUtils.IsNullOrEmpty(optionsUnwrapped.ModelMetadataFilePaths))
                 Array.ForEach(optionsUnwrapped.ModelMetadataFilePaths, LoadModelAttributes);
+        }
+
+        static Type GetWellKnownType(string typeName, WellKnownTypeKind kind, Dictionary<string, Type> typeCache)
+        {
+            var key = string.Concat(kind.ToString(), "|", typeName);
+
+            if (!typeCache.TryGetValue(key, out Type resultLocal))
+                typeCache[key] = resultLocal = GetWellKnownTypeCore(wellKnownTypes[kind]);
+
+            return resultLocal;
+
+            Type GetWellKnownTypeCore(WellKnownTypeInfo info)
+            {
+                foreach (var kvp in info.Namespaces)
+                {
+                    var assembly = kvp.Key;
+                    var namespaces = kvp.Value;
+                    Type type;
+                    var count = namespaces.Length;
+                    for (var i = 0; i < count; i++)
+                        if ((type = assembly.GetType(string.Concat(namespaces[i], ".", typeName), throwOnError: false, ignoreCase: true)) != null &&
+                            info.BaseType.IsAssignableFrom(type))
+                            return type;
+                }
+                return null;
+            }
+        }
+
+        static object ConvertFrom(string value, Type type)
+        {
+            return
+                type.IsEnum ? Enum.Parse(type, value) :
+                type == typeof(Type) ? Type.GetType(value, throwOnError: true) :
+                Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
+        }
+
+        static Attribute ParseAttribute(XElement attributeElement, XAttribute typeNameAttribute, XAttribute propertyNameAttribute, Dictionary<string, Type> typeCache)
+        {
+            string attributeTypeHint;
+            Type attributeType;
+            if (attributeElement.Name == "attribute")
+            {
+                var attributeTypeHintAttribute = attributeElement.Attribute("type-name");
+                if (attributeTypeHintAttribute == null)
+                    throw new FormatException("Missing attribute type name in " +
+                        propertyNameAttribute != null ?
+                        $"property {typeNameAttribute.Value}.{propertyNameAttribute.Value}." :
+                        $"type {typeNameAttribute.Value}.");
+
+                attributeTypeHint = attributeTypeHintAttribute.Value;
+                attributeType = Type.GetType(attributeTypeHint, throwOnError: false, ignoreCase: true);
+            }
+            else
+            {
+                attributeTypeHint = attributeElement.Name.ToString();
+                attributeType = GetWellKnownType(attributeTypeHint + "Attribute", WellKnownTypeKind.Attribute, typeCache);
+            }
+
+            if (attributeType == null)
+                throw new InvalidOperationException($"Invalid attribute type {attributeTypeHint}.");
+
+            object[] ctorArgs;
+            if (attributeElement.HasElements)
+                ctorArgs = attributeElement.Elements().Select(ctorArgElement =>
+                {
+                    string ctorArgTypeHint;
+                    Type ctorArgType;
+
+                    if (ctorArgElement.Name == "arg")
+                    {
+                        var ctorArgTypeHintAttribute = ctorArgElement.Attribute("type-name");
+                        if (ctorArgTypeHintAttribute == null)
+                            throw new FormatException("Missing attribute constructor argument type name in " +
+                                propertyNameAttribute != null ?
+                                $"property {typeNameAttribute.Value}.{propertyNameAttribute.Value}." :
+                                $"type {typeNameAttribute.Value}.");
+
+                        ctorArgTypeHint = ctorArgTypeHintAttribute.Value;
+                        ctorArgType = Type.GetType(ctorArgTypeHint, throwOnError: false, ignoreCase: true);
+                    }
+                    else
+                    {
+                        ctorArgTypeHint = ctorArgElement.Name.ToString();
+                        ctorArgType = GetWellKnownType(ctorArgTypeHint, WellKnownTypeKind.AttributeParam, typeCache);
+                    }
+
+                    if (ctorArgType == null)
+                        throw new InvalidOperationException($"Invalid attribute constructor argument type {ctorArgTypeHint}.");
+
+                    return ConvertFrom(ctorArgElement.Value, ctorArgType);
+                }).ToArray();
+            else if (!attributeElement.IsEmpty && !string.IsNullOrEmpty(attributeElement.Value))
+                ctorArgs = new[] { (object)attributeElement.Value };
+            else
+                ctorArgs = ArrayUtils.Empty<object>();
+
+            var attribute = (Attribute)Activator.CreateInstance(attributeType, ctorArgs);
+            string attributeAttributeName;
+            foreach (var attributeAttribute in attributeElement.Attributes())
+                if ((attributeAttributeName = attributeAttribute.Name.ToString()) != "type-name")
+                {
+                    var property = attributeType.GetProperty(attributeAttributeName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                    if (property == null)
+                        throw new InvalidOperationException($"Invalid attribute property name {attributeType.Name}.{attributeAttributeName}");
+
+                    var value = ConvertFrom(attributeAttribute.Value, property.PropertyType);
+                    property.SetValue(attribute, value);
+                }
+
+            return attribute;
+        }
+
+        static KeyValuePair<string, List<Attribute>> ParseProperty(XElement propertyElement, XAttribute typeNameAttribute, Dictionary<string, Type> typeCache)
+        {
+            var propertyNameAttribute = propertyElement.Attribute("name");
+            if (propertyNameAttribute == null)
+                throw new FormatException($"Missing property name in type {typeNameAttribute.Value}.");
+
+            var attributes = new List<Attribute>();
+            foreach (var attributeElement in propertyElement.Elements())
+            {
+                var attribute = ParseAttribute(attributeElement, typeNameAttribute, propertyNameAttribute, typeCache);
+                attributes.Add(attribute);
+            }
+
+            return new KeyValuePair<string, List<Attribute>>(propertyNameAttribute.Value, attributes);
+        }
+
+        static void CheckElementName(XElement element, string expectedName)
+        {
+            if (element.Name != expectedName)
+                throw new FormatException($"Invalid element name: {element.Name}.");
         }
 
         void LoadModelAttributes(string modelMetadataFilePath)
@@ -88,175 +220,39 @@ namespace AspNetSkeleton.UI.Infrastructure.Models
 
                 var type = Type.GetType(typeNameAttribute.Value, throwOnError: true);
 
-                var propertyAttributes = new Dictionary<string, Attribute[]>();
-                Dictionary<string, Attribute[]> inheritedPropertyAttributes;
-
-                var inheritFromTypeNameAttribute = typeElement.Attribute("inheritFrom");
-                if (inheritFromTypeNameAttribute != null)
+                var baseTypes = new List<Type>();
+                foreach (var inheritFromElement in typeElement.Elements("inheritFrom"))
                 {
-                    var inheritFromType = Type.GetType(inheritFromTypeNameAttribute.Value, throwOnError: true);
+                    var baseTypeHintAttribute = inheritFromElement.Attribute("type-name");
+                    if (baseTypeHintAttribute == null)
+                        throw new FormatException($"Missing base type name in type {typeNameAttribute.Value}.");
 
-                    if (!_attributeCache.TryGetValue(inheritFromType, out inheritedPropertyAttributes))
-                        throw new InvalidOperationException($"Undefined type {inheritFromTypeNameAttribute.Value}.");
+                    var baseType = Type.GetType(baseTypeHintAttribute.Value, throwOnError: true);
+
+                    baseTypes.Add(baseType);
                 }
-                else
-                    inheritedPropertyAttributes = null;
 
+                var typeAttributes = new List<Attribute>();
+                foreach (var attributeElement in typeElement.Elements("attribute"))
+                {
+                    var attribute = ParseAttribute(attributeElement, typeNameAttribute, null, typeCache);
+                    typeAttributes.Add(attribute);
+                }
+
+                var propertyAttributes = new Dictionary<string, Attribute[]>();
                 foreach (var propertyElement in typeElement.Elements("property"))
                 {
-                    var propertyNameAttribute = propertyElement.Attribute("name");
-                    if (propertyNameAttribute == null)
-                        throw new FormatException($"Missing property name in type {typeNameAttribute.Value}.");
-
-                    var attributes = new Dictionary<Type, Attribute>();
-
-                    foreach (var attributeElement in propertyElement.Elements())
-                    {
-                        string attributeTypeHint;
-                        Type attributeType;
-
-                        if (attributeElement.Name == "attribute")
-                        {
-                            var attributeTypeHintAttribute = attributeElement.Attribute("type-name");
-                            if (attributeTypeHintAttribute == null)
-                                throw new FormatException($"Missing attribute type name in property {typeNameAttribute.Value}.{propertyNameAttribute.Value}.");
-
-                            attributeTypeHint = attributeTypeHintAttribute.Value;
-                            attributeType = Type.GetType(attributeTypeHint, throwOnError: false, ignoreCase: true);
-                        }
-                        else
-                        {
-                            attributeTypeHint = attributeElement.Name.ToString();
-                            attributeType = GetWellKnownType(attributeTypeHint + "Attribute", WellKnownTypeKind.Attribute);
-                        }
-
-                        if (attributeType == null)
-                            throw new InvalidOperationException($"Invalid attribute type {attributeTypeHint}.");
-
-                        object[] ctorArgs;
-                        if (attributeElement.HasElements)
-                            ctorArgs = attributeElement.Elements().Select(ctorArgElement =>
-                            {
-                                string ctorArgTypeHint;
-                                Type ctorArgType;
-
-                                if (ctorArgElement.Name == "arg")
-                                {
-                                    var ctorArgTypeHintAttribute = ctorArgElement.Attribute("type-name");
-                                    if (ctorArgTypeHintAttribute == null)
-                                        throw new FormatException($"Missing attribute constructor argument type name in property {typeNameAttribute.Value}.{propertyNameAttribute.Value}.");
-
-                                    ctorArgTypeHint = ctorArgTypeHintAttribute.Value;
-                                    ctorArgType = Type.GetType(ctorArgTypeHint, throwOnError: false, ignoreCase: true);
-                                }
-                                else
-                                {
-                                    ctorArgTypeHint = ctorArgElement.Name.ToString();
-                                    ctorArgType = GetWellKnownType(ctorArgTypeHint, WellKnownTypeKind.AttributeParam);
-                                }
-
-                                if (ctorArgType == null)
-                                    throw new InvalidOperationException($"Invalid attribute constructor argument type {ctorArgTypeHint}.");
-
-                                return ConvertFrom(ctorArgElement.Value, ctorArgType);
-                            }).ToArray();
-                        else if (!attributeElement.IsEmpty && !string.IsNullOrEmpty(attributeElement.Value))
-                            ctorArgs = new[] { (object)attributeElement.Value };
-                        else
-                            ctorArgs = ArrayUtils.Empty<object>();
-
-                        var attribute = (Attribute)Activator.CreateInstance(attributeType, ctorArgs);
-
-                        string attributeAttributeName;
-                        foreach (var attributeAttribute in attributeElement.Attributes())
-                            if ((attributeAttributeName = attributeAttribute.Name.ToString()) != "type-name")
-                            {
-                                var property = attributeType.GetProperty(attributeAttributeName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-                                if (property == null)
-                                    throw new InvalidOperationException($"Invalid attribute property name {attributeType.Name}.{attributeAttributeName}");
-
-                                var value = ConvertFrom(attributeAttribute.Value, property.PropertyType);
-                                property.SetValue(attribute, value);
-                            }
-
-                        attributes.Add(attributeType, attribute);
-                    }
-
-                    if (attributes.Count > 0)
-                    {
-                        if (inheritedPropertyAttributes != null && inheritedPropertyAttributes.TryGetValue(propertyNameAttribute.Value, out Attribute[] inheritedAttributes))
-                        {
-                            Attribute inheritedAttribute;
-                            Type inheritedAttributeType;
-                            var count = inheritedAttributes.Length;
-                            for (var i = 0; i < count; i++)
-                                if (!attributes.ContainsKey(inheritedAttributeType = (inheritedAttribute = inheritedAttributes[i]).GetType()))
-                                    attributes.Add(inheritedAttributeType, inheritedAttribute);
-                        }
-
-                        propertyAttributes.Add(propertyNameAttribute.Value, attributes.Values.ToArray());
-                    }
+                    var propertyAttribute = ParseProperty(propertyElement, typeNameAttribute, typeCache);
+                    propertyAttributes.Add(propertyAttribute.Key, propertyAttribute.Value.ToArray());
                 }
 
-                if (inheritedPropertyAttributes != null)
-                    foreach (var inheritedProperty in inheritedPropertyAttributes)
-                        if (!propertyAttributes.ContainsKey(inheritedProperty.Key))
-                            propertyAttributes.Add(inheritedProperty.Key, inheritedProperty.Value);
-
-                if (propertyAttributes.Count > 0)
-                    _attributeCache.Add(type, propertyAttributes);
+                _attributeCache.Add(type, new DynamicModelMetadata(baseTypes.ToArray(), typeAttributes.ToArray(), propertyAttributes));
             }
-
-            #region Local methods
-            void CheckElementName(XElement element, string expectedName)
-            {
-                if (element.Name != expectedName)
-                    throw new FormatException($"Invalid element name: {element.Name}.");
-            }
-
-            Type GetWellKnownType(string typeName, WellKnownTypeKind kind)
-            {
-                var key = string.Concat(kind.ToString(), "|", typeName);
-
-                if (!typeCache.TryGetValue(key, out Type resultLocal))
-                    typeCache[key] = resultLocal = GetWellKnownTypeCore(wellKnownTypes[kind]);
-
-                return resultLocal;
-
-                Type GetWellKnownTypeCore(WellKnownTypeInfo info)
-                {
-                    foreach (var kvp in info.Namespaces)
-                    {
-                        var assembly = kvp.Key;
-                        var namespaces = kvp.Value;
-                        Type type;
-                        var count = namespaces.Length;
-                        for (var i = 0; i < count; i++)
-                            if ((type = assembly.GetType(string.Concat(namespaces[i], ".", typeName), throwOnError: false, ignoreCase: true)) != null &&
-                                info.BaseType.IsAssignableFrom(type))
-                                return type;
-                    }
-                    return null;
-                }
-            }
-
-            object ConvertFrom(string value, Type type)
-            {
-                return
-                    type.IsEnum ? Enum.Parse(type, value) :
-                    type == typeof(Type) ? Type.GetType(value, throwOnError: true) :
-                    Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
-            }
-            #endregion
         }
 
-        public Attribute[] GetAttributes(Type containerType, string propertyName)
+        protected override bool TryGetModelMetadata(Type containerType, out DynamicModelMetadata value)
         {
-            return
-                _attributeCache.TryGetValue(containerType, out Dictionary<string, Attribute[]> propertyAttributes) &&
-                propertyAttributes.TryGetValue(propertyName, out Attribute[] result) ?
-                result :
-                ArrayUtils.Empty<Attribute>();
+            return _attributeCache.TryGetValue(containerType, out value);
         }
     }
 }

@@ -5,26 +5,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace AspNetSkeleton.UI.Infrastructure.Models
 {
-    public class FluentModelAttributesProvider : IModelAttributesProvider
+    public class FluentModelAttributesProvider : DynamicModelAttributesProvider
     {
-        readonly IReadOnlyDictionary<Type, IReadOnlyDictionary<string, Attribute[]>> _configuration;
+        readonly IReadOnlyDictionary<Type, DynamicModelMetadata> _configuration;
 
-        public FluentModelAttributesProvider(IReadOnlyDictionary<Type, IReadOnlyDictionary<string, Attribute[]>> configuration)
+        public FluentModelAttributesProvider(IReadOnlyDictionary<Type, DynamicModelMetadata> configuration)
         {
             _configuration = configuration;
         }
 
-        public Attribute[] GetAttributes(Type containerType, string propertyName)
+        protected override bool TryGetModelMetadata(Type containerType, out DynamicModelMetadata value)
         {
-            return
-                _configuration.TryGetValue(containerType, out IReadOnlyDictionary<string, Attribute[]> propertyAttributes) &&
-                propertyAttributes.TryGetValue(propertyName, out Attribute[] result) ?
-                result :
-                ArrayUtils.Empty<Attribute>();
+            return _configuration.TryGetValue(containerType, out value);
         }
     }
 
@@ -35,13 +30,15 @@ namespace AspNetSkeleton.UI.Infrastructure.Models
 
     public interface IModelAttributesConfigurer<TModel>
     {
+        IModelAttributesConfigurer<TModel> InheritFrom<TBaseModel>();
+        IModelAttributesConfigurer<TModel> Apply(Attribute attribute);
         IModelPropertyAttributesConfigurer Property<TProperty>(Expression<Func<TModel, TProperty>> expression);
     }
 
     public interface IModelAttributesProviderBuilder
     {
         IModelAttributesConfigurer<TModel> Model<TModel>();
-        IModelAttributesProvider Build();
+        IDynamicModelAttributesProvider Build();
     }
 
     public interface IModelAttributesProviderConfigurer
@@ -76,40 +73,81 @@ namespace AspNetSkeleton.UI.Infrastructure.Models
 
         interface IModelConfiguration
         {
-            Dictionary<PropertyInfo, ModelPropertyConfiguration> Configs { get; }
+            List<Type> BaseTypes { get; }
+            List<Attribute> Attributes { get; }
+            Dictionary<string, ModelPropertyConfiguration> PropertyConfigs { get; }
         }
 
         class ModelConfigurer<TModel> : IModelConfiguration, IModelAttributesConfigurer<TModel>
         {
-            public Dictionary<PropertyInfo, ModelPropertyConfiguration> Configs { get; } = new Dictionary<PropertyInfo, ModelPropertyConfiguration>();
+            public List<Type> BaseTypes { get; } = new List<Type>();
+            public List<Attribute> Attributes { get; } = new List<Attribute>();
+            public Dictionary<string, ModelPropertyConfiguration> PropertyConfigs { get; } = new Dictionary<string, ModelPropertyConfiguration>();
+
+            readonly ModelAttributesProviderBuilder _owner;
+
+            public ModelConfigurer(ModelAttributesProviderBuilder owner)
+            {
+                _owner = owner;
+            }
+
+            public IModelAttributesConfigurer<TModel> InheritFrom<TBaseModel>()
+            {
+                BaseTypes.Add(typeof(TBaseModel));
+                return this;
+            }
+
+            public IModelAttributesConfigurer<TModel> Apply(Attribute attribute)
+            {
+                Attributes.Add(attribute);
+                return this;
+            }
 
             public IModelPropertyAttributesConfigurer Property<TProperty>(Expression<Func<TModel, TProperty>> expression)
             {
                 var property = Lambda.Property(expression);
-                if (!Configs.TryGetValue(property, out ModelPropertyConfiguration config))
-                    Configs.Add(property, config = new ModelPropertyConfiguration());
+                if (!PropertyConfigs.TryGetValue(property.Name, out ModelPropertyConfiguration propertyConfig))
+                    PropertyConfigs.Add(property.Name, propertyConfig = new ModelPropertyConfiguration());
 
-                return config;
+                return propertyConfig;
             }
         }
 
-        readonly Dictionary<Type, IModelConfiguration> _configs = new Dictionary<Type, IModelConfiguration>();
+        readonly Dictionary<Type, IModelConfiguration> _modelConfigs = new Dictionary<Type, IModelConfiguration>();
 
         public IModelAttributesConfigurer<TModel> Model<TModel>()
         {
             var type = typeof(TModel);
-            if (!_configs.TryGetValue(type, out IModelConfiguration config))
-                _configs.Add(type, config = new ModelConfigurer<TModel>());
+            if (!_modelConfigs.TryGetValue(type, out IModelConfiguration config))
+                _modelConfigs.Add(type, config = new ModelConfigurer<TModel>(this));
 
             return (ModelConfigurer<TModel>)config;
         }
 
-        public IModelAttributesProvider Build()
+        static IEnumerable<Attribute> MergeAttributes(IEnumerable<Attribute> attributes, IList<Attribute> otherAttributes)
         {
-            var configuration = _configs
+            var n = otherAttributes.Count;
+            if (n == 0)
+                return attributes;
+
+            var attributesByType = attributes.ToDictionary(a => a.GetType(), Identity<Attribute>.Func);
+
+            Type otherAttributeType;
+            Attribute otherAttribute;
+            for (var i = 0; i < n; i++)
+                if (!attributesByType.ContainsKey(otherAttributeType = (otherAttribute = otherAttributes[i]).GetType()))
+                    attributesByType.Add(otherAttributeType, otherAttribute);
+
+            return attributesByType.Values;
+        }
+
+        public IDynamicModelAttributesProvider Build()
+        {
+            var configuration = _modelConfigs
                 .ToDictionary(
                     mc => mc.Key,
-                    mc => (IReadOnlyDictionary<string, Attribute[]>)mc.Value.Configs.ToDictionary(pc => pc.Key.Name, pc => pc.Value.Attributes.ToArray()));
+                    mc => new DynamicModelMetadata(mc.Value.BaseTypes.ToArray(), mc.Value.Attributes.ToArray(),
+                        mc.Value.PropertyConfigs.ToDictionary(pc => pc.Key, pc => pc.Value.Attributes.ToArray())));
 
             return new FluentModelAttributesProvider(configuration);
         }
