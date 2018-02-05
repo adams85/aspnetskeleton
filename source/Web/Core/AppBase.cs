@@ -135,6 +135,9 @@ namespace AspNetSkeleton.Core
                 .ConfigureServices(sc => sc.Remove(IsSharedService)) // removing shared registrations
                 .ConfigureServices(sc => sc.AddSingleton(AsStartup));
 
+            if (!_settings.EnableApplicationInsights)
+                builder.UseSetting(WebHostDefaults.PreventHostingStartupKey, true.ToString());
+
             return builder.Build();
         }
 
