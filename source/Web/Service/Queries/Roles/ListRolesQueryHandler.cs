@@ -24,18 +24,16 @@ namespace AspNetSkeleton.Service.Queries.Roles
 
             using (var scope = _queryContext.CreateDataAccessScope())
             {
-                IQueryable<Role> baseLinq;
+                IQueryable<Role> linq;
                 if (query.UserName != null)
-                    baseLinq =
+                    linq =
                         from u in scope.Context.Query<User>().FilterByName(query.UserName)
                         from ur in u.Roles
                         select ur.Role;
                 else
-                    baseLinq = scope.Context.Query<Role>();
+                    linq = scope.Context.Query<Role>();
 
-                var linq = Apply(query, baseLinq.ToData());
-
-                return await ResultAsync(query, linq, cancellationToken).ConfigureAwait(false);
+                return await ResultAsync(query, linq.ToData(), cancellationToken).ConfigureAwait(false);
             }
         }
     }
