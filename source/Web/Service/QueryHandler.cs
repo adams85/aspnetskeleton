@@ -71,11 +71,8 @@ namespace AspNetSkeleton.Service
                 }
             }
 
-            if (query.PageIndex != null)
-                linq = linq.Skip(query.PageIndex.Value);
-
-            if (query.PageSize != null)
-                linq = linq.Take(query.PageSize.Value);
+            if (query.IsPaged)
+                linq = linq.Skip(query.PageIndex.Value * query.PageSize.Value).Take(query.PageSize.Value);
 
             return linq;
         }
