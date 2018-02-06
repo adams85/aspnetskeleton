@@ -14,7 +14,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    @RenderSection("metas", required: false)
+    @RenderSection("Metas", required: false)
 
     <title>AspNetSkeleton@(title)</title>
     <link rel="icon" type="image/png" href="@Url.Content("~/images/favicon.png")" />
@@ -24,6 +24,9 @@
     <link rel="stylesheet" href="~/bundles/css/themes/@ThemeManager.CurrentTheme/site.css" />
 
     @RenderSection("Stylesheets", required: false)
+
+    @* scripts *@
+    @RenderSection("ScriptsHead", required: false)
 </head>
 <body>
     <div id="page-wrapper">
@@ -92,7 +95,7 @@
 
     <script src="~/bundles/js/site.js"></script>
 
-    @RenderSection("Scripts", required: false)
+    @RenderSection("ScriptsBody", required: false)
 
     <script type="text/javascript">
         page.confirmDeleteMessage = '@T["Do you really want to delete this item?"]';

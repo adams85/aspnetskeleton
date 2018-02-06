@@ -4,9 +4,14 @@
     var activeSubMenuItem = (string)ViewData["ActiveSubMenuItem"];
 }
 
-@section Scripts
+@section Stylesheets
 {
-    @RenderSection("Scripts", required: false)
+    @RenderSection("Stylesheets", required: false)
+}
+
+@section ScriptsHead
+{
+    @RenderSection("ScriptsHead", required: false)
 }
 
 @* https://www.jonathanbriehl.com/2014/01/17/vertical-menu-for-bootstrap-3/ *@
@@ -27,3 +32,8 @@
     @RenderBody()
   </div>
 </div>
+
+@section ScriptsBody
+{
+    @RenderSection("ScriptsBody", required: false)
+}
