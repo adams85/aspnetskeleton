@@ -10,6 +10,7 @@ using AspNetSkeleton.UI.Infrastructure.Localization;
 using AspNetSkeleton.UI.Infrastructure.Models;
 using AspNetSkeleton.UI.Infrastructure.Security;
 using AspNetSkeleton.UI.Infrastructure.Theming;
+using AspNetSkeleton.UI.Middlewares;
 using Autofac;
 using Karambolo.Common;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -137,11 +138,7 @@ namespace AspNetSkeleton.UI
             #endregion
 
             #region MVC
-            services.AddMvc(
-                o =>
-                {
-                    o.Filters.Add<ExceptionHandlingAttribute>();
-                })
+            services.AddMvc()
                 .ConfigureApplicationPartManager(m =>
                 {
                     // restricting controller discovery to the current assembly
@@ -260,6 +257,8 @@ namespace AspNetSkeleton.UI
             }
             else
                 app.UseExceptionHandler("/Home/Error");
+
+            app.UseMiddleware<ExceptionFilterMiddleware>();
             #endregion
 
             #region Reverse proxy support
@@ -295,13 +294,7 @@ namespace AspNetSkeleton.UI
             else
             {
                 var defaultCulture = CultureInfo.CreateSpecificCulture(settings.DefaultCulture);
-
-                app.Use((ctx, next) =>
-                {
-                    CultureInfo.CurrentCulture = defaultCulture;
-                    CultureInfo.CurrentUICulture = defaultCulture;
-                    return next();
-                });
+                app.UseMiddleware<DefaultCultureMiddleware>(defaultCulture);
             }
             #endregion
 
