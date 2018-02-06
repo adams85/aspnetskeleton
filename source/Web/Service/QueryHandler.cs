@@ -82,12 +82,10 @@ namespace AspNetSkeleton.Service
 
         protected async Task<TResult> ResultAsync(TQuery query, IQueryable<T> linq, CancellationToken cancellationToken)
         {
-            var result = new TResult();
-            result.Rows = await linq.ToArrayAsync(cancellationToken).ConfigureAwait(false);
-            result.TotalRowCount = query.IsPaged ? await linq.CountAsync(cancellationToken).ConfigureAwait(false) : result.Rows.Length;
-            result.PageIndex = query.PageIndex ?? 0;
-            result.PageSize = query.PageSize ?? 0;
-            return result;
+            var rows = await Apply(query, linq).ToArrayAsync(cancellationToken).ConfigureAwait(false);
+            var totalRowCount = query.IsPaged ? await linq.CountAsync(cancellationToken).ConfigureAwait(false) : rows.Length;
+
+            return Result(rows, totalRowCount, query.PageIndex ?? 0, query.PageSize ?? 0);
         }
 
         protected TResult Result(T[] rows, int totalRowCount, int pageIndex, int pageSize)

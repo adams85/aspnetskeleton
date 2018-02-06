@@ -24,7 +24,7 @@ namespace AspNetSkeleton.Service.Queries.Users
 
             using (var scope = _queryContext.CreateDataAccessScope())
             {
-                var baseLinq =
+                var linq =
                     query.RoleName != null ?
                     (
                         from r in scope.Context.Query<Role>().FilterByName(query.RoleName)
@@ -34,14 +34,12 @@ namespace AspNetSkeleton.Service.Queries.Users
                     scope.Context.Query<User>();
 
                 if (query.UserNamePattern != null)
-                    baseLinq = baseLinq.FilterByName(query.UserNamePattern, pattern: true);
+                    linq = linq.FilterByName(query.UserNamePattern, pattern: true);
 
                 if (query.EmailPattern != null)
-                    baseLinq = baseLinq.FilterByEmail(query.EmailPattern, pattern: true);
+                    linq = linq.FilterByEmail(query.EmailPattern, pattern: true);
 
-                var linq = Apply(query, baseLinq.ToData());
-
-                return await ResultAsync(query, linq, cancellationToken).ConfigureAwait(false);
+                return await ResultAsync(query, linq.ToData(), cancellationToken).ConfigureAwait(false);
             }
         }
     }

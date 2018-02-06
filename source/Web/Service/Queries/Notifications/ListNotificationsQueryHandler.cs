@@ -24,14 +24,12 @@ namespace AspNetSkeleton.Service.Queries.Notifications
 
             using (var scope = _queryContext.CreateDataAccessScope())
             {
-                var baseLinq = scope.Context.Query<Notification>();
+                var linq = scope.Context.Query<Notification>();
 
                 if (query.State != null)
-                    baseLinq = baseLinq.Where(m => m.State == query.State);
+                    linq = linq.Where(m => m.State == query.State);
 
-                var linq = Apply(query, baseLinq.ToData());
-
-                return await ResultAsync(query, linq, cancellationToken).ConfigureAwait(false);
+                return await ResultAsync(query, linq.ToData(), cancellationToken).ConfigureAwait(false);
             }
         }
     }
