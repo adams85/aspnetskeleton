@@ -53,7 +53,7 @@ namespace AspNetSkeleton.UI.Infrastructure.Models
                 if (dynamicAttributes.Length > 0)
                 {
                     var attributes = propertyEntry.ModelAttributes;
-                    attributes = new ModelAttributes(attributes.TypeAttributes, attributes.PropertyAttributes.Concat(dynamicAttributes));
+                    attributes = new ModelAttributes(attributes.PropertyAttributes.Concat(dynamicAttributes), attributes.TypeAttributes);
 
                     result[i] = new DefaultMetadataDetails(propertyEntry.Key, attributes)
                     {                        
