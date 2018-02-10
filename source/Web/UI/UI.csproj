@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <UserSecretsId>aspnet-aspnetcore-38AB7092-857C-458C-9088-B396A4ED2A9C</UserSecretsId>
-    <AssemblyName>AspNetSkeleton.UI</AssemblyName>
+    <AssemblyName>Web.UI</AssemblyName>
     <RootNamespace>AspNetSkeleton.UI</RootNamespace>
     <Copyright>© 2017 Adam Simon</Copyright>
     <Authors />

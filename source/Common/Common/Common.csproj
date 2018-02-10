@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>AspNetSkeleton.Common</AssemblyName>
+    <AssemblyName>Common</AssemblyName>
     <RootNamespace>AspNetSkeleton.Common</RootNamespace>
     <Copyright>© 2017 Adam Simon</Copyright>
     <Authors />

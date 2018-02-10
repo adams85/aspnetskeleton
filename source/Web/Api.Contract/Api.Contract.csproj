@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>AspNetSkeleton.Api.Contract</AssemblyName>
+    <AssemblyName>Web.Api.Contract</AssemblyName>
     <RootNamespace>AspNetSkeleton.Api.Contract</RootNamespace>
     <Copyright>© 2017 Adam Simon</Copyright>
     <Authors />

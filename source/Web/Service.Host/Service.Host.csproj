@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <AssemblyName>AspNetSkeleton.Service.Host</AssemblyName>
+    <AssemblyName>Web.Service.Host</AssemblyName>
     <RootNamespace>AspNetSkeleton.Service.Host</RootNamespace>
     <Copyright>© 2017 Adam Simon</Copyright>
     <Authors />

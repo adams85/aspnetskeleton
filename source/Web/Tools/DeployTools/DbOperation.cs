@@ -35,11 +35,11 @@ namespace AspNetSkeleton.DeployTools
         };
 
 #if DISTRIBUTED
-        const string serviceHostAssemblyFileName = "AspNetSkeleton.Service.Host.dll";
+        const string serviceHostAssemblyFileName = "Web.Service.Host.dll";
         const string serviceHostConfigFileName = "appsettings.json";
         const string serviceHostRelativeBinPath = @"..\..\..\Service.Host\bin";
 #else
-        const string serviceHostAssemblyFileName = "AspNetSkeleton.UI.dll";
+        const string serviceHostAssemblyFileName = "Web.UI.dll";
         const string serviceHostConfigFileName = "appsettings.Monolithic.json";
         const string serviceHostRelativeBinPath = @"..\..\..\UI\bin";
 #endif
