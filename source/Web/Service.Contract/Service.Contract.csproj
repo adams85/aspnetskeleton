@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AspNetSkeleton.Service.Contract</RootNamespace>
-    <AssemblyName>AspNetSkeleton.Service.Contract</AssemblyName>
+    <AssemblyName>Web.Service.Contract</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>

@@ -7,7 +7,7 @@
     <ProjectGuid>{960C23A9-2DB5-4580-BF02-96F207BF6D62}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>AspNetSkeleton.Service.Host</RootNamespace>
-    <AssemblyName>AspNetSkeleton.Service.Host</AssemblyName>
+    <AssemblyName>Web.Service.Host</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

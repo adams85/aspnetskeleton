@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AspNetSkeleton.Service.Host.Core</RootNamespace>
-    <AssemblyName>AspNetSkeleton.Service.Host.Core</AssemblyName>
+    <AssemblyName>Web.Service.Host.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>

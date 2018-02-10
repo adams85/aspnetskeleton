@@ -16,11 +16,11 @@ namespace AspNetSkeleton.DeployTools
         public const string ServiceHostPathOption = "host-path";
 
 #if DISTRIBUTED
-        const string serviceHostAssemblyFileName = "AspNetSkeleton.Service.Host.exe";
+        const string serviceHostAssemblyFileName = "Web.Service.Host.exe";
         const string serviceHostConfigFileName = "app.config";
         const string serviceHostRelativeBinPath = @"..\..\..\Service.Host\bin";
 #else
-        const string serviceHostAssemblyFileName = "AspNetSkeleton.UI.dll";
+        const string serviceHostAssemblyFileName = "Web.UI.dll";
         const string serviceHostConfigFileName = "web.config";
         const string serviceHostRelativeBinPath = @"..\..\..\UI\bin";
 #endif
