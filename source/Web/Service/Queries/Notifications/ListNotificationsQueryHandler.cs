@@ -27,7 +27,7 @@ namespace AspNetSkeleton.Service.Queries.Notifications
                 var linq = scope.Context.Query<Notification>();
 
                 if (query.State != null)
-                    linq = linq.Where(m => m.State == query.State);
+                    linq = linq.Where(m => (m.State & query.State) == m.State);
 
                 return await ResultAsync(query, linq.ToData(), cancellationToken).ConfigureAwait(false);
             }

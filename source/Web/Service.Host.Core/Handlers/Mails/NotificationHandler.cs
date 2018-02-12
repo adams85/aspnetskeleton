@@ -6,12 +6,14 @@ using RazorLight;
 using System.Threading.Tasks;
 using System.Threading;
 using Karambolo.Common;
+using MimeKit;
+using MimeKit.Text;
 
 namespace AspNetSkeleton.Service.Host.Core.Handlers.Mails
 {
     public interface INotificationHandler
     {
-        Task<MailMessage> CreateMailMessageAsync(NotificationData notification, CancellationToken cancellationToken);
+        Task<MimeMessage> CreateMailMessageAsync(NotificationData notification, CancellationToken cancellationToken);
     }
 
     public abstract class NotificationHandler<TModel> : INotificationHandler
@@ -61,28 +63,30 @@ namespace AspNetSkeleton.Service.Host.Core.Handlers.Mails
 
         protected virtual bool IsBodyHtml => true;
 
-        static void AddAddressesToCollection(MailAddressCollection collection, IEnumerable<string> addresses)
+        static void AddAddressesToCollection(InternetAddressList collection, IEnumerable<string> addresses)
         {
             foreach (var address in addresses)
-                collection.Add(new MailAddress(address));
+                collection.Add(MailboxAddress.Parse(address));
         }
 
-        public async Task<MailMessage> CreateMailMessageAsync(NotificationData notification, CancellationToken cancellationToken)
+        public async Task<MimeMessage> CreateMailMessageAsync(NotificationData notification, CancellationToken cancellationToken)
         {
             var model = CreateModel(notification.Data);
 
-            var result = new MailMessage();
+            var result = new MimeMessage();
 
-            result.Sender = new MailAddress(GetSender(model));
-            result.From = new MailAddress(GetFrom(model));
+            result.Sender = MailboxAddress.Parse(GetSender(model));
+            result.From.Add(MailboxAddress.Parse(GetFrom(model)));
             AddAddressesToCollection(result.To, GetTo(model));
-            AddAddressesToCollection(result.CC, GetCc(model));
+            AddAddressesToCollection(result.Cc, GetCc(model));
             AddAddressesToCollection(result.Bcc, GetBcc(model));
 
             result.Subject = GenerateSubject(model);
 
-            result.Body = await GenerateBodyAsync(notification.Code, model, cancellationToken).ConfigureAwait(false);
-            result.IsBodyHtml = IsBodyHtml;
+            result.Body = new TextPart(IsBodyHtml ? TextFormat.Html : TextFormat.Plain)
+            {
+                Text = await GenerateBodyAsync(notification.Code, model, cancellationToken).ConfigureAwait(false)
+            };
 
             return result;
         }

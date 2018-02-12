@@ -20,7 +20,13 @@ namespace AspNetSkeleton.Service.Commands.Notifications
         {
             using (var scope = _commandContext.CreateDataAccessScope())
             {
-                var linq = scope.Context.Query<Notification>().Where(m => m.State != command.State);
+                IQueryable<Notification> linq = scope.Context.Query<Notification>();
+
+                if (command.Id != null)
+                    linq = linq.Where(n => n.Id.Value == command.Id.Value);
+
+                if (command.State != null)
+                    linq = linq.Where(n => (n.State & command.State.Value) == n.State);
 
                 if (command.Count != null)
                     linq = linq.Take(command.Count.Value);
@@ -31,7 +37,7 @@ namespace AspNetSkeleton.Service.Commands.Notifications
                 {
                     scope.Context.Track(notification);
 
-                    notification.State = command.State;
+                    notification.State = command.NewState;
 
                     scope.Context.Update(notification);
                 }

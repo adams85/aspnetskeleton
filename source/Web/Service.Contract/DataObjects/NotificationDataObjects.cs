@@ -4,11 +4,13 @@ using AspNetSkeleton.Common.Utils;
 
 namespace AspNetSkeleton.Service.Contract.DataObjects
 {
+    [Flags]
     public enum NotificationState
     {
-        Unknown,
-        Queued,
-        Processing,
+        Unknown = 0,
+        Queued = 1,
+        Processing = 2,
+        Failed = 4,
     }
 
     public class NotificationData

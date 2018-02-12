@@ -17,7 +17,9 @@ namespace AspNetSkeleton.Service.Contract.Commands
 
     public class MarkNotificationsCommand : ICommand
     {
+        public int? Id { get; set; }
+        public NotificationState? State { get; set; }
+        public NotificationState NewState { get; set; }
         public int? Count { get; set; }
-        public NotificationState State { get; set; }
     }
 }
