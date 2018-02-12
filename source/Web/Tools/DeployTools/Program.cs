@@ -28,6 +28,11 @@ namespace AspNetSkeleton.DeployTools
             Configuration = new ConfigurationBuilder()
                 .SetBasePath(AppEnvironment.Instance.AppBasePath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+#if DISTRIBUTED
+                .AddJsonFile("appsettings.Distributed.json", optional: true, reloadOnChange: false)
+#else
+                .AddJsonFile("appsettings.Monolithic.json", optional: true, reloadOnChange: false)
+#endif
                 .Build();
 
             using (var loggerFactory = CreateLoggerFactory())
