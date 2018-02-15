@@ -12,6 +12,7 @@ using AspNetSkeleton.Core.Hosting;
 using Karambolo.Extensions.Logging.File;
 using Microsoft.AspNetCore.Hosting;
 using AspNetSkeleton.Core.Utils;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace AspNetSkeleton.Core.Infrastructure
 {
@@ -75,6 +76,7 @@ namespace AspNetSkeleton.Core.Infrastructure
             services.AddLogging(ConfigureLogging);
 
             services.ConfigureByConvention<CoreSettings>(Configuration);
+            services.Configure<DataProtectionSettings>(Configuration.GetSection("DataProtection"));
             #endregion
 
             _hostConfiguration.RegisterCommonServices(services);

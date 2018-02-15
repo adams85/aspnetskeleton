@@ -1,11 +1,14 @@
 ﻿using System;
+using System.IO;
 using AspNetSkeleton.Core.Infrastructure;
 using Autofac;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace AspNetSkeleton.Core
 {
@@ -60,9 +63,30 @@ namespace AspNetSkeleton.Core
             AppContext = context;
         }
 
-        public virtual void RegisterBranchComponents(ContainerBuilder builder) { }
+        public virtual IServiceProvider ConfigureServices(IServiceCollection services)
+        {
+            // http://www.paraesthesia.com/archive/2016/06/15/set-up-asp-net-dataprotection-in-a-farm/
 
-        public abstract IServiceProvider ConfigureServices(IServiceCollection services);
+            var dataProtectionSettings = CommonContext.Resolve<IOptions<DataProtectionSettings>>().Value;
+
+            var dataProtection = services.AddDataProtection();
+
+            if (dataProtectionSettings.ApplicationName != null)
+                dataProtection.SetApplicationName(dataProtectionSettings.ApplicationName);
+
+            if (dataProtectionSettings.KeyLifetime != null)
+                dataProtection.SetDefaultKeyLifetime(dataProtectionSettings.KeyLifetime.Value);
+
+            if (dataProtectionSettings.KeyStorePath != null)
+                dataProtection.PersistKeysToFileSystem(new DirectoryInfo(dataProtectionSettings.KeyStorePath));
+
+            if (dataProtectionSettings.DisableAutomaticKeyGeneration)
+                dataProtection.DisableAutomaticKeyGeneration();
+
+            return null;
+        }
+
+        public virtual void RegisterBranchComponents(ContainerBuilder builder) { }
 
         public abstract void Configure(IApplicationBuilder app);
     }

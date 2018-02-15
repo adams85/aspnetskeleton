@@ -2,15 +2,27 @@
 
 namespace AspNetSkeleton.UI
 {
+    [Flags]
+    public enum ResponseKind
+    {
+        None = 0,
+        StaticFiles = 1,
+        Bundles = 2,
+        Views = 4,
+        All = StaticFiles | Bundles | Views
+    }
+
     public class UISettings
     {
         public string ListenUrl { get; set; }
 
         public string[] ReverseProxies { get; set; }
-        public bool EnableResponseMinification { get; set; }
+
+        public ResponseKind EnableResponseMinification { get; set; }
         public bool EnableResponseCompression { get; set; }
-        public bool EnableResponseCaching { get; set; }
+        public ResponseKind EnableResponseCaching { get; set; }
         public TimeSpan CacheHeaderMaxAge { get; set; } = TimeSpan.FromDays(7);
+        public ResponseKind UsePersistentCache { get; set; }
 
         public bool EnableLocalization { get; set; }
         public string DefaultCulture { get; set; } = "en-US";

@@ -12,6 +12,7 @@ using AspNetSkeleton.UI.Infrastructure.Security;
 using AspNetSkeleton.UI.Infrastructure.Theming;
 using AspNetSkeleton.UI.Middlewares;
 using Autofac;
+using Karambolo.AspNetCore.Bundling.Internal.Caching;
 using Karambolo.Common;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -28,6 +29,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
+using WebMarkupMin.AspNet.Common.Helpers;
 using WebMarkupMin.AspNetCore2;
 
 namespace AspNetSkeleton.UI
@@ -70,14 +72,13 @@ namespace AspNetSkeleton.UI
 
         public override IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            base.ConfigureServices(services);
+
             var env = WebHostServices.GetRequiredService<IHostingEnvironment>();
             var settings = CommonContext.Resolve<IOptions<UISettings>>().Value;
 
-            // TODO: configure data protection API if necessary
-            // http://www.paraesthesia.com/archive/2016/06/15/set-up-asp-net-dataprotection-in-a-farm/
-
             #region Response compression & minification
-            if (settings.EnableResponseCompression || settings.EnableResponseMinification)
+            if (settings.EnableResponseMinification.HasFlag(ResponseKind.Views) || settings.EnableResponseCompression)
             {
                 var webMarkupMin = services.AddWebMarkupMin(o =>
                 {
@@ -86,9 +87,9 @@ namespace AspNetSkeleton.UI
                     o.DisablePoweredByHttpHeaders = true;
                 });
 
-                if (settings.EnableResponseMinification)
+                if (settings.EnableResponseMinification.HasFlag(ResponseKind.Views))
                 {
-                    webMarkupMin.AddHtmlMinification(o => o.SupportedMediaTypes = new HashSet<string> { "text/html" });
+                    webMarkupMin.AddHtmlMinification(o => o.SupportedMediaTypes = new HashSet<string>() { "text/html" });
                     services.Configure<HtmlMinificationOptions>(Configuration.GetSection("Response").GetSection("HtmlMinification"));
                 }
 
@@ -103,16 +104,23 @@ namespace AspNetSkeleton.UI
             #region Bundling
             var bundling = services.AddBundling()
                 .UseWebMarkupMin()
-                .UseMemoryCaching()
                 .UseHashVersioning()
                 .AddCss()
                 .AddJs()
                 .AddLess();
 
-            if (settings.EnableResponseMinification)
+            if (settings.UsePersistentCache.HasFlag(ResponseKind.Bundles))
+            {
+                bundling.UseFileSystemCaching();
+                services.Configure<FileSystemBundleCacheOptions>(Configuration.GetSection("Response").GetSection("BundleCaching"));
+            }
+            else
+                bundling.UseMemoryCaching();
+
+            if (settings.EnableResponseMinification.HasFlag(ResponseKind.Bundles))
                 bundling.EnableMinification();
 
-            if (settings.EnableResponseCaching)
+            if (settings.EnableResponseCaching.HasFlag(ResponseKind.Bundles))
                 bundling.EnableCacheHeader(settings.CacheHeaderMaxAge);
 
             if (env.IsDevelopment())
@@ -130,8 +138,11 @@ namespace AspNetSkeleton.UI
             #endregion
 
             #region View caching
-            if (settings.EnableResponseCaching)
+            if (settings.EnableResponseCaching.HasFlag(ResponseKind.Views))
             {
+                if (settings.UsePersistentCache.HasFlag(ResponseKind.Views))
+                    throw new NotImplementedException("Persistent view caching is not implemented.");
+
                 services.AddResponseCaching();
                 services.Configure<ResponseCachingOptions>(Configuration.GetSection("Response").GetSection("ViewCaching"));
             }
@@ -299,7 +310,7 @@ namespace AspNetSkeleton.UI
             #endregion
 
             #region Response compression & minification
-            if (settings.EnableResponseCompression || settings.EnableResponseMinification)
+            if (settings.EnableResponseMinification.HasFlag(ResponseKind.Views) || settings.EnableResponseCompression)
                 app.UseWebMarkupMin();
             #endregion
 
@@ -327,7 +338,7 @@ namespace AspNetSkeleton.UI
 
             #region Static files
             var staticFileOptions = new StaticFileOptions();
-            if (settings.EnableResponseCaching)
+            if (settings.EnableResponseCaching.HasFlag(ResponseKind.StaticFiles))
                 staticFileOptions.OnPrepareResponse = ctx =>
                 {
                     var headers = ctx.Context.Response.GetTypedHeaders();
@@ -342,7 +353,7 @@ namespace AspNetSkeleton.UI
             #endregion
 
             #region View caching
-            if (settings.EnableResponseCaching)
+            if (settings.EnableResponseCaching.HasFlag(ResponseKind.Views))
                 app.UseResponseCaching();
             #endregion
 

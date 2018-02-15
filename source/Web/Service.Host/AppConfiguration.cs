@@ -35,6 +35,8 @@ namespace AspNetSkeleton.Service.Host
 
         public override IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            base.ConfigureServices(services);
+
             services.AddSingleton<IExceptionHandler, ExceptionHandler>();
 
             services.AddMvc(o => o.OutputFormatters.RemoveType<HttpNoContentOutputFormatter>())

@@ -120,7 +120,7 @@ namespace AspNetSkeleton.UI.Filters
             }
 
             var settings = serviceProvider.GetRequiredService<IOptions<UISettings>>().Value;
-            if (!settings.EnableResponseCaching)
+            if (!settings.EnableResponseCaching.HasFlag(ResponseKind.Views))
                 return NoopFilter.Instance;
 
             var optionsAccessor = serviceProvider.GetRequiredService<IOptions<MvcOptions>>();

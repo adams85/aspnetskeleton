@@ -262,6 +262,7 @@ namespace AspNetSkeleton.UI.Controllers
             }
         }
 
+        [AllowAnonymous]
         public IActionResult AccessDenied()
         {
             return View();

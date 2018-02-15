@@ -48,10 +48,9 @@ namespace AspNetSkeleton.Api
 
         public override IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IExceptionHandler, ExceptionHandler>();
+            base.ConfigureServices(services);
 
-            // TODO: configure data protection API if necessary
-            // http://www.paraesthesia.com/archive/2016/06/15/set-up-asp-net-dataprotection-in-a-farm/
+            services.AddSingleton<IExceptionHandler, ExceptionHandler>();
 
             services.AddAuthentication(ApiAuthenticationHandler.AuthenticationScheme)
                 .AddScheme<TokenAuthenticationOptions, ApiAuthenticationHandler>(ApiAuthenticationHandler.AuthenticationScheme, null);
