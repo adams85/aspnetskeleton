@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using AspNetSkeleton.Api.Contract;
+using AspNetSkeleton.Core;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,12 @@ namespace AspNetSkeleton.Api.Handlers
             if (ex == null)
                 return Task.CompletedTask;
 
-            if (ex is ApiErrorException apiErrorException)
+            if (ex is HttpResponseException httpResponseException)
+                result = new JsonResult(httpResponseException.Content)
+                {
+                    StatusCode = httpResponseException.StatusCode
+                };
+            else if (ex is ApiErrorException apiErrorException)
                 result = new JsonResult(apiErrorException.Error)
                 {
                     StatusCode = StatusCodes.Status400BadRequest
