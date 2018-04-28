@@ -200,7 +200,15 @@ namespace AspNetSkeleton.DataAccess
 
         const string RowVersionColumnName = "RowVersion";
 
-        static readonly Func<object, object> entityCloner = BuildEntityCloner();
+        static readonly Func<object, object> entityCloner;
+        static readonly MappingSchema mappingSchema;
+
+        static DbContext()
+        {
+            entityCloner = BuildEntityCloner();
+            mappingSchema = new MappingSchema(IdentityKey.MappingSchema);
+            mappingSchema.AddMetadataReader(new MetadataReader());
+        }
 
         static Func<object, object> BuildEntityCloner()
         {
@@ -214,11 +222,9 @@ namespace AspNetSkeleton.DataAccess
         readonly Dictionary<object, object> _trackedEntities = new Dictionary<object, object>();
 
         protected DbContext(string configurationString)
-            : base(configurationString)
+            : base(configurationString, mappingSchema)
         {
             ProviderName = DbConfiguration.GetProviderName(ConfigurationString);
-            MappingSchema.AddMetadataReader(new MetadataReader());
-            AddMappingSchema(IdentityKey.MappingSchema);
         }
 
         public string ProviderName { get; }
