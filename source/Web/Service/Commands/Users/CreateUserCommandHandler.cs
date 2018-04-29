@@ -98,8 +98,8 @@ namespace AspNetSkeleton.Service.Commands.Users
 
                 await scope.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-                command.OnKeyGenerated?.Invoke(command, key.ValueObject);
-            }            
+                this.RaiseKeyGenerated(command, key);
+            }
         }
     }
 }

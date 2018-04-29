@@ -34,7 +34,7 @@ namespace AspNetSkeleton.Service.Commands.Notifications
 
                 await scope.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-                command.OnKeyGenerated?.Invoke(command, key.ValueObject);
+                this.RaiseKeyGenerated(command, key);
             }
         }
     }

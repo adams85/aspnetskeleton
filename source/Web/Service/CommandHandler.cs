@@ -5,6 +5,7 @@ using AspNetSkeleton.Service.Contract;
 using System.Threading.Tasks;
 using System.Threading;
 using Karambolo.Common;
+using AspNetSkeleton.DataAccess;
 
 namespace AspNetSkeleton.Service
 {
@@ -57,6 +58,18 @@ namespace AspNetSkeleton.Service
             where TCommand : ICommand
         {
             @this.Require(!entityHasDependencies, CommandErrorCode.EntityDependent, () => new[] { Lambda.PropertyPath(paramPath) });
+        }
+
+        public static void RaiseKeyGenerated<TCommand>(this ICommandHandler<TCommand> @this, TCommand command, object keyValue)
+            where TCommand : IKeyGeneratorCommand
+        {
+            if (command.OnKeyGenerated == null)
+                return;
+
+            if (keyValue is IdentityKey identityKey && identityKey.IsAvailable)
+                keyValue = identityKey.ValueObject;
+
+            command.OnKeyGenerated.Invoke(command, keyValue);
         }
     }
 }
