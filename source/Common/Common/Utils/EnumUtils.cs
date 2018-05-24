@@ -7,19 +7,19 @@ namespace AspNetSkeleton.Common.Utils
     [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = false)]
     public class DisplayTextAttribute : Attribute
     {
-        public DisplayTextAttribute(string displayName)
+        public DisplayTextAttribute(string displayText)
         {
-            DisplayText = displayName;
+            DisplayText = displayText;
         }
 
-        public DisplayTextAttribute(string displayName, string abbreviation)
-            : this(displayName)
+        public DisplayTextAttribute(string displayText, string shortText)
+            : this(displayText)
         {
-            ShortText = abbreviation;
+            ShortText = shortText;
         }
 
-        public string DisplayText { get; private set; }
-        public string ShortText { get; private set; }
+        public string DisplayText { get; }
+        public string ShortText { get; }
     }
 
     public static class EnumUtils
@@ -39,7 +39,7 @@ namespace AspNetSkeleton.Common.Utils
             return attribute?.DisplayText;
         }
 
-        public static string Abbreviation(this Enum @this)
+        public static string ShortText(this Enum @this)
         {
             var attribute = GetDisplayTextAttribute(@this.GetType(), @this.ToString());
             return attribute?.ShortText;
