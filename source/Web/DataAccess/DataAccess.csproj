@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="linq2db.Core" Version="1.10.1" />
+    <PackageReference Include="linq2db" Version="2.0.0" />
     <PackageReference Include="MySql.Data" Version="6.10.5" />
   </ItemGroup>
 

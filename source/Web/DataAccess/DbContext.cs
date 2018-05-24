@@ -84,6 +84,11 @@ namespace AspNetSkeleton.DataAccess
 
                 return ArrayUtils.Empty<T>();
             }
+
+            public MemberInfo[] GetDynamicColumns(Type type)
+            {
+                return ArrayUtils.Empty<MemberInfo>();
+            }
         }
 
         protected class EntityMetadata
@@ -332,7 +337,7 @@ namespace AspNetSkeleton.DataAccess
 
         public IQueryable<TEntity> Query<TEntity>() where TEntity : class
         {
-            return new LinqToDBQueryableDecorator<TEntity>(GetTable<TEntity>());
+            return GetTable<TEntity>();
         }
 
         public void Track<TEntity>(TEntity entity) where TEntity : class
