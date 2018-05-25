@@ -38,41 +38,19 @@ namespace AspNetSkeleton.Service
 
             if (query.IsOrdered)
             {
-                var count = query.OrderColumns.Length;
-                for (var i = 0; i < count; i++)
+                var n = query.OrderColumns.Length;
+                for (var i = 0; i < n; i++)
                     this.RequireValid(!string.IsNullOrEmpty(query.OrderColumns[i]), q => q.OrderColumns);
             }
         }
 
         protected IQueryable<T> Apply(TQuery query, IQueryable<T> linq)
         {
-            if (!ArrayUtils.IsNullOrEmpty(query.OrderColumns))
-            {
-                bool ParseOrderColumn(string value, out string cn)
-                {
-                    var c = value[0];
-                    switch (c)
-                    {
-                        case '+':
-                        case '-':
-                            cn = value.Substring(1);
-                            return c == '-';
-                        default:
-                            cn = value;
-                            return false;
-                    }
-                }
-
-                var orderColumnCount = query.OrderColumns.Length;
-                for (var i = 0; i < orderColumnCount; i++)
-                {
-                    var descending = ParseOrderColumn(query.OrderColumns[i], out string columnName);
-                    linq = ApplyColumnOrder(linq, columnName, descending, nested: i > 0);
-                }
-            }
+            if (query.IsOrdered)
+                linq = linq.ApplyOrdering(query.OrderColumns);
 
             if (query.IsPaged)
-                linq = linq.Skip(query.PageIndex.Value * query.PageSize.Value).Take(query.PageSize.Value);
+                linq = linq.ApplyPaging(query.PageIndex.Value, query.PageSize.Value);
 
             return linq;
         }

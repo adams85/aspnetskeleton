@@ -45,5 +45,56 @@ namespace AspNetSkeleton.Common.Utils
         {
             return source.OrderByCore(keyPath, descending, nested: true);
         }
+
+        public static IQueryable<T> ApplyOrdering<T>(this IQueryable<T> source, params string[] orderColumns)
+        {
+            if (orderColumns == null)
+                throw new ArgumentNullException(nameof(orderColumns));
+
+            var n = orderColumns.Length;
+            for (var i = 0; i < n; i++)
+            {
+                var orderColumn = orderColumns[i];
+
+                if (string.IsNullOrEmpty(orderColumn))
+                    throw new ArgumentException(null, nameof(orderColumns));
+
+                var descending = ParseOrderColumn(orderColumn, out string columnName);
+                source = ApplyColumnOrder(source, columnName, descending, nested: i > 0);
+            }
+
+            return source;
+
+            bool ParseOrderColumn(string value, out string cn)
+            {
+                var c = value[0];
+                switch (c)
+                {
+                    case '+':
+                    case '-':
+                        cn = value.Substring(1);
+                        return c == '-';
+                    default:
+                        cn = value;
+                        return false;
+                }
+            }
+
+            IOrderedQueryable<T> ApplyColumnOrder(IQueryable<T> src, string columnName, bool descending, bool nested)
+            {
+                return nested ? ((IOrderedQueryable<T>)src).ThenBy(columnName, descending) : source.OrderBy(columnName, descending);
+            }
+        }
+
+        public static IQueryable<T> ApplyPaging<T>(this IQueryable<T> source, int pageIndex, int pageSize)
+        {
+            if (pageIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(pageIndex));
+
+            if (pageSize <= 0)
+                throw new ArgumentOutOfRangeException(nameof(pageSize));
+
+            return source.Skip(pageIndex * pageSize).Take(pageSize);
+        }
     }
 }
