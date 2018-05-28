@@ -137,7 +137,7 @@ LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user`
 /* password: "admin" */
-VALUES (1,'root','root@example.com','r4L+ezxon83leaAs/l5uhWyuxBgswAARkD3ecp/H4mcSinGq/ER50CPgKTEJo9m1',NULL,1,0,NOW(),NOW(),NOW(),NOW(),NULL,NOW(),0,NOW(),NULL,NULL);
+VALUES (1,'root','root@example.com','r4L+ezxon83leaAs/l5uhWyuxBgswAARkD3ecp/H4mcSinGq/ER50CPgKTEJo9m1',NULL,1,0,NULL,NOW(),NULL,NOW(),NULL,NOW(),0,NOW(),NULL,NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
