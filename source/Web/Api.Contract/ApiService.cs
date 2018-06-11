@@ -105,16 +105,14 @@ namespace AspNetSkeleton.Api.Contract
         }
 
         public static Task<ApiResult<TResponse>> InvokeApiAsync<TResponse>(this IApiService @this, CancellationToken cancellationToken, string verb, string action,
-            string userName, string password, string deviceId, object query = null, object content = null)
+            NetworkCredential credentials, string deviceId, object query = null, object content = null)
         {
-            if (userName == null)
-                throw new ArgumentNullException(nameof(userName));
-            if (password == null)
-                throw new ArgumentNullException(nameof(password));
+            if (credentials == null)
+                throw new ArgumentNullException(nameof(credentials));
 
             return @this.InvokeApiAsync<TResponse>(cancellationToken,
                 verb, action,
-                hc => hc[ApiContractConstants.CredentialsHttpHeaderName] = SerializeCredentials(userName, password, deviceId),
+                hc => hc[ApiContractConstants.CredentialsHttpHeaderName] = SerializeCredentials(credentials.UserName, credentials.Password, deviceId),
                 query, content);
         }
     }
