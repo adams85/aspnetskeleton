@@ -1,4 +1,6 @@
-﻿using AspNetSkeleton.Common.DataTransfer;
+﻿using System.Linq;
+using AspNetSkeleton.Common;
+using AspNetSkeleton.Common.DataTransfer;
 using AspNetSkeleton.Common.Utils;
 
 namespace AspNetSkeleton.Service.Contract
@@ -34,7 +36,7 @@ namespace AspNetSkeleton.Service.Contract
         public CommandErrorException(ErrorData error) : base(error) { }
 
         public CommandErrorException(CommandErrorCode errorCode, params object[] args)
-            : this(new ErrorData { Code = (int)errorCode, Args = args }) { }
+            : this(new ErrorData { Code = (int)errorCode, Args = args?.Select(Polymorph.Create).ToArray() }) { }
 
         public new CommandErrorCode ErrorCode => (CommandErrorCode)Error.Code;
 
@@ -45,7 +47,7 @@ namespace AspNetSkeleton.Service.Contract
                 var displayText = ErrorCode.DisplayText();
                 return
                     displayText != null ?
-                    string.Format(displayText, Error.Args) :
+                    string.Format(displayText, Args) :
                     $"Command execution failed with error code {ErrorCode}.";
             }
         }

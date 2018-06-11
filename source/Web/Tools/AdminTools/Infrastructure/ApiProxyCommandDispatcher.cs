@@ -6,17 +6,18 @@ using AspNetSkeleton.Service.Contract;
 using System.Threading.Tasks;
 using AspNetSkeleton.Api.Contract;
 using System.Runtime.ExceptionServices;
+using AspNetSkeleton.Common;
+using System.Linq;
 
 namespace AspNetSkeleton.AdminTools.Infrastructure
 {
-    public class ApiProxyCommandDispatcher : ICommandDispatcher
+    public class ApiProxyCommandDispatcher : ApiService, ICommandDispatcher
     {
-        readonly IApiService _apiService;
         readonly IApiOperationContext _context;
 
-        public ApiProxyCommandDispatcher(IApiService apiService, IApiOperationContext context)
+        public ApiProxyCommandDispatcher(IApiOperationContext context)
+            : base(context.Settings.ApiUrl, Enumerable.Empty<Predicate<Type>>())
         {
-            _apiService = apiService;
             _context = context;
         }
 
@@ -35,12 +36,12 @@ namespace AspNetSkeleton.AdminTools.Infrastructure
             var queryString = new { t = actualCommandType.Name };
             var invokeTask =
                 useCredentials ?
-                _apiService.InvokeApiAsync(cancellationToken, typeof(object), WebRequestMethods.Http.Post, "Admin/Command",
+                this.InvokeApiAsync<Polymorph<object>>(cancellationToken, WebRequestMethods.Http.Post, "Admin/Command",
                     _context.ApiCredentials, string.Empty, queryString, content: command) :
-                _apiService.InvokeApiAsync(cancellationToken, typeof(object), WebRequestMethods.Http.Post, "Admin/Command",
+                this.InvokeApiAsync<Polymorph<object>>(cancellationToken, WebRequestMethods.Http.Post, "Admin/Command",
                     _context.ApiAuthToken, queryString, content: command);
 
-            ApiResult<object> result;
+            ApiResult<Polymorph<object>> result;
             try
             {
                 result = await invokeTask
@@ -65,7 +66,7 @@ namespace AspNetSkeleton.AdminTools.Infrastructure
 
                 throw new UnauthorizedAccessException(useCredentials ? "API credentials are invalid." : "API authentication token has expired.", ex);
             }
-            
+
             if (command is IKeyGeneratorCommand keyGeneratorCommand)
             {
                 var key = result.Content;

@@ -1,6 +1,7 @@
 ﻿using System;
 using AspNetSkeleton.Service.Contract.Commands;
 using AspNetSkeleton.Common.Utils;
+using AspNetSkeleton.Common;
 
 namespace AspNetSkeleton.Service.Contract.DataObjects
 {
@@ -50,7 +51,7 @@ namespace AspNetSkeleton.Service.Contract.DataObjects
             return new CreateNotificationCommand
             {
                 Code = CodeInternal,
-                Data = Serialize(),
+                Data = Polymorph.Create<object>(Serialize()),
             };
         }
     }

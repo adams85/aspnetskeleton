@@ -20,20 +20,19 @@ namespace AspNetSkeleton.Service.Queries.Roles
         public async Task<RoleData> HandleAsync(GetRoleQuery query, CancellationToken cancellationToken)
         {
             Role role;
-
             using (var scope = _queryContext.CreateDataAccessScope())
             {
                 switch (query.Identifier)
                 {
                     case RoleIdentifier.Id:
-                        this.RequireValid(query.Key is int, q => q.Key);
-                        role = await scope.Context.GetByKeyAsync<Role>(cancellationToken, query.Key).ConfigureAwait(false);
+                        this.RequireValid(query.Key.Value is int, q => q.Key);
+                        role = await scope.Context.GetByKeyAsync<Role>(cancellationToken, query.Key.Value).ConfigureAwait(false);
                         break;
                     case RoleIdentifier.Name:
-                        this.RequireValid(query.Key is string, q => q.Key);
+                        this.RequireValid(query.Key.Value is string, q => q.Key);
 
-                        var roleName = (string)query.Key;
-                        this.RequireSpecified(roleName, q => q.Key);
+                        var roleName = (string)query.Key.Value;
+                        this.RequireSpecified<GetRoleQuery, RoleData, object>(roleName, q => q.Key);
 
                         role = await scope.Context.Query<Role>().GetByNameAsync(roleName, cancellationToken).ConfigureAwait(false);
                         break;

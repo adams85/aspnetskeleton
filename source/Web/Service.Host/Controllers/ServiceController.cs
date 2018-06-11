@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AspNetSkeleton.Common;
 using AspNetSkeleton.Core;
 using AspNetSkeleton.Service.Contract;
 using Microsoft.AspNetCore.Http;
@@ -69,7 +70,7 @@ namespace AspNetSkeleton.Service.Host.Controllers
 
             var command = (ICommand)formatterResult.Model;
 
-            object key = null;
+            Polymorph<object> key = default;
             if (command is IKeyGeneratorCommand keyGeneratorCommand)
                 keyGeneratorCommand.OnKeyGenerated = (c, k) => key = k;
 

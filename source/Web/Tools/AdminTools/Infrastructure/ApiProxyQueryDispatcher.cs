@@ -9,14 +9,13 @@ using System.Runtime.ExceptionServices;
 
 namespace AspNetSkeleton.AdminTools.Infrastructure
 {
-    public class ApiProxyQueryDispatcher : IQueryDispatcher
+    public class ApiProxyQueryDispatcher : ApiService, IQueryDispatcher
     {
-        readonly IApiService _apiService;
         readonly IApiOperationContext _context;
 
-        public ApiProxyQueryDispatcher(IApiService apiService, IApiOperationContext context)
+        public ApiProxyQueryDispatcher(IApiOperationContext context)
+            : base(context.Settings.ApiUrl, EnumerableUtils.FromElement<Predicate<Type>>(ServiceContractTypes.DataObjectTypes.Contains))
         {
-            _apiService = apiService;
             _context = context;
         }
 
@@ -39,9 +38,9 @@ namespace AspNetSkeleton.AdminTools.Infrastructure
             var queryString = new { t = actualQueryType.Name };
             var invokeTask =
                 useCredentials ?
-                _apiService.InvokeApiAsync(cancellationToken, resultType, WebRequestMethods.Http.Post, "Admin/Query",
+                this.InvokeApiAsync(cancellationToken, resultType, WebRequestMethods.Http.Post, "Admin/Query",
                     _context.ApiCredentials, string.Empty, queryString, content: query) :
-                _apiService.InvokeApiAsync(cancellationToken, resultType, WebRequestMethods.Http.Post, "Admin/Query",
+                this.InvokeApiAsync(cancellationToken, resultType, WebRequestMethods.Http.Post, "Admin/Query",
                     _context.ApiAuthToken, queryString, content: query);
 
             ApiResult<object> result;

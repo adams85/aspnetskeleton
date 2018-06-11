@@ -1,9 +1,12 @@
 ﻿using System;
+using AspNetSkeleton.Api.Contract;
 using AspNetSkeleton.Api.Handlers;
 using AspNetSkeleton.Base.Utils;
+using AspNetSkeleton.Common;
 using AspNetSkeleton.Common.Utils;
 using AspNetSkeleton.Core;
 using AspNetSkeleton.Core.Infrastructure.Security;
+using AspNetSkeleton.Service.Contract;
 using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -64,7 +67,14 @@ namespace AspNetSkeleton.Api
                     m.ApplicationParts.Add(new AssemblyPart(typeof(App).Assembly));
                 })
                 .AddControllersAsServices()
-                .AddJsonOptions(o => SerializationUtils.ConfigureDataTransferSerializerSettings(o.SerializerSettings));
+                .AddJsonOptions(o => SerializationUtils.ConfigureDataTransferSerializerSettings(o.SerializerSettings, new Predicate<Type>[]
+                {
+                    CommonTypes.DataObjectTypes.Contains,
+                    ServiceContractTypes.DataObjectTypes.Contains,
+                    ServiceContractTypes.QueryTypes.Contains,
+                    ServiceContractTypes.CommandTypes.Contains,
+                    ApiContractTypes.DataObjectTypes.Contains,
+                }));
 
             return null;
         }

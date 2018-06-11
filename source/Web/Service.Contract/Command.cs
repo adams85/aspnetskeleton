@@ -1,4 +1,5 @@
-﻿using AspNetSkeleton.Common.Infrastructure;
+﻿using AspNetSkeleton.Common;
+using AspNetSkeleton.Common.Infrastructure;
 using Karambolo.Common;
 using System;
 using System.Collections.Concurrent;
@@ -11,7 +12,7 @@ namespace AspNetSkeleton.Service.Contract
 
     public interface IKeyGeneratorCommand : ICommand
     {
-        Action<ICommand, object> OnKeyGenerated { get; set; }
+        Action<ICommand, Polymorph<object>> OnKeyGenerated { get; set; }
     }
 
     public static class Command

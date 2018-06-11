@@ -4,6 +4,7 @@ using AspNetSkeleton.Service.Contract.DataObjects;
 using AspNetSkeleton.DataAccess.Entities;
 using System.Threading;
 using System.Threading.Tasks;
+using System;
 
 namespace AspNetSkeleton.Service.Commands.Notifications
 {
@@ -28,7 +29,15 @@ namespace AspNetSkeleton.Service.Commands.Notifications
                 notification.State = NotificationState.Queued;
                 notification.CreatedAt = _clock.UtcNow;
                 notification.Code = command.Code;
-                notification.Data = command.Data;
+
+                if (command.Data.Value is Func<object> dataFactory)
+                    scope.Context.Schedule((ctx, ct) =>
+                    {
+                        notification.Data = dataFactory()?.ToString();
+                        return Task.FromResult(0);
+                    });
+                else
+                    notification.Data = command.Data.Value?.ToString();
 
                 var key = scope.Context.Create(notification);
 

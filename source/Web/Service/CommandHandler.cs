@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using Karambolo.Common;
 using AspNetSkeleton.DataAccess;
+using AspNetSkeleton.Common;
 
 namespace AspNetSkeleton.Service
 {
@@ -69,7 +70,7 @@ namespace AspNetSkeleton.Service
             if (keyValue is IdentityKey identityKey && identityKey.IsAvailable)
                 keyValue = identityKey.ValueObject;
 
-            command.OnKeyGenerated.Invoke(command, keyValue);
+            command.OnKeyGenerated.Invoke(command, Polymorph.Create(keyValue));
         }
     }
 }

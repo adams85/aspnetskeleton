@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.IO;
 using System.Linq;
 using Microsoft.Extensions.Options;
+using AspNetSkeleton.Common;
 
 namespace AspNetSkeleton.Api.Controllers
 {
@@ -80,7 +81,7 @@ namespace AspNetSkeleton.Api.Controllers
 
             var command = (ICommand)formatterResult.Model;
 
-            object key = null;
+            Polymorph<object> key = default;
             if (command is IKeyGeneratorCommand keyGeneratorCommand)
                 keyGeneratorCommand.OnKeyGenerated = (c, k) => key = k;
 

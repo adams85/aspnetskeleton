@@ -2,6 +2,7 @@
 using AspNetSkeleton.Base.Utils;
 using AspNetSkeleton.Common.Utils;
 using AspNetSkeleton.Core;
+using AspNetSkeleton.Service.Contract;
 using AspNetSkeleton.Service.Host.Core;
 using AspNetSkeleton.Service.Host.Handlers;
 using Autofac;
@@ -41,7 +42,12 @@ namespace AspNetSkeleton.Service.Host
 
             services.AddMvc(o => o.OutputFormatters.RemoveType<HttpNoContentOutputFormatter>())
                 .AddControllersAsServices()
-                .AddJsonOptions(o => SerializationUtils.ConfigureDataTransferSerializerSettings(o.SerializerSettings));
+                .AddJsonOptions(o => SerializationUtils.ConfigureDataTransferSerializerSettings(o.SerializerSettings, new Predicate<Type>[]
+                {
+                    ServiceContractTypes.DataObjectTypes.Contains,
+                    ServiceContractTypes.QueryTypes.Contains,
+                    ServiceContractTypes.CommandTypes.Contains,
+                }));
 
             return null;
         }

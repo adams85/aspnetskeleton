@@ -18,6 +18,8 @@ using LinqToDB.Metadata;
 
 namespace AspNetSkeleton.DataAccess
 {
+    public delegate Task<int> DbSaveChangesAction(DbContext context, CancellationToken cancellationToken);
+
     public interface IReadOnlyDbContext : IDisposable
     {
         object[] GetKey<TEntity>(TEntity entity) where TEntity : class;
@@ -39,6 +41,9 @@ namespace AspNetSkeleton.DataAccess
 
         void Delete<TEntity>(TEntity entity) where TEntity : class;
         void Delete<TEntity>(object rowVersion, params object[] keyValues) where TEntity : class;
+
+        void Schedule(DbSaveChangesAction action);
+
     }
 
     public interface IUnitOfWork : IDisposable
@@ -58,8 +63,6 @@ namespace AspNetSkeleton.DataAccess
 
     public abstract class DbContext : DataConnection, IDbContext
     {
-        delegate Task<int> ChangeTaskFactory(DbContext context, CancellationToken cancellationToken);
-
         class MetadataReader : IMetadataReader
         {
             public T[] GetAttributes<T>(Type type, bool inherit = true) where T : Attribute
@@ -223,7 +226,7 @@ namespace AspNetSkeleton.DataAccess
             return lambda.Compile();
         }
 
-        readonly List<ChangeTaskFactory> _changes = new List<ChangeTaskFactory>();
+        readonly List<DbSaveChangesAction> _changes = new List<DbSaveChangesAction>();
         readonly Dictionary<object, object> _trackedEntities = new Dictionary<object, object>();
 
         protected DbContext(string configurationString)
@@ -435,7 +438,7 @@ namespace AspNetSkeleton.DataAccess
 
             var setterAdapted = Expression.Lambda<Func<TEntity, TEntity>>(setter.Body, Expression.Parameter(typeof(TEntity)));
 
-            ChangeTaskFactory changeTaskFactory =
+            DbSaveChangesAction changeTaskFactory =
                 (ctx, ct) => ctx.GetTable<TEntity>().Where(filterPredicate).UpdateAsync(ctx.GetTable<TEntity>(), setterAdapted, ct);
 
             if (rowVersion != null)
@@ -468,7 +471,7 @@ namespace AspNetSkeleton.DataAccess
 
             var filterPredicate = BuildEntityFilterPredicate<TEntity>(rowVersion, keyValues);
 
-            ChangeTaskFactory changeTaskFactory =
+            DbSaveChangesAction changeTaskFactory =
                 (ctx, ct) => ctx.GetTable<TEntity>().Where(filterPredicate).DeleteAsync(ct);
 
             if (rowVersion != null)
@@ -481,6 +484,11 @@ namespace AspNetSkeleton.DataAccess
                 });
             else
                 _changes.Add(changeTaskFactory);
+        }
+
+        public void Schedule(DbSaveChangesAction action)
+        {
+            _changes.Add(action);
         }
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)

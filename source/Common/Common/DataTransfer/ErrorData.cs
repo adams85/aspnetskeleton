@@ -3,6 +3,6 @@
     public class ErrorData
     {
         public int Code { get; set; }
-        public object[] Args { get; set; }
+        public Polymorph<object>[] Args { get; set; }
     }
 }
