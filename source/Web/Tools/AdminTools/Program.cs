@@ -18,7 +18,6 @@ namespace AspNetSkeleton.AdminTools
             return new Program().Execute(args);
         }
 
-        readonly Lazy<IApiService> _apiService;
         readonly Lazy<IQueryDispatcher> _queryDispatcher;
         readonly Lazy<ICommandDispatcher> _commandDispatcher;
 
@@ -28,22 +27,18 @@ namespace AspNetSkeleton.AdminTools
             Logger = new TraceSourceLogger(AppName);
 
             Settings = new ToolsSettings();
-            _apiService = new Lazy<IApiService>(() => new ApiService(Settings.ApiUrl));
-            _queryDispatcher = new Lazy<IQueryDispatcher>(() => new ApiProxyQueryDispatcher(_apiService.Value, this));
-            _commandDispatcher = new Lazy<ICommandDispatcher>(() => new ApiProxyCommandDispatcher(_apiService.Value, this));
+            _queryDispatcher = new Lazy<IQueryDispatcher>(() => new ApiProxyQueryDispatcher(this));
+            _commandDispatcher = new Lazy<ICommandDispatcher>(() => new ApiProxyCommandDispatcher(this));
         }
 
         Program(Program prototype) : base(prototype)
         {
             Settings = prototype.Settings;
-            _apiService = prototype._apiService;
             _queryDispatcher = prototype._queryDispatcher;
             _commandDispatcher = prototype._commandDispatcher;
         }
 
         public IToolsSettings Settings { get; }
-
-        public IApiService ApiService => _apiService.Value;
 
         public IQueryDispatcher QueryDispatcher => _queryDispatcher.Value;
 

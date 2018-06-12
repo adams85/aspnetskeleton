@@ -3,7 +3,9 @@ using AspNetSkeleton.Common.Utils;
 using Karambolo.Common;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Runtime.ExceptionServices;
 using System.Threading;
@@ -32,6 +34,7 @@ namespace AspNetSkeleton.Common
         }
 
         public ErrorData Error { get; }
+        public object[] Args => Error.Args?.Select(a => a.Value).ToArray();
 
         public override string Message => $"Web API request failed with error code {Error?.Code.ToString() ?? "<unkown>"}.";
     }
@@ -43,10 +46,10 @@ namespace AspNetSkeleton.Common
         readonly JsonSerializer _serializer;
         readonly string _apiBaseUrl;
 
-        public WebApiInvoker(string apiBaseUrl)
+        public WebApiInvoker(string apiBaseUrl, IEnumerable<Predicate<Type>> typeFilters)
         {
             _apiBaseUrl = apiBaseUrl;
-            _serializer = JsonSerializer.Create(SerializationUtils.DataTransferSerializerSettings);
+            _serializer = JsonSerializer.Create(SerializationUtils.CreateDataTransferSerializerSettings(typeFilters.WithHead(CommonTypes.DataObjectTypes.Contains)));
         }
 
         protected virtual WebApiResult<TResponse> CreateResult<TResponse>(WebHeaderCollection headers, TResponse content)

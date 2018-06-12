@@ -1,6 +1,7 @@
 ﻿using System;
 using AspNetSkeleton.Service.Contract.Commands;
 using AspNetSkeleton.Common.Utils;
+using AspNetSkeleton.Common;
 
 namespace AspNetSkeleton.Service.Contract.DataObjects
 {

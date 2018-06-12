@@ -19,7 +19,5 @@ namespace AspNetSkeleton.Service.Contract
         protected ServiceErrorException(ErrorData error) : base(error) { }
 
         public ServiceErrorCode ErrorCode => (ServiceErrorCode)Error.Code;
-
-        public object[] Args => Error.Args;
     }
 }

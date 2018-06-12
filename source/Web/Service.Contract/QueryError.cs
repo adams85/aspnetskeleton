@@ -1,4 +1,6 @@
-﻿using AspNetSkeleton.Common.DataTransfer;
+﻿using System.Linq;
+using AspNetSkeleton.Common;
+using AspNetSkeleton.Common.DataTransfer;
 using AspNetSkeleton.Common.Utils;
 using System.ComponentModel.DataAnnotations;
 
@@ -8,13 +10,13 @@ namespace AspNetSkeleton.Service.Contract
     {
         Unknown = ServiceErrorCode.Unknown,
 
-        [Display(Name = "Value for parameter {0} was not specified.")]
+        [DisplayText("Value for parameter {0} was not specified.")]
         ParamNotSpecified = ServiceErrorCode.ParamNotSpecified,
 
-        [Display(Name = "Value of parameter {0} is not valid.")]
+        [DisplayText("Value of parameter {0} is not valid.")]
         ParamNotValid = ServiceErrorCode.ParamNotValid,
 
-        [Display(Name = "Entity identified by parameter {0} was not found.")]
+        [DisplayText("Entity identified by parameter {0} was not found.")]
         EntityNotFound = ServiceErrorCode.EntityNotFound,
     }
 
@@ -23,7 +25,7 @@ namespace AspNetSkeleton.Service.Contract
         public QueryErrorException(ErrorData error) : base(error) { }
 
         public QueryErrorException(QueryErrorCode errorCode, params object[] args)
-            : this(new ErrorData { Code = (int)errorCode, Args = args }) { }
+            : this(new ErrorData { Code = (int)errorCode, Args = args?.Select(Polymorph.Create).ToArray() }) { }
 
         public new QueryErrorCode ErrorCode => (QueryErrorCode)Error.Code;
 
@@ -34,7 +36,7 @@ namespace AspNetSkeleton.Service.Contract
                 var displayText = ErrorCode.DisplayText();
                 return
                     displayText != null ?
-                    string.Format(displayText, Error.Args) :
+                    string.Format(displayText, Args) :
                     $"Query execution failed with error code {ErrorCode}.";
             }
         }

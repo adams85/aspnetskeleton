@@ -36,7 +36,7 @@ namespace AspNetSkeleton.Service.Commands.Roles
 
                 await scope.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-                command.OnKeyGenerated?.Invoke(command, role.RoleId);
+                this.RaiseKeyGenerated(command, role.RoleId);
             }
         }
     }

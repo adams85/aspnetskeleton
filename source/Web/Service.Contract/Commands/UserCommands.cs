@@ -1,4 +1,5 @@
 ﻿using System;
+using AspNetSkeleton.Common;
 
 namespace AspNetSkeleton.Service.Contract.Commands
 {
@@ -16,7 +17,7 @@ namespace AspNetSkeleton.Service.Contract.Commands
         public string PhoneNumber { get; set; }
         public int DeviceLimit { get; set; }
 
-        public Action<ICommand, object> OnKeyGenerated { get; set; }
+        public Action<ICommand, Polymorph<object>> OnKeyGenerated { get; set; }
     }
 
     public class DeleteUserCommand : ICommand

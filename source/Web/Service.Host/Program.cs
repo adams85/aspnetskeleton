@@ -16,6 +16,7 @@ using System.Linq;
 using Karambolo.Common;
 using AspNetSkeleton.Service.Host.Core.Infrastructure.BackgroundWork;
 using AspNetSkeleton.Service.Host.Infrastructure;
+using AspNetSkeleton.Service.Contract;
 
 namespace AspNetSkeleton.Service.Host
 {
@@ -81,7 +82,12 @@ namespace AspNetSkeleton.Service.Host
             config.DependencyResolver = new AutofacWebApiDependencyResolver(_lifetimeScope);
 
             config.Formatters.Remove(config.Formatters.XmlFormatter);
-            config.Formatters.JsonFormatter.SerializerSettings = SerializationUtils.DataTransferSerializerSettings;
+            config.Formatters.JsonFormatter.SerializerSettings = SerializationUtils.CreateDataTransferSerializerSettings(new Predicate<Type>[]
+            {
+                ServiceContractTypes.DataObjectTypes.Contains,
+                ServiceContractTypes.QueryTypes.Contains,
+                ServiceContractTypes.CommandTypes.Contains,
+            });
 
             config.Filters.Add(new ExceptionHandlingAttribute());
 

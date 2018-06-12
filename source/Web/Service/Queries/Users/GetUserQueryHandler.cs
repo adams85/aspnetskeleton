@@ -25,22 +25,22 @@ namespace AspNetSkeleton.Service.Queries.Users
                 switch (query.Identifier)
                 {
                     case UserIdentifier.Id:
-                        this.RequireValid(query.Key is int, q => q.Key);
-                        user = await scope.Context.GetByKeyAsync<User>(cancellationToken, query.Key).ConfigureAwait(false);
+                        this.RequireValid(query.Key.Value is int, q => q.Key);
+                        user = await scope.Context.GetByKeyAsync<User>(cancellationToken, query.Key.Value).ConfigureAwait(false);
                         break;
                     case UserIdentifier.Name:
-                        this.RequireValid(query.Key is string, q => q.Key);
+                        this.RequireValid(query.Key.Value is string, q => q.Key);
 
-                        var userName = (string)query.Key;
-                        this.RequireSpecified(userName, q => q.Key);
+                        var userName = (string)query.Key.Value;
+                        this.RequireSpecified<GetUserQuery, UserData, object>(userName, q => q.Key);
 
                         user = await scope.Context.Query<User>().GetByNameAsync(userName, cancellationToken).ConfigureAwait(false);
                         break;
                     case UserIdentifier.Email:
-                        this.RequireValid(query.Key is string, q => q.Key);
+                        this.RequireValid(query.Key.Value is string, q => q.Key);
 
-                        var email = (string)query.Key;
-                        this.RequireSpecified(email, q => q.Key);
+                        var email = (string)query.Key.Value;
+                        this.RequireSpecified<GetUserQuery, UserData, object>(email, q => q.Key);
 
                         user = await scope.Context.Query<User>().GetByEmailAsync(email, cancellationToken).ConfigureAwait(false);
                         break;

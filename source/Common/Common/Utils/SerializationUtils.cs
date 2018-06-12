@@ -7,48 +7,58 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using Karambolo.Common;
+using AspNetSkeleton.Common.Infrastructure.Serialization;
+using Newtonsoft.Json.Converters;
 
 namespace AspNetSkeleton.Common.Utils
 {
     public static class SerializationUtils
     {
-        public class ExcludeDelegatesResolver : DefaultContractResolver
+        public static void ConfigureDataTransferSerializerSettings(JsonSerializerSettings settings, IEnumerable<Predicate<Type>> typeFilters = null)
         {
-            protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+            // built-in type name handling is disabled, Polymorph<T> is used as a workaround
+
+            settings.DefaultValueHandling = DefaultValueHandling.Ignore;
+
+            settings.SerializationBinder = new CustomSerializationBinder(
+                (typeFilters ?? Enumerable.Empty<Predicate<Type>>()).WithHead(CustomSerializationBinder.AllowBasicTypes).ToArray());
+
+            settings.ContractResolver = new CustomContractResolver(new Predicate<JsonProperty>[]
             {
-                var result = base.CreateProperties(type, memberSerialization);
+                CustomContractResolver.ExcludeDelegateProperty
+            });
 
-                for (var i = result.Count - 1; i >= 0; i--)
-                    if (result[i].PropertyType.IsDelegate())
-                        result.RemoveAt(i);
-
-                return result;
-            }
+            settings.Converters.Add(new PolymorphConverter());
+            settings.Converters.Add(new VersionConverter());
+            settings.Converters.Add(new CurrencyConverter());
+            settings.Converters.Add(new MoneyConverter());
+            settings.Converters.Add(new ConversionConverter());
         }
 
-        public class WritablePropertiesOnlyResolver : DefaultContractResolver
+        public static JsonSerializerSettings CreateDataTransferSerializerSettings(IEnumerable<Predicate<Type>> typeFilters = null)
         {
-            protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
-            {
-                var result = base.CreateProperties(type, memberSerialization);
-
-                for (var i = result.Count - 1; i >= 0; i--)
-                    if (!result[i].Writable)
-                        result.RemoveAt(i);
-
-                return result;
-            }
+            var settings = new JsonSerializerSettings();
+            ConfigureDataTransferSerializerSettings(settings, typeFilters);
+            return settings;
         }
 
-        public static readonly JsonSerializerSettings DataTransferSerializerSettings = new JsonSerializerSettings
+        public static readonly JsonSerializer DataPersistenceSerializer = new JsonSerializer
         {
-            DefaultValueHandling = DefaultValueHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.Auto,
-            TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
-            ContractResolver = new ExcludeDelegatesResolver(),
+            SerializationBinder = new CustomSerializationBinder(),
+            ContractResolver = new CustomContractResolver(new Predicate<JsonProperty>[]
+            {
+                CustomContractResolver.ExcludeDelegateProperty,
+                CustomContractResolver.ExcludeReadOnlyProperty
+            }),
+            Converters =
+            {
+                new PolymorphConverter(),
+                new VersionConverter(),
+                new CurrencyConverter(),
+                new MoneyConverter(),
+                new ConversionConverter()
+            }
         };
-
-        public static readonly JsonSerializer DataPersistenceSerializer = new JsonSerializer { ContractResolver = new WritablePropertiesOnlyResolver() };
 
         public static string SerializeArray<T>(T[] value, Func<T, string> elementSerializer)
         {

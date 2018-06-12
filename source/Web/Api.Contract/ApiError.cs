@@ -1,7 +1,7 @@
 ﻿using AspNetSkeleton.Common.DataTransfer;
 using AspNetSkeleton.Common.Utils;
 using AspNetSkeleton.Common;
-using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace AspNetSkeleton.Api.Contract
 {
@@ -9,17 +9,17 @@ namespace AspNetSkeleton.Api.Contract
     {
         Unknown,
 
-        [Display(Name = "Request had missing or invalid parameters. {0}")]
+        [DisplayText("Request had missing or invalid parameters. {0}")]
         InvalidRequest,
 
-        [Display(Name = "Device is not allowed.")]
+        [DisplayText("Device is not allowed.")]
         DeviceNotAllowed,
     }
 
     public class ApiErrorException : WebApiErrorException
     {
         public ApiErrorException(ApiErrorCode errorCode, params object[] args)
-            : this(new ErrorData { Code = (int)errorCode, Args = args }, null) { }
+            : this(new ErrorData { Code = (int)errorCode, Args = args?.Select(Polymorph.Create).ToArray() }, null) { }
 
         public ApiErrorException(ErrorData error, string authToken)
             : base(error)
@@ -38,7 +38,7 @@ namespace AspNetSkeleton.Api.Contract
                 var displayText = ErrorCode.DisplayText();
                 return
                     displayText != null ?
-                    string.Format(displayText, Error.Args) :
+                    string.Format(displayText, Args) :
                     $"API request failed with error code {ErrorCode}.";
             }
         }

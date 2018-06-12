@@ -13,7 +13,8 @@ namespace AspNetSkeleton.Core.Infrastructure
     {
         readonly ICoreSettings _settings;
 
-        public ServiceProxyQueryDispatcher(ICoreSettings settings) : base(settings.ServiceBaseUrl)
+        public ServiceProxyQueryDispatcher(ICoreSettings settings) :
+            base(settings.ServiceBaseUrl, EnumerableUtils.FromElement<Predicate<Type>>(ServiceContractTypes.DataObjectTypes.Contains))
         {
             _settings = settings;
         }

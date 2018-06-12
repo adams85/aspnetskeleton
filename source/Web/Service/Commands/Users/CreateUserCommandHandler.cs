@@ -94,7 +94,7 @@ namespace AspNetSkeleton.Service.Commands.Users
 
                 await scope.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-                command.OnKeyGenerated?.Invoke(command, user.UserId);
+                this.RaiseKeyGenerated(command, user.UserId);
             }            
         }
     }

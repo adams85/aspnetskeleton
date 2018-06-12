@@ -6,6 +6,7 @@ using AspNetSkeleton.Service.Contract;
 using System.Threading;
 using Karambolo.Common;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace AspNetSkeleton.Core.Infrastructure
 {
@@ -13,7 +14,8 @@ namespace AspNetSkeleton.Core.Infrastructure
     {
         readonly ICoreSettings _settings;
 
-        public ServiceProxyCommandDispatcher(ICoreSettings settings) : base(settings.ServiceBaseUrl)
+        public ServiceProxyCommandDispatcher(ICoreSettings settings)
+            : base(settings.ServiceBaseUrl, Enumerable.Empty<Predicate<Type>>())
         {
             _settings = settings;
         }
@@ -30,7 +32,7 @@ namespace AspNetSkeleton.Core.Infrastructure
 
             var actualCommandType = Command.GetActualTypeFor(command.GetType());
 
-            var result = await InvokeAsync(cancellationToken, typeof(object),
+            var result = await InvokeAsync<Polymorph<object>>(cancellationToken,
                 WebRequestMethods.Http.Post, "Command",
                 query: new { t = actualCommandType.Name }, content: command)
                 .WithTimeout(_settings.ServiceTimeOut)

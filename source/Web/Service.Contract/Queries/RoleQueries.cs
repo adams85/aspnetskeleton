@@ -1,4 +1,5 @@
-﻿using AspNetSkeleton.Service.Contract.DataObjects;
+﻿using AspNetSkeleton.Common;
+using AspNetSkeleton.Service.Contract.DataObjects;
 
 namespace AspNetSkeleton.Service.Contract.Queries
 {
@@ -11,7 +12,7 @@ namespace AspNetSkeleton.Service.Contract.Queries
     public class GetRoleQuery : IQuery<RoleData>
     {
         public RoleIdentifier Identifier { get; set; }
-        public object Key { get; set; }
+        public Polymorph<object> Key { get; set; }
     }
 
     public class ListRolesQuery : ListQuery<RoleData>

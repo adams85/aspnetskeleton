@@ -13,6 +13,9 @@ using Autofac.Integration.WebApi;
 using System.Web.Http;
 using System.Web.Routing;
 using Karambolo.Common;
+using AspNetSkeleton.Common;
+using AspNetSkeleton.Service.Contract;
+using AspNetSkeleton.Api.Contract;
 
 namespace AspNetSkeleton.Api
 {
@@ -61,7 +64,14 @@ namespace AspNetSkeleton.Api
         static void SetupWebApiFormatters(MediaTypeFormatterCollection formatters, IComponentContext context)
         {
             formatters.Remove(formatters.XmlFormatter);
-            formatters.JsonFormatter.SerializerSettings = SerializationUtils.DataTransferSerializerSettings;
+            formatters.JsonFormatter.SerializerSettings = SerializationUtils.CreateDataTransferSerializerSettings(new Predicate<Type>[]
+            {
+                CommonTypes.DataObjectTypes.Contains,
+                ServiceContractTypes.DataObjectTypes.Contains,
+                ServiceContractTypes.QueryTypes.Contains,
+                ServiceContractTypes.CommandTypes.Contains,
+                ApiContractTypes.DataObjectTypes.Contains,
+            });
         }
 
         public static void Configure(ILifetimeScope lifetimeScope)

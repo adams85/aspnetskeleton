@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AspNetSkeleton.Service.Contract;
 using System.Net;
 using System.Threading;
+using AspNetSkeleton.Common;
 
 namespace AspNetSkeleton.Service.Host.Controllers
 {
@@ -55,7 +56,7 @@ namespace AspNetSkeleton.Service.Host.Controllers
                 (command = await DeserializeBodyAsync(type, formatter)) == null)
                 throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
 
-            object key = null;
+            var key = default(Polymorph<object>);
             if (command is IKeyGeneratorCommand keyGeneratorCommand)
                 keyGeneratorCommand.OnKeyGenerated = (c, k) => key = k;
 

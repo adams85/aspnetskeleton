@@ -1,4 +1,5 @@
 ﻿using System;
+using AspNetSkeleton.Common;
 using AspNetSkeleton.Service.Contract.DataObjects;
 
 namespace AspNetSkeleton.Service.Contract.Queries
@@ -13,7 +14,7 @@ namespace AspNetSkeleton.Service.Contract.Queries
     public class GetUserQuery : IQuery<UserData>
     {
         public UserIdentifier Identifier { get; set; }
-        public object Key { get; set; }
+        public Polymorph<object> Key { get; set; }
     }
 
     public class ListUsersQuery : ListQuery<UserData>
