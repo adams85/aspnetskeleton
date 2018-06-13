@@ -50,7 +50,7 @@ namespace AspNetSkeleton.Service.Queries.Users
                 }
             }
 
-            return user.ToData();
+            return user?.ToData();
         }
     }
 }
