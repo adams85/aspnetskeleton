@@ -42,7 +42,7 @@ namespace AspNetSkeleton.Service.Queries.Roles
                 }
             }
 
-            return role.ToData();
+            return role?.ToData();
         }
     }
 }
