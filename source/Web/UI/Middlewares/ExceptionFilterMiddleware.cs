@@ -54,7 +54,7 @@ namespace AspNetSkeleton.UI.Middlewares
 
             if (ex is HttpResponseException httpResponseEx)
             {
-                result = new ObjectResult(httpResponseEx.Content) { StatusCode = httpResponseEx.StatusCode };
+                result = new ContentResult { StatusCode = httpResponseEx.StatusCode };
                 return true;
             }
 
@@ -69,7 +69,11 @@ namespace AspNetSkeleton.UI.Middlewares
             if (isAjaxRequest)
             {
                 logUnhandledException(_logger, ex);
-                result = new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                result = new ContentResult
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError,
+                    Content = "A server error occurred. Try again or contact the system administrator if the problem persists."
+                };
                 return true;
             }
 
