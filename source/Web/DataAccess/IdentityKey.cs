@@ -23,7 +23,7 @@ namespace AspNetSkeleton.DataAccess
 
                 mappingSchema.SetConverter<IdentityKey<T>, DataParameter>(v => new DataParameter
                 {
-                    Value = v.Value,
+                    Value = v?.Value,
                     DataType = SqlDataType.GetDataType(typeof(T)).DataType
                 });
 
@@ -34,8 +34,7 @@ namespace AspNetSkeleton.DataAccess
                     if (v.DataType != SqlDataType.GetDataType(typeof(T)).DataType)
                         throw new InvalidOperationException("Parameter and identity key type mismatch.");
 
-                    var value = MappingSchema.Default.ChangeTypeTo<T>(v.Value);
-                    return From(value);
+                    return v.Value != null ? From(MappingSchema.Default.ChangeTypeTo<T>(v.Value)) : null;
                 });
             }
         }
