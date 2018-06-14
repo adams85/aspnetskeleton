@@ -262,11 +262,14 @@ namespace AspNetSkeleton.UI
             #region Reverse proxy support
             // https://github.com/aspnet/Home/issues/2302
             if (!string.IsNullOrEmpty(settings.PathBase))
+            {
+                PathString pathBase = settings.PathBase;
                 app.Use((ctx, next) =>
                 {
-                    ctx.Request.PathBase = settings.PathBase;
+                    ctx.Request.PathBase = pathBase;
                     return next();
                 });
+            }
 
             if (!ArrayUtils.IsNullOrEmpty(settings.ReverseProxies))
             {
