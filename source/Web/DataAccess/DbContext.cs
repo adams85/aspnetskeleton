@@ -288,14 +288,12 @@ namespace AspNetSkeleton.DataAccess
 
             var bindings = new MemberBinding[columnCount];
 
+            var entityConstant = Expression.Constant(entity, typeof(TEntity));
             for (var i = 0; i < columnCount; i++)
             {
                 var member = columns[i].MemberInfo;
-                var constant = member.Get(
-                    pi => Expression.Constant(pi.GetValue(entity), pi.PropertyType),
-                    fi => Expression.Constant(fi.GetValue(entity), fi.FieldType));
-
-                bindings[i] = Expression.Bind(member, constant);
+                var memberAccess = Expression.MakeMemberAccess(entityConstant, member);
+                bindings[i] = Expression.Bind(member, memberAccess);
             }
 
             var setter = Expression.MemberInit(Expression.New(typeof(TEntity)), bindings);
