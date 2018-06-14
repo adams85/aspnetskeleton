@@ -259,6 +259,29 @@ namespace AspNetSkeleton.UI
             var themeProvider = app.ApplicationServices.GetRequiredService<IThemeProvider>();
             var localizationProvider = app.ApplicationServices.GetRequiredService<ILocalizationProvider>();
 
+            #region Reverse proxy support
+            // https://github.com/aspnet/Home/issues/2302
+            if (!string.IsNullOrEmpty(settings.PathBase))
+                app.Use((ctx, next) =>
+                {
+                    ctx.Request.PathBase = settings.PathBase;
+                    return next();
+                });
+
+            if (!ArrayUtils.IsNullOrEmpty(settings.ReverseProxies))
+            {
+                var forwardedHeadersOptions = new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.All,
+                    ForwardLimit = null
+                };
+
+                Array.ForEach(settings.ReverseProxies, rp => forwardedHeadersOptions.KnownProxies.Add(IPAddress.Parse(rp)));
+
+                app.UseForwardedHeaders(forwardedHeadersOptions);
+            }
+            #endregion
+
             #region Exception handling
             if (env.IsDevelopment())
             {
@@ -272,21 +295,6 @@ namespace AspNetSkeleton.UI
             app.UseStatusCodePages();
 
             app.UseMiddleware<ExceptionFilterMiddleware>();
-            #endregion
-
-            #region Reverse proxy support
-            if (!ArrayUtils.IsNullOrEmpty(settings.ReverseProxies))
-            {
-                var forwardedHeadersOptions = new ForwardedHeadersOptions
-                {
-                    ForwardedHeaders = ForwardedHeaders.All,
-                    ForwardLimit = null
-                };
-
-                Array.ForEach(settings.ReverseProxies, rp => forwardedHeadersOptions.KnownProxies.Add(IPAddress.Parse(rp)));
-
-                app.UseForwardedHeaders(forwardedHeadersOptions);
-            }
             #endregion
 
             #region Localization
