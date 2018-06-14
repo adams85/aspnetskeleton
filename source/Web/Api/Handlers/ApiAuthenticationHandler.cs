@@ -110,7 +110,7 @@ namespace AspNetSkeleton.Api.Handlers
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             var dataProtector = new Lazy<ITimeLimitedDataProtector>(
-                () => Options.DataProtectionProvider.CreateProtector(Scheme.Name).ToTimeLimitedDataProtector(), 
+                () => Options.DataProtectionProvider.CreateProtector(DataProtectorPurpose).ToTimeLimitedDataProtector(), 
                 isThreadSafe: false);
 
             // authenticating
@@ -123,8 +123,6 @@ namespace AspNetSkeleton.Api.Handlers
 
             var accountInfo = await _queryDispatcher.DispatchAsync(new GetAccountInfoQuery { UserName = authData.UserName }, Context.RequestAborted);
             var identity = AuthenticationHelper.CreateIdentity(accountInfo, authData.DeviceId, ClaimsIssuer);
-
-            Context.User = new ClaimsPrincipal(identity);
 
             Response.OnStarting(() =>
             {

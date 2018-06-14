@@ -87,6 +87,7 @@ namespace AspNetSkeleton.UI.Controllers
             return View(model);
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();

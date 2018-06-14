@@ -31,6 +31,8 @@ namespace AspNetSkeleton.Core.Infrastructure.Security
     public abstract class TokenAuthenticationHandler<TOptions> : AuthenticationHandler<TOptions>
          where TOptions : TokenAuthenticationOptions, new()
     {
+        public const string DataProtectorPurpose = "TokenAuthentication";
+
         protected TokenAuthenticationHandler(IOptionsMonitor<TOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
             : base(options, logger, encoder, clock) { }
 
