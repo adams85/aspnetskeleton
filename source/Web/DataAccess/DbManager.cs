@@ -132,6 +132,7 @@ namespace AspNetSkeleton.DataAccess
                 // commit
                 for (var i = dbHistory.Count; i <= targetIndex; i++)
                 {
+                    var index = i;
                     var migration = contextHistory.GetKeyAt(i);
 
                     var getCommitScriptTask = migrationProvider.GetCommitScriptAsync(Context, migration, cancellationToken);
@@ -148,7 +149,7 @@ namespace AspNetSkeleton.DataAccess
 
                         var migrationInfo = new MigrationInfo
                         {
-                            Index = i,
+                            Index = index,
                             Name = migration,
                             AppliedAt = Clock.UtcNow,
                             RevertScript = revertScript,
