@@ -54,6 +54,8 @@ namespace AspNetSkeleton.Service.Host
 
         public override void Configure(IApplicationBuilder app)
         {
+            base.Configure(app);
+
             var exceptionHandler = app.ApplicationServices.GetRequiredService<IExceptionHandler>();
             app.UseExceptionHandler(new ExceptionHandlerOptions { ExceptionHandler = exceptionHandler.Handle });
 

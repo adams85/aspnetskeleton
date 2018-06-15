@@ -15,8 +15,6 @@ namespace AspNetSkeleton.UI
     public class UISettings
     {
         public string ListenUrl { get; set; }
-        public string PathBase { get; set; }
-        public string[] ReverseProxies { get; set; }
 
         public ResponseKind EnableResponseMinification { get; set; }
         public bool EnableResponseCompression { get; set; }

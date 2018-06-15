@@ -1,11 +1,15 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using AspNetSkeleton.Core.Infrastructure;
+using AspNetSkeleton.Core.Middlewares;
 using Autofac;
+using Karambolo.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -88,6 +92,27 @@ namespace AspNetSkeleton.Core
 
         public virtual void RegisterBranchComponents(ContainerBuilder builder) { }
 
-        public abstract void Configure(IApplicationBuilder app);
+        public virtual void Configure(IApplicationBuilder app)
+        {
+            var settings = app.ApplicationServices.GetRequiredService<IOptions<CoreSettings>>().Value;
+
+            #region Reverse proxy support
+            if (settings.PathAdjustment != null)
+                app.UseMiddleware<PathAdjusterMiddleware>(settings.PathAdjustment);
+
+            if (!ArrayUtils.IsNullOrEmpty(settings.ReverseProxies))
+            {
+                var forwardedHeadersOptions = new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.All,
+                    ForwardLimit = null
+                };
+
+                Array.ForEach(settings.ReverseProxies, rp => forwardedHeadersOptions.KnownProxies.Add(IPAddress.Parse(rp)));
+
+                app.UseForwardedHeaders(forwardedHeadersOptions);
+            }
+            #endregion
+        }
     }
 }

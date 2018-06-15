@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net;
 using AspNetSkeleton.Base.Utils;
 using AspNetSkeleton.Core;
-using AspNetSkeleton.UI.Filters;
 using AspNetSkeleton.UI.Infrastructure.Localization;
 using AspNetSkeleton.UI.Infrastructure.Models;
 using AspNetSkeleton.UI.Infrastructure.Security;
@@ -13,12 +11,10 @@ using AspNetSkeleton.UI.Infrastructure.Theming;
 using AspNetSkeleton.UI.Middlewares;
 using Autofac;
 using Karambolo.AspNetCore.Bundling.Internal.Caching;
-using Karambolo.Common;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Localization;
@@ -29,7 +25,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
-using WebMarkupMin.AspNet.Common.Helpers;
 using WebMarkupMin.AspNetCore2;
 
 namespace AspNetSkeleton.UI
@@ -259,31 +254,7 @@ namespace AspNetSkeleton.UI
             var themeProvider = app.ApplicationServices.GetRequiredService<IThemeProvider>();
             var localizationProvider = app.ApplicationServices.GetRequiredService<ILocalizationProvider>();
 
-            #region Reverse proxy support
-            // https://github.com/aspnet/Home/issues/2302
-            if (!string.IsNullOrEmpty(settings.PathBase))
-            {
-                PathString pathBase = settings.PathBase;
-                app.Use((ctx, next) =>
-                {
-                    ctx.Request.PathBase = pathBase;
-                    return next();
-                });
-            }
-
-            if (!ArrayUtils.IsNullOrEmpty(settings.ReverseProxies))
-            {
-                var forwardedHeadersOptions = new ForwardedHeadersOptions
-                {
-                    ForwardedHeaders = ForwardedHeaders.All,
-                    ForwardLimit = null
-                };
-
-                Array.ForEach(settings.ReverseProxies, rp => forwardedHeadersOptions.KnownProxies.Add(IPAddress.Parse(rp)));
-
-                app.UseForwardedHeaders(forwardedHeadersOptions);
-            }
-            #endregion
+            base.Configure(app);
 
             #region Exception handling
             if (env.IsDevelopment())

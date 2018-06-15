@@ -81,6 +81,8 @@ namespace AspNetSkeleton.Api
 
         public override void Configure(IApplicationBuilder app)
         {
+            base.Configure(app);
+
             var exceptionHandler = app.ApplicationServices.GetRequiredService<IExceptionHandler>();
             app.UseExceptionHandler(new ExceptionHandlerOptions { ExceptionHandler = exceptionHandler.Handle });
 
@@ -93,11 +95,12 @@ namespace AspNetSkeleton.Api
         {
             var settings = context.Resolve<IOptions<ApiSettings>>().Value;
 
-            if (!string.IsNullOrEmpty(settings.ApiBasePath))
+            if (!string.IsNullOrEmpty(settings.BranchPrefix))
                 return ctx =>
                 {
                     var request = ctx.Request;
-                    PathString prefix = settings.ApiBasePath;
+                    PathString prefix = settings.BranchPrefix;
+
                     if (request.Path.StartsWithSegments(prefix, out PathString remaining))
                     {
                         request.PathBase += prefix;

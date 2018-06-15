@@ -9,13 +9,13 @@ namespace AspNetSkeleton.Api
 {
     public class App : AppBase
     {
-        readonly string _baseUrl;
+        readonly string _listenUrl;
 
         public App(IEnumerable<IAppConfiguration> configurations, TextWriter statusWriter, IComponentContext context)
             : base(configurations, statusWriter, context)
         {
             var settings = context.Resolve<IOptions<ApiSettings>>().Value;
-            _baseUrl = settings.ApiBaseUrl;
+            _listenUrl = settings.ListenUrl;
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -23,7 +23,7 @@ namespace AspNetSkeleton.Api
             builder
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseUrls(_baseUrl);
+                .UseUrls(_listenUrl);
         }
     }
 }
