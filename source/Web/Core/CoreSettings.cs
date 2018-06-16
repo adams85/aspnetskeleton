@@ -9,7 +9,7 @@ namespace AspNetSkeleton.Core
         public TimeSpan ShutDownTimeOut { get; set; } = TimeSpan.FromMinutes(1);
         public TimeSpan ServiceTimeOut { get; set; } = TimeSpan.FromMinutes(1);
 
-        public PathAdjustment PathAdjustment { get; set; }
+        public PathAdjustment[] PathAdjustments { get; set; }
         public string[] ReverseProxies { get; set; }
 
         public string ServiceBaseUrl { get; set; }

@@ -97,8 +97,8 @@ namespace AspNetSkeleton.Core
             var settings = app.ApplicationServices.GetRequiredService<IOptions<CoreSettings>>().Value;
 
             #region Reverse proxy support
-            if (settings.PathAdjustment != null)
-                app.UseMiddleware<PathAdjusterMiddleware>(settings.PathAdjustment);
+            if (!ArrayUtils.IsNullOrEmpty(settings.PathAdjustments))
+                app.UseMiddleware<PathAdjusterMiddleware>(new PathAdjusterOptions { Adjustments = settings.PathAdjustments });
 
             if (!ArrayUtils.IsNullOrEmpty(settings.ReverseProxies))
             {
