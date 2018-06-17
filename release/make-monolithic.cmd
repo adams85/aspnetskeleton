@@ -28,7 +28,4 @@ md UI
 md DeployTools
 
 robocopy ..\source\Web\UI\bin\%TARGET_RUNTIME%\publish UI /mir
-IF %ERRORLEVEL% NEQ 0 goto:eof
-
 robocopy ..\source\Web\Tools\DeployTools\bin\%TARGET_RUNTIME%\publish DeployTools /mir
-IF %ERRORLEVEL% NEQ 0 goto:eof
