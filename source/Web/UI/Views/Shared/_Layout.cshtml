@@ -52,7 +52,7 @@
                     </ul>
 
                     @* TODO: donut caching? *@
-                    @Html.Partial("Partials/_VaryingMenu", activeMenuItem)
+                    @await Html.PartialAsync("Partials/_VaryingMenu", activeMenuItem)
                 </div>
             </div>
         </div>
