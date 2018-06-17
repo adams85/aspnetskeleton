@@ -32,7 +32,11 @@ namespace AspNetSkeleton.UI.Infrastructure.Models
                 (dynamicAttributes = _modelAttributesProvider.GetTypeAttributes(result.Key.ModelType)).Length > 0)
             {
                 var attributes = result.ModelAttributes;
+
+                // TODO: find a non-obsolete way
+#pragma warning disable 0618
                 attributes = new ModelAttributes(attributes.TypeAttributes.Concat(dynamicAttributes));
+#pragma warning restore 0618
 
                 result = new DefaultMetadataDetails(result.Key, attributes);
             }
@@ -53,10 +57,14 @@ namespace AspNetSkeleton.UI.Infrastructure.Models
                 if (dynamicAttributes.Length > 0)
                 {
                     var attributes = propertyEntry.ModelAttributes;
+
+                    // TODO: find a non-obsolete way
+#pragma warning disable 0618
                     attributes = new ModelAttributes(attributes.PropertyAttributes.Concat(dynamicAttributes), attributes.TypeAttributes);
+#pragma warning restore 0618
 
                     result[i] = new DefaultMetadataDetails(propertyEntry.Key, attributes)
-                    {                        
+                    {
                         PropertyGetter = propertyEntry.PropertyGetter,
                         PropertySetter = propertyEntry.PropertySetter,
                     };

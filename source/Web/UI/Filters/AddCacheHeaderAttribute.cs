@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace AspNetSkeleton.UI.Filters
@@ -125,8 +126,9 @@ namespace AspNetSkeleton.UI.Filters
 
             var optionsAccessor = serviceProvider.GetRequiredService<IOptions<MvcOptions>>();
             var cacheProfile = GetCacheProfile(optionsAccessor.Value);
+            var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
 
-            return new ResponseCacheFilter(cacheProfile);
+            return new ResponseCacheFilter(cacheProfile, loggerFactory);
         }
     }
 }

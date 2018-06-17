@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AspNetSkeleton.Core.Infrastructure;
 using Autofac;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AspNetSkeleton.Core
 {
@@ -22,6 +23,10 @@ namespace AspNetSkeleton.Core
 
             LifetimeScope = lifetimeScopeFactory.CreateChildScope("app", (cb, ctx) =>
             {
+                // registering factory of hosting service provider (used by WebHost builder) so that it's nested in the root container
+                cb.RegisterInstance(new NestedServiceProviderFactory(lifetimeScopeFactory))
+                    .As<IServiceProviderFactory<IServiceCollection>>();
+
                 foreach (var configuration in configurations)
                 {
                     configuration.OnConfigureApp(ctx);

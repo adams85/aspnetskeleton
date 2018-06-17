@@ -57,7 +57,7 @@ namespace AspNetSkeleton.Core
                     var requestServicesFeature = ctx.Features.Get<IServiceProvidersFeature>() as RequestServicesFeature;
                     requestServicesFeature?.Dispose();
 
-                    requestServicesFeature = new RequestServicesFeature(scopeFactory);
+                    requestServicesFeature = new RequestServicesFeature(ctx, scopeFactory);
                     ctx.Features.Set<IServiceProvidersFeature>(requestServicesFeature);
 
                     return next();
@@ -81,10 +81,11 @@ namespace AspNetSkeleton.Core
         IServiceCollection _branchCommonServices;
         IApplicationLifetime _appLifetime;
 
-        readonly IReadOnlyList<(IAppConfiguration Configuration, BranchPredicate BranchPredicate)> _branches;
+        readonly IReadOnlyList<(IAppConfiguration, BranchPredicate)> _branches;
         readonly IAppConfiguration _mainBranch;
 
         ISet<ServiceDescriptor> _sharedServices;
+        readonly IServiceProviderFactory<IServiceCollection> _hostingServiceProviderFactory;
         readonly ILifetimeScopeFactory _lifetimeScopeFactory;
         readonly CoreSettings _settings;
 
@@ -109,6 +110,7 @@ namespace AspNetSkeleton.Core
 
             var commonServices = context.Resolve<ICommonServicesAccessor>().Services;
             _sharedServices = Enumerable.ToHashSet(commonServices, ServiceCollectionUtils.DescriptorEqualityComparer);
+            _hostingServiceProviderFactory = context.Resolve<IServiceProviderFactory<IServiceCollection>>();
             _lifetimeScopeFactory = context.Resolve<ILifetimeScopeFactory>();
             _settings = context.Resolve<IOptions<CoreSettings>>().Value;
 
@@ -131,8 +133,9 @@ namespace AspNetSkeleton.Core
             ConfigureWebHost(builder);
 
             builder
-                .UseSetting(WebHostDefaults.ApplicationKey, GetType().Assembly.FullName)                
+                .UseSetting(WebHostDefaults.ApplicationKey, GetType().Assembly.FullName)
                 .ConfigureServices(sc => sc.Remove(IsSharedService)) // removing shared registrations
+                .ConfigureServices(sc => sc.AddSingleton(_hostingServiceProviderFactory))
                 .ConfigureServices(sc => sc.AddSingleton(AsStartup));
 
             if (!_settings.EnableApplicationInsights)
@@ -205,11 +208,11 @@ namespace AspNetSkeleton.Core
             var n = _branches.Count;
             for (var i = 0; i < n; i++)
             {
-                var cfg = _branches[i];
+                var (configuration, branchPredicate) = _branches[i];
                 var services = _branchCommonServices.Clone();
-                var serviceProvider = CreateServiceProvider(services, cfg.Configuration, isBranch: true);
+                var serviceProvider = CreateServiceProvider(services, configuration, isBranch: true);
 
-                CreateBranch(app, cfg.BranchPredicate, serviceProvider, cfg.Configuration);
+                CreateBranch(app, branchPredicate, serviceProvider, configuration);
             }
 
             if (_mainBranch != null)
