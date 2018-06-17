@@ -4,13 +4,11 @@
     var activeSubMenuItem = (string)ViewData["ActiveSubMenuItem"];
 }
 
-@section Stylesheets
-{
+@section Stylesheets {
     @RenderSection("Stylesheets", required: false)
 }
 
-@section ScriptsHead
-{
+@section ScriptsHead {
     @RenderSection("ScriptsHead", required: false)
 }
 
@@ -33,7 +31,6 @@
   </div>
 </div>
 
-@section ScriptsBody
-{
+@section ScriptsBody {
     @RenderSection("ScriptsBody", required: false)
 }
