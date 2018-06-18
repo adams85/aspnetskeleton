@@ -4,8 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace AspNetSkeleton.UI.Infrastructure.Localization
 {
     // Data annotations localization is (still) broken, default error messages values won't be put through the localizer.
-    // https://github.com/aspnet/Localization/issues/286
-    // https://github.com/dotnet/corefx/issues/25128
+    // https://github.com/aspnet/Mvc/issues/6696
     // WORKAROUND: specifying explicit error messages until it's fixed...
     // Original messages: https://github.com/dotnet/corefx/blob/master/src/System.ComponentModel.Annotations/src/Resources/Strings.resx
     public static class DataAnnotationsLocalizationHelper
