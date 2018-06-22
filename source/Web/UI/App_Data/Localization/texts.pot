@@ -8,27 +8,27 @@ msgstr ""
 "Last-Translator: \n"
 "Plural-Forms: \n"
 "PO-Revision-Date: \n"
-"POT-Creation-Date: 2018-02-03 02:04+0100\n"
+"POT-Creation-Date: 2018-06-22 07:01+0200\n"
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 
-#: Areas/Dashboard/Models/AccountModels.cs:19
+#: Areas/Dashboard/Models/AccountModels.cs:17
 msgid "Current password"
 msgstr "Current password"
 
-#: Areas/Dashboard/Models/AccountModels.cs:24 Models/AccountModels.cs:99
+#: Areas/Dashboard/Models/AccountModels.cs:22 Models/AccountModels.cs:97
 msgid "New password"
 msgstr "New password"
 
-#: Areas/Dashboard/Models/AccountModels.cs:27 Models/AccountModels.cs:53 Models/AccountModels.cs:102
+#: Areas/Dashboard/Models/AccountModels.cs:25 Models/AccountModels.cs:51 Models/AccountModels.cs:100
 msgid "The {0} must be at least {2} characters long."
 msgstr "The {0} must be at least {2} characters long."
 
-#: Areas/Dashboard/Models/AccountModels.cs:30 Models/AccountModels.cs:56 Models/AccountModels.cs:105
+#: Areas/Dashboard/Models/AccountModels.cs:28 Models/AccountModels.cs:54 Models/AccountModels.cs:103
 msgid "Confirm password"
 msgstr "Confirm password"
 
-#: Areas/Dashboard/Models/AccountModels.cs:32 Models/AccountModels.cs:58 Models/AccountModels.cs:107
+#: Areas/Dashboard/Models/AccountModels.cs:30 Models/AccountModels.cs:56 Models/AccountModels.cs:105
 msgid "The password and confirmation password must match."
 msgstr "The password and confirmation password must match."
 
@@ -48,7 +48,7 @@ msgstr "Your password could not be changed."
 msgid "Change password"
 msgstr "Change password"
 
-#: Areas/Dashboard/Views/Home/Index.cshtml:5 Areas/Dashboard/Views/Shared/_Layout.cshtml:19
+#: Areas/Dashboard/Views/Home/Index.cshtml:5 Areas/Dashboard/Views/Shared/_Layout.cshtml:22
 msgid "Overview"
 msgstr "Overview"
 
@@ -59,85 +59,85 @@ msgid_plural "{0} hours to midnight"
 msgstr[0] "{0} hour to midnight"
 msgstr[1] "{0} hours to midnight"
 
-#: Areas/Dashboard/Views/Shared/_Layout.cshtml:20
+#: Areas/Dashboard/Views/Shared/_Layout.cshtml:23
 msgid "Account Settings"
 msgstr "Account Settings"
 
-#: Controllers/AccountController.cs:87
+#: Controllers/AccountController.cs:82
 msgid "The password specified is invalid."
 msgstr "The password specified is invalid."
 
-#: Controllers/AccountController.cs:290
+#: Controllers/AccountController.cs:287
 msgid "The e-mail address specified is already linked to an existing account."
 msgstr "The e-mail address specified is already linked to an existing account."
 
-#: Controllers/AccountController.cs:293
+#: Controllers/AccountController.cs:290
 msgid ""
 "The password specified is not formatted correctly. Please enter a valid "
 "password value."
 msgstr ""
 "The password specified is not formatted correctly. Please enter a valid "
 "password value."
+
+#: Controllers/AccountController.cs:293
+msgid ""
+"The e-mail address specified is not formatted correctly. Please enter a valid "
+"e-mail address."
+msgstr ""
+"The e-mail address specified is not formatted correctly. Please enter a valid "
+"e-mail address."
 
 #: Controllers/AccountController.cs:296
 msgid ""
-"The e-mail address specified is not formatted correctly. Please enter a valid "
-"e-mail address."
-msgstr ""
-"The e-mail address specified is not formatted correctly. Please enter a valid "
-"e-mail address."
-
-#: Controllers/AccountController.cs:299
-msgid ""
 "An unknown error occurred. Please verify your entry and try again. If the "
 "problem persists, please contact your system administrator."
 msgstr ""
 "An unknown error occurred. Please verify your entry and try again. If the "
 "problem persists, please contact your system administrator."
 
-#: Infrastructure/Localization/DataAnnotationsLocalizationHelper.cs:27
+#: Infrastructure/Localization/DataAnnotationsLocalizationHelper.cs:22
 msgid "The {0} field is required."
 msgstr "The {0} field is required."
 
-#: Infrastructure/Localization/DataAnnotationsLocalizationHelper.cs:37
+#: Infrastructure/Localization/DataAnnotationsLocalizationHelper.cs:32
 msgid "The field {0} must match the regular expression '{1}'."
 msgstr "The field {0} must match the regular expression '{1}'."
 
-#: Infrastructure/Localization/DataAnnotationsLocalizationHelper.cs:47
+#: Infrastructure/Localization/DataAnnotationsLocalizationHelper.cs:42
 msgid "The {0} field is not a valid e-mail address."
 msgstr "The {0} field is not a valid e-mail address."
 
-#: Infrastructure/Localization/DataAnnotationsLocalizationHelper.cs:57
+#: Infrastructure/Localization/DataAnnotationsLocalizationHelper.cs:52
 msgid ""
 "The field {0} must be a string or array type with a maximum length of '{1}'."
 msgstr ""
 "The field {0} must be a string or array type with a maximum length of '{1}'."
 
-#: Infrastructure/Localization/DataAnnotationsLocalizationHelper.cs:67
+#: Infrastructure/Localization/DataAnnotationsLocalizationHelper.cs:62
 msgid "The field {0} must be a string with a maximum length of {1}."
 msgstr "The field {0} must be a string with a maximum length of {1}."
 
-#: Infrastructure/Localization/DataAnnotationsLocalizationHelper.cs:77
+#: Infrastructure/Localization/DataAnnotationsLocalizationHelper.cs:72
 msgid "'{0}' and '{1}' do not match."
 msgstr "'{0}' and '{1}' do not match."
 
-#: Models/AccountModels.cs:20 Models/AccountModels.cs:44 Models/AccountModels.cs:83
+#: Models/AccountModels.cs:18 Models/AccountModels.cs:42 Models/AccountModels.cs:81
 msgid "E-mail address"
 msgstr "E-mail address"
 
-#: Models/AccountModels.cs:24 Models/AccountModels.cs:50
+#: Models/AccountModels.cs:22 Models/AccountModels.cs:48
 msgid "Password"
 msgstr "Password"
 
-#: Models/AccountModels.cs:29
+#: Models/AccountModels.cs:27
 msgid "Remember me?"
 msgstr "Remember me?"
 
-#: Models/AccountModels.cs:61
+#: Models/AccountModels.cs:59
 msgid "First name"
 msgstr "First name"
 
-#: Models/AccountModels.cs:66
+#: Models/AccountModels.cs:64
 msgid "Last name"
 msgstr "Last name"
 
@@ -237,7 +237,7 @@ msgstr "Well done! Your account has been verified."
 msgid "Your account could not be verified."
 msgstr "Your account could not be verified."
 
-#: Views/Home/Error.cshtml:6 Views/Home/Error.cshtml:10 Views/Shared/_Layout.cshtml:99 Views/Shared/Error.cshtml:9
+#: Views/Home/Error.cshtml:6 Views/Home/Error.cshtml:10 Views/Shared/_Layout.cshtml:102 Views/Shared/Error.cshtml:9
 msgid "Error"
 msgstr "Error"
 
@@ -249,19 +249,19 @@ msgstr "An error occurred while processing your request."
 msgid "Request ID:"
 msgstr "Request ID:"
 
-#: Views/Home/Index.cshtml:14
+#: Views/Home/Index.cshtml:13
 msgid "ASP.NET Skeleton"
 msgstr "ASP.NET Skeleton"
 
-#: Views/Shared/_Layout.cshtml:47
+#: Views/Shared/_Layout.cshtml:50
 msgid "Page 1"
 msgstr "Page 1"
 
-#: Views/Shared/_Layout.cshtml:48
+#: Views/Shared/_Layout.cshtml:51
 msgid "Page 2"
 msgstr "Page 2"
 
-#: Views/Shared/_Layout.cshtml:98
+#: Views/Shared/_Layout.cshtml:101
 msgid "Do you really want to delete this item?"
 msgstr "Do you really want to delete this item?"
 
