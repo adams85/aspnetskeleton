@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace AspNetSkeleton.Base.Utils
 {
@@ -19,6 +21,13 @@ namespace AspNetSkeleton.Base.Utils
             where TOptions : class
         {
             return @this.Configure<TOptions>(configuration.GetSectionFor<TOptions>());
+        }
+
+        public static IServiceCollection Configure<TOptions, TDep>(this IServiceCollection @this, Action<TOptions, TDep> configure)
+            where TOptions : class
+            where TDep : class
+        {
+            return @this.AddSingleton<IConfigureOptions<TOptions>>(sp => new ConfigureNamedOptions<TOptions, TDep>(Options.DefaultName, sp.GetRequiredService<TDep>(), configure));
         }
     }
 }

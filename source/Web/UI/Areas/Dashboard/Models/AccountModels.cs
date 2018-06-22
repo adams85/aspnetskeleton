@@ -9,25 +9,25 @@ namespace AspNetSkeleton.UI.Areas.Dashboard.Models
     [HandledAs(typeof(ChangePasswordCommand))]
     public class ChangePasswordModel : ChangePasswordCommand
     {
-        public class Configurer : ModelAttributesProviderConfigurer
+        public class Configurer : ModelMetadataConfigurer
         {
-            public override void Configure(ModelAttributesProviderBuilder builder)
+            protected override void Configure(IModelMetadataBuilder builder)
             {
                 builder.Model<ChangePasswordModel>().Property(m => m.CurrentPassword)
-                    .Apply(new DisplayAttribute() { Name = T["Current password"] })
-                    .Apply(new RequiredAttribute().Localize())
-                    .Apply(new DataTypeAttribute(DataType.Password));
+                    .DisplayName(() => T["Current password"])
+                    .Validator(new RequiredAttribute().Localize())
+                    .Validator(new DataTypeAttribute(DataType.Password));
 
                 builder.Model<ChangePasswordModel>().Property(m => m.NewPassword)
-                    .Apply(new DisplayAttribute() { Name = T["New password"] })
-                    .Apply(new RequiredAttribute().Localize())
-                    .Apply(new DataTypeAttribute(DataType.Password))
-                    .Apply(new StringLengthAttribute(100) { MinimumLength = 6, ErrorMessage = T["The {0} must be at least {2} characters long."] });
+                    .DisplayName(() => T["New password"])
+                    .Validator(new RequiredAttribute().Localize())
+                    .Validator(new DataTypeAttribute(DataType.Password))
+                    .Validator(new StringLengthAttribute(100) { MinimumLength = 6, ErrorMessage = T["The {0} must be at least {2} characters long."] });
 
                 builder.Model<ChangePasswordModel>().Property(m => m.ConfirmPassword)
-                    .Apply(new DisplayAttribute() { Name = T["Confirm password"] })
-                    .Apply(new DataTypeAttribute(DataType.Password))
-                    .Apply(new CompareAttribute(nameof(NewPassword)) { ErrorMessage = T["The password and confirmation password must match."] });
+                    .DisplayName(() => T["Confirm password"])
+                    .Validator(new DataTypeAttribute(DataType.Password))
+                    .Validator(new CompareAttribute(nameof(NewPassword)) { ErrorMessage = T["The password and confirmation password must match."] });
             }
         }
 

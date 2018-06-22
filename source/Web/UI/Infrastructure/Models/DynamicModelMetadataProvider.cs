@@ -1,77 +1,36 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
-using Microsoft.Extensions.Options;
-using System;
-using System.Linq;
 
 namespace AspNetSkeleton.UI.Infrastructure.Models
 {
-    public class DynamicModelMetadataProvider : DefaultModelMetadataProvider
+    public abstract class DynamicModelMetadataProvider : IMetadataDetailsProvider, IBindingMetadataProvider, IDisplayMetadataProvider, IValidationMetadataProvider
     {
-        readonly IDynamicModelAttributesProvider _modelAttributesProvider;
+        protected DynamicModelMetadataProvider() { }
 
-        public DynamicModelMetadataProvider(ICompositeMetadataDetailsProvider detailsProvider, IDynamicModelAttributesProvider modelAttributesProvider)
-            : base(detailsProvider)
+        protected abstract IList<Action<BindingMetadata>> GetBindingMetadataSetters(ModelMetadataIdentity key);
+        protected abstract IList<Action<DisplayMetadata>> GetDisplayMetadataSetters(ModelMetadataIdentity key);
+        protected abstract IList<Action<ValidationMetadata>> GetValidationMetadataSetters(ModelMetadataIdentity key);
+
+        public void CreateBindingMetadata(BindingMetadataProviderContext context)
         {
-            _modelAttributesProvider = modelAttributesProvider;
+            var setters = GetBindingMetadataSetters(context.Key);
+            for (int i = 0, n = setters.Count; i < n; i++)
+                setters[i](context.BindingMetadata);
         }
 
-        public DynamicModelMetadataProvider(ICompositeMetadataDetailsProvider detailsProvider, IOptions<MvcOptions> optionsAccessor, IDynamicModelAttributesProvider modelAttributesProvider)
-            : base(detailsProvider, optionsAccessor)
+        public void CreateDisplayMetadata(DisplayMetadataProviderContext context)
         {
-            _modelAttributesProvider = modelAttributesProvider;
+            var setters = GetDisplayMetadataSetters(context.Key);
+            for (int i = 0, n = setters.Count; i < n; i++)
+                setters[i](context.DisplayMetadata);
         }
 
-        protected override DefaultMetadataDetails CreateTypeDetails(ModelMetadataIdentity key)
+        public void CreateValidationMetadata(ValidationMetadataProviderContext context)
         {
-            var result = base.CreateTypeDetails(key);
-
-            Attribute[] dynamicAttributes;
-            if (_modelAttributesProvider != null && // method is called from base constructor...
-                (dynamicAttributes = _modelAttributesProvider.GetTypeAttributes(result.Key.ModelType)).Length > 0)
-            {
-                var attributes = result.ModelAttributes;
-
-                // TODO: find a non-obsolete way
-#pragma warning disable 0618
-                attributes = new ModelAttributes(attributes.TypeAttributes.Concat(dynamicAttributes));
-#pragma warning restore 0618
-
-                result = new DefaultMetadataDetails(result.Key, attributes);
-            }
-
-            return result;
-        }
-
-        protected override DefaultMetadataDetails[] CreatePropertyDetails(ModelMetadataIdentity key)
-        {
-            var result = base.CreatePropertyDetails(key);
-
-            var n = result.Length;
-            for (var i = 0; i < n; i++)
-            {
-                var propertyEntry = result[i];
-
-                var dynamicAttributes = _modelAttributesProvider.GetPropertyAttributes(propertyEntry.Key.ContainerType, propertyEntry.Key.Name);
-                if (dynamicAttributes.Length > 0)
-                {
-                    var attributes = propertyEntry.ModelAttributes;
-
-                    // TODO: find a non-obsolete way
-#pragma warning disable 0618
-                    attributes = new ModelAttributes(attributes.PropertyAttributes.Concat(dynamicAttributes), attributes.TypeAttributes);
-#pragma warning restore 0618
-
-                    result[i] = new DefaultMetadataDetails(propertyEntry.Key, attributes)
-                    {
-                        PropertyGetter = propertyEntry.PropertyGetter,
-                        PropertySetter = propertyEntry.PropertySetter,
-                    };
-                }
-            }
-
-            return result;
+            var setters = GetValidationMetadataSetters(context.Key);
+            for (int i = 0, n = setters.Count; i < n; i++)
+                setters[i](context.ValidationMetadata);
         }
     }
 }

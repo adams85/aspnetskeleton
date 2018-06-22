@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -154,6 +155,17 @@ namespace AspNetSkeleton.UI
                 .AddControllersAsServices()
                 .AddViewLocalization()
                 .AddDataAnnotationsLocalization();
+
+            services.Configure<MvcOptions, IEnumerable<IModelMetadataConfigurer>>((o, mc) =>
+            {
+                var metadataProviderBuilder = new ModelMetadataProviderBuilder();
+
+                foreach (var metadataConfigurer in mc)
+                    metadataConfigurer.Configure(metadataProviderBuilder);
+
+                var metadataProvider = metadataProviderBuilder.Build();
+                o.ModelMetadataDetailsProviders.Add(metadataProvider);
+            });
             #endregion
 
             return null;
@@ -224,25 +236,8 @@ namespace AspNetSkeleton.UI
             #endregion
 
             #region Model Metadata
-            // overriding default IModelMetadataProvider
-            builder.RegisterType<DynamicModelMetadataProvider>()
-                .As<IModelMetadataProvider>()
-                .SingleInstance();
-
             builder.RegisterAssemblyTypes(typeof(App).Assembly)
-                .As<IModelAttributesProviderConfigurer>();
-
-            builder.Register(ctx =>
-            {
-                var providerBuilder = new ModelAttributesProviderBuilder();
-
-                foreach (var configurer in ctx.Resolve<IEnumerable<IModelAttributesProviderConfigurer>>())
-                    configurer.Configure(providerBuilder);
-
-                return providerBuilder.Build();
-            })
-            .As<IDynamicModelAttributesProvider>()
-            .SingleInstance();
+                .As<IModelMetadataConfigurer>();
             #endregion
         }
 
