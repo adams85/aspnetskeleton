@@ -10,6 +10,7 @@ using AspNetSkeleton.Service.Contract;
 using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
@@ -74,7 +75,8 @@ namespace AspNetSkeleton.Api
                     ServiceContractTypes.QueryTypes.Contains,
                     ServiceContractTypes.CommandTypes.Contains,
                     ApiContractTypes.DataObjectTypes.Contains,
-                }));
+                }))
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             return null;
         }

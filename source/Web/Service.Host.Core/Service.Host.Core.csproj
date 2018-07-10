@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <RuntimeFrameworkVersion>2.1.1</RuntimeFrameworkVersion>
     <AssemblyName>Web.Service.Host.Core</AssemblyName>
     <RootNamespace>AspNetSkeleton.Service.Host.Core</RootNamespace>    
     <Copyright>© 2017 Adam Simon</Copyright>
@@ -31,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="2.0.4" />
+    <PackageReference Include="MailKit" Version="2.0.5" />
     <PackageReference Include="RazorLight" Version="2.0.0-beta1" />
   </ItemGroup>
 

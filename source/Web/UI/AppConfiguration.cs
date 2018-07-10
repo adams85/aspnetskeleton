@@ -154,7 +154,8 @@ namespace AspNetSkeleton.UI
                 })
                 .AddControllersAsServices()
                 .AddViewLocalization()
-                .AddDataAnnotationsLocalization();
+                .AddDataAnnotationsLocalization()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.Configure<MvcOptions, IEnumerable<IModelMetadataConfigurer>>((o, mc) =>
             {
@@ -256,7 +257,6 @@ namespace AspNetSkeleton.UI
             {
                 app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();
-                app.UseDatabaseErrorPage();
             }
             else
                 app.UseExceptionHandler("/Home/Error");

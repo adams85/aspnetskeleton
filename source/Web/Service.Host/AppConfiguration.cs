@@ -7,6 +7,7 @@ using AspNetSkeleton.Service.Host.Core;
 using AspNetSkeleton.Service.Host.Handlers;
 using Autofac;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,7 +48,8 @@ namespace AspNetSkeleton.Service.Host
                     ServiceContractTypes.DataObjectTypes.Contains,
                     ServiceContractTypes.QueryTypes.Contains,
                     ServiceContractTypes.CommandTypes.Contains,
-                }));
+                }))
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             return null;
         }

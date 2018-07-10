@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <RuntimeFrameworkVersion>2.1.1</RuntimeFrameworkVersion>
     <AssemblyName>admintools</AssemblyName>
     <RootNamespace>AspNetSkeleton.AdminTools</RootNamespace>
     <Copyright>© 2017 Adam Simon</Copyright>
@@ -45,8 +46,8 @@
   <ItemGroup>
     <PackageReference Include="Karambolo.Common" Version="2.1.0" />
     <PackageReference Include="Karambolo.Extensions.Logging.File" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.1.0" />
   </ItemGroup>
 
