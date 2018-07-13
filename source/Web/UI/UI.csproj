@@ -39,7 +39,7 @@
     <PackageReference Include="Karambolo.AspNetCore.Bundling.Less" Version="1.0.0" />
     <PackageReference Include="Karambolo.AspNetCore.Bundling.WebMarkupMin" Version="1.0.0" />
     <PackageReference Include="Karambolo.PO" Version="1.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" PrivateAssets="All" />
     <PackageReference Include="WebMarkupMin.AspNetCore2" Version="2.4.4" />
