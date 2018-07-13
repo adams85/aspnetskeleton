@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Common</AssemblyName>
     <RootNamespace>AspNetSkeleton.Common</RootNamespace>
-    <Copyright>© 2017 Adam Simon</Copyright>
+    <Copyright>© 2018 Adam Simon</Copyright>
     <Authors />
     <Company />
     <Description />

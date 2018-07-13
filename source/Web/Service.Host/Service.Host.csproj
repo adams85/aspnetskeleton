@@ -5,7 +5,7 @@
     <RuntimeFrameworkVersion>2.1.2</RuntimeFrameworkVersion>
     <AssemblyName>Web.Service.Host</AssemblyName>
     <RootNamespace>AspNetSkeleton.Service.Host</RootNamespace>
-    <Copyright>© 2017 Adam Simon</Copyright>
+    <Copyright>© 2018 Adam Simon</Copyright>
     <Authors />
     <Company />
     <Description />

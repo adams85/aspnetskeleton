@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Web.Api.Contract</AssemblyName>
     <RootNamespace>AspNetSkeleton.Api.Contract</RootNamespace>
-    <Copyright>© 2017 Adam Simon</Copyright>
+    <Copyright>© 2018 Adam Simon</Copyright>
     <Authors />
     <Company />
     <Description />
