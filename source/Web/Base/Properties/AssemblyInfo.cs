@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("AspNetSkeleton.Base")]
-[assembly: AssemblyCopyright("© 2017 Adam Simon")]
+[assembly: AssemblyCopyright("© 2018 Adam Simon")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
