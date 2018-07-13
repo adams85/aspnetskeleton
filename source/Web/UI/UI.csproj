@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web" ToolsVersion="15.0">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <RuntimeFrameworkVersion>2.1.1</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion>2.1.2</RuntimeFrameworkVersion>
     <UserSecretsId>aspnet-aspnetcore-38AB7092-857C-458C-9088-B396A4ED2A9C</UserSecretsId>
     <AssemblyName>Web.UI</AssemblyName>
     <RootNamespace>AspNetSkeleton.UI</RootNamespace>

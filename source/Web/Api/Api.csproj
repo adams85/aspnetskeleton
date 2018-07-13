@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <RuntimeFrameworkVersion>2.1.1</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion>2.1.2</RuntimeFrameworkVersion>
     <AssemblyName>Web.Api</AssemblyName>
     <RootNamespace>AspNetSkeleton.Api</RootNamespace>
     <Copyright>© 2017 Adam Simon</Copyright>
