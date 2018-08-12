@@ -26,9 +26,12 @@ namespace AspNetSkeleton.UI.Infrastructure.Localization
 
     public class NullLocalizationProvider : ILocalizationProvider
     {
+        readonly Task<ProviderCultureResult> _cachedDetermineResult;
+
         public NullLocalizationProvider(IOptions<UISettings> settings)
         {
             Cultures = new[] { settings.Value.DefaultCulture };
+            _cachedDetermineResult = Task.FromResult(new ProviderCultureResult(settings.Value.DefaultCulture));
         }
 
         public string[] Cultures { get; }
@@ -37,7 +40,7 @@ namespace AspNetSkeleton.UI.Infrastructure.Localization
 
         public Task<ProviderCultureResult> DetermineProviderCultureResult(HttpContext httpContext)
         {
-            throw new NotSupportedException();
+            return _cachedDetermineResult;
         }
     }
 

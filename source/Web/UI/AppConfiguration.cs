@@ -19,7 +19,6 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Localization;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.ResponseCaching;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -267,25 +266,14 @@ namespace AspNetSkeleton.UI
             #endregion
 
             #region Localization
-            if (settings.EnableLocalization)
+            var supportedCultures = localizationProvider.Cultures.Select(CultureInfo.CreateSpecificCulture).ToArray();
+            app.UseRequestLocalization(new RequestLocalizationOptions
             {
-                var supportedCultures = localizationProvider.Cultures
-                    .Select(c => CultureInfo.CreateSpecificCulture(c))
-                    .ToArray();
-
-                app.UseRequestLocalization(new RequestLocalizationOptions
-                {
-                    DefaultRequestCulture = new RequestCulture(settings.DefaultCulture, settings.DefaultCulture),
-                    SupportedCultures = supportedCultures,
-                    SupportedUICultures = supportedCultures,
-                    RequestCultureProviders = new[] { localizationProvider }
-                });
-            }
-            else
-            {
-                var defaultCulture = CultureInfo.CreateSpecificCulture(settings.DefaultCulture);
-                app.UseMiddleware<DefaultCultureMiddleware>(defaultCulture);
-            }
+                DefaultRequestCulture = new RequestCulture(settings.DefaultCulture, settings.DefaultCulture),
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures,
+                RequestCultureProviders = new[] { localizationProvider },
+            });
             #endregion
 
             #region Response compression & minification
