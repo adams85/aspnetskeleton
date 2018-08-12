@@ -16,6 +16,8 @@ namespace AspNetSkeleton.UI
     {
         public string ListenUrl { get; set; }
 
+        public bool EnableStatusCodePages { get; set; }
+
         public ResponseKind EnableResponseMinification { get; set; }
         public bool EnableResponseCompression { get; set; }
         public ResponseKind EnableResponseCaching { get; set; }

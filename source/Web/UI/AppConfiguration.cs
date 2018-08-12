@@ -260,7 +260,8 @@ namespace AspNetSkeleton.UI
             else
                 app.UseExceptionHandler("/Home/Error");
 
-            app.UseStatusCodePages();
+            if (settings.EnableStatusCodePages)
+                app.UseStatusCodePages();
 
             app.UseMiddleware<ExceptionFilterMiddleware>();
             #endregion
