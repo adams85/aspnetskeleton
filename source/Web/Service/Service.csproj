@@ -84,7 +84,7 @@
     <Compile Include="Queries\Users\GetAccountInfoQueryHandler.cs" />
     <Compile Include="Queries\Users\AuthenticateUserQueryHandler.cs" />
     <Compile Include="Queries\Users\GetOnlineUserCountQueryHandler.cs" />
-    <Compile Include="Queries\Users\ListUserQueryHandler.cs" />
+    <Compile Include="Queries\Users\ListUsersQueryHandler.cs" />
     <Compile Include="Queries\Users\GetUserQueryHandler.cs" />
     <Compile Include="CommandHandler.cs" />
     <Compile Include="QueryContext.cs" />
