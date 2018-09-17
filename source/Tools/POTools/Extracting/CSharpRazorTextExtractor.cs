@@ -17,9 +17,8 @@ namespace AspNetSkeleton.POTools.Extracting
 
         public CSharpRazorTextExtractor(CSharpTextExtractorSettings settings) : base(settings)
         {
-            var engine = RazorEngine.Create();
-            var project = RazorProject.Create(@"\");
-            _templateEngine = new RazorTemplateEngine(engine, project);
+            var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, RazorProjectFileSystem.Create(@"\"));
+            _templateEngine = new RazorTemplateEngine(projectEngine.Engine, projectEngine.FileSystem);
         }
 
         protected override string GetCode(string content, CancellationToken cancellationToken)

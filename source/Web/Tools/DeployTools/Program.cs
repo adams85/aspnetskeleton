@@ -14,13 +14,10 @@ namespace AspNetSkeleton.DeployTools
 
         static ILoggerFactory CreateLoggerFactory()
         {
-            var result = new LoggerFactory();
-
-            var config = Configuration.GetSection("Logging")?.GetSection(FileLoggerProvider.Alias);
-            if (config != null)
-                result.AddFile(new FileLoggerContext(AppEnvironment.Instance.AppBasePath, "default.log"), config);
-
-            return result;
+            var config = Configuration.GetSection("Logging");
+            return new LoggerFactory()
+                .AddFile(FileLoggerContext.Default, new ConfigurationFileLoggerSettings(config.GetSection(FileLoggerProvider.Alias),
+                    o => o.FileAppender = new PhysicalFileAppender(AppEnvironment.Instance.AppBasePath));
         }
 
         static int Main(string[] args)

@@ -54,16 +54,9 @@ namespace AspNetSkeleton.Core.Infrastructure
 
         protected virtual void ConfigureLogging(ILoggingBuilder builder)
         {
-            var config = Configuration.GetSection("Logging");
-            if (config != null)
-                builder.AddConfiguration(config);
+            builder.AddConfiguration(Configuration.GetSection("Logging"));
 
-            config = Configuration.GetSection("Logging")?.GetSection(FileLoggerProvider.Alias);
-            if (config != null)
-            {
-                builder.Services.Configure<FileLoggerOptions>(config);
-                builder.AddFile(new FileLoggerContext(AppEnvironment.Instance.AppBasePath, "default.log"));
-            }
+            builder.AddFile(o => o.RootPath = AppEnvironment.Instance.AppBasePath);
 
             if (ConfigurationHelper.EnvironmentName == EnvironmentName.Development)
                 builder.AddConsole();
