@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <RuntimeFrameworkVersion>2.1.2</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion>2.1.4</RuntimeFrameworkVersion>
     <AssemblyName>Web.Api</AssemblyName>
     <RootNamespace>AspNetSkeleton.Api</RootNamespace>
     <Copyright>© 2018 Adam Simon</Copyright>
@@ -40,7 +40,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.4" />
   </ItemGroup>
 
   <ItemGroup>
