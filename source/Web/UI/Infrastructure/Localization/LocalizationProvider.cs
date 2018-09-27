@@ -104,20 +104,20 @@ namespace AspNetSkeleton.UI.Infrastructure.Localization
                 Noop<POParser>.Action);
 
             Cultures = cultures;
+
             TextCatalogs = textCatalogs
                 .GroupBy(it => it.Culture, it => (it.FileName, it.Catalog))
-                .ToDictionary(g => g.Key, g =>
-                {
-                    var catalogs = g.OrderBy(it => it.FileName).Select(it => it.Catalog).ToArray();
-                    return catalogs.Skip(1).Aggregate(catalogs[0], (acc, src) =>
+                .ToDictionary(g => g.Key, g => g
+                    .OrderBy(it => it.FileName)
+                    .Select(it => it.Catalog)
+                    .Aggregate((acc, src) =>
                     {
                         foreach (var entry in src)
                             try { acc.Add(entry); }
                             catch (ArgumentException) { Logger.LogWarning("Multiple translations for key {KEY}.", POStringLocalizer.FormatKey(entry.Key)); }
 
                         return acc;
-                    });
-                });                           
+                    }));
         }
 
         public Task<ProviderCultureResult> DetermineProviderCultureResult(HttpContext httpContext)
