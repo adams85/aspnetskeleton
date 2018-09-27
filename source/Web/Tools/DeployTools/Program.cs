@@ -17,7 +17,7 @@ namespace AspNetSkeleton.DeployTools
             var config = Configuration.GetSection("Logging");
             return new LoggerFactory()
                 .AddFile(FileLoggerContext.Default, new ConfigurationFileLoggerSettings(config.GetSection(FileLoggerProvider.Alias),
-                    o => o.FileAppender = new PhysicalFileAppender(AppEnvironment.Instance.AppBasePath));
+                    o => o.FileAppender = new PhysicalFileAppender(AppEnvironment.Instance.AppBasePath)));
         }
 
         static int Main(string[] args)
