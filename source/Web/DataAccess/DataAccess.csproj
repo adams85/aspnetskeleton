@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <RuntimeFrameworkVersion>2.1.4</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion>2.1.5</RuntimeFrameworkVersion>
     <AssemblyName>Web.DataAccess</AssemblyName>
     <RootNamespace>AspNetSkeleton.DataAccess</RootNamespace>
     <Copyright>© 2018 Adam Simon</Copyright>
