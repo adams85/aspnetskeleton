@@ -267,7 +267,7 @@ namespace AspNetSkeleton.UI
             #endregion
 
             #region Localization
-            var supportedCultures = localizationProvider.Cultures.Select(CultureInfo.CreateSpecificCulture).ToArray();
+            var supportedCultures = localizationProvider.Cultures.Select(c => new CultureInfo(c)).ToArray();
             app.UseRequestLocalization(new RequestLocalizationOptions
             {
                 DefaultRequestCulture = new RequestCulture(settings.DefaultCulture, settings.DefaultCulture),

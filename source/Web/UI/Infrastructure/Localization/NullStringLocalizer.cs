@@ -24,8 +24,7 @@ namespace AspNetSkeleton.UI.Infrastructure.Localization
             var plural = default(Plural);
             var context = default(TextContext);
 
-            var result = !ArrayUtils.IsNullOrEmpty(arguments);
-            if (result)
+            if (!ArrayUtils.IsNullOrEmpty(arguments))
             {
                 var pluralIndex = Array.FindIndex(arguments, a => a is Plural);
                 if (pluralIndex >= 0)

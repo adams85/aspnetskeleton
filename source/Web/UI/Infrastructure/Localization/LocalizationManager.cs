@@ -45,7 +45,13 @@ namespace AspNetSkeleton.UI.Infrastructure.Localization
 
         POCatalog GetCatalogForCulture(CultureInfo culture)
         {
-            return Provider.TextCatalogs.TryGetValue((culture ?? CultureInfo.InvariantCulture).Name, out POCatalog catalog) ? catalog : null;
+            while (culture != null && !culture.Equals(CultureInfo.InvariantCulture))
+                if (Provider.TextCatalogs.TryGetValue(culture.Name, out var catalog))
+                    return catalog;
+                else
+                    culture = culture.Parent;
+
+            return null;
         }
 
         public override IExtendedStringLocalizer WithCulture(CultureInfo culture)
