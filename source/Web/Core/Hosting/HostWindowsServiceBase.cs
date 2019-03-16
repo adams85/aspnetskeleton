@@ -41,7 +41,7 @@ namespace AspNetSkeleton.Core.Hosting
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Failed to start windows service.");
-                ExceptionDispatchInfo.Capture(ex).Throw();
+                throw;
             }
 
             Logger.LogInformation("Windows service started.");
@@ -59,7 +59,7 @@ namespace AspNetSkeleton.Core.Hosting
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Failed to stop windows service.");
-                ExceptionDispatchInfo.Capture(ex).Throw();
+                throw;
             }
 
             Logger.LogInformation("Windows service stopped.");

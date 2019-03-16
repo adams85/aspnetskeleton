@@ -127,12 +127,12 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure.BackgroundWork
             {
                 await _mailClient.ConnectAsync(_mailSettings.Host, _mailSettings.Port, _mailSettings.Security, shutDownToken);
             }
-            catch (Exception ex)
+            catch
             {
                 var mailClient = _mailClient;
                 _mailClient = null;
                 mailClient.Dispose();
-                ExceptionDispatchInfo.Capture(ex).Throw();
+                throw;
             }
 
             try

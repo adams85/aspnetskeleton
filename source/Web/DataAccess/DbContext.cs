@@ -502,10 +502,10 @@ namespace AspNetSkeleton.DataAccess
 
                         transaction.Commit();
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         transaction.Rollback();
-                        ExceptionDispatchInfo.Capture(ex).Throw();
+                        throw;
                     }
 
                 _changes.Clear();

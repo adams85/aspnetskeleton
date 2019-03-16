@@ -168,10 +168,10 @@ namespace AspNetSkeleton.DataAccess
                         await executers[i](cancellationToken).ConfigureAwait(false);
                         transaction.Commit();
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         transaction.Rollback();
-                        ExceptionDispatchInfo.Capture(ex).Throw();
+                        throw;
                     }
 
             return revert ? -n : n;
