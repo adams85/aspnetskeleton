@@ -113,15 +113,11 @@ namespace AspNetSkeleton.Common
                         case HttpStatusCode.UnsupportedMediaType:
                             throw new FormatException(null, ex);
                         default:
-                            ExceptionDispatchInfo.Capture(ex).Throw();
                             throw;
                     }
                 }
                 else
-                {
-                    ExceptionDispatchInfo.Capture(ex).Throw();
                     throw;
-                }
             }
 
             using (var memoryStream = new MemoryStream())

@@ -97,11 +97,9 @@ namespace AspNetSkeleton.DeployTools
                 result.ConnectionString = _connString.ConnectionString;
                 return result;
 	        }
-	        catch (Exception ex)
+	        catch
 	        {
 	            result?.Dispose();
-
-	            ExceptionDispatchInfo.Capture(ex).Throw();
                 throw;
 	        }
         }

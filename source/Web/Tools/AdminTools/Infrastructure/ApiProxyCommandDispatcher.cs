@@ -56,7 +56,6 @@ namespace AspNetSkeleton.AdminTools.Infrastructure
                 _context.ApiCredentials = null;
                 _context.ApiAuthToken = ex.AuthToken;
 
-                ExceptionDispatchInfo.Capture(ex).Throw();
                 throw;
             }
             catch (UnauthorizedAccessException ex)

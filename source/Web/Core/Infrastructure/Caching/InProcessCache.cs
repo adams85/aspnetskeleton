@@ -144,10 +144,9 @@ namespace AspNetSkeleton.Core.Infrastructure.Caching
                 monitor?.Dispose();
 
             try { return await (storedValueTaskLazy ?? newValueTaskLazy).Value.ConfigureAwait(false); }
-            catch (Exception ex)
+            catch
             {
                 _cache.Remove(key);
-                ExceptionDispatchInfo.Capture(ex).Throw();
                 throw;
             }
         }

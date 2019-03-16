@@ -54,12 +54,12 @@ namespace AspNetSkeleton.Service.Host.Infrastructure
                     installer.Install(state);
                     installer.Commit(state);
                 }
-                catch (Exception ex)
+                catch
                 {
                     try { installer.Rollback(state); }
                     catch { }
 
-                    ExceptionDispatchInfo.Capture(ex).Throw();
+                    throw;
                 }
             }
         }
