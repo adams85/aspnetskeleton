@@ -49,7 +49,7 @@ namespace AspNetSkeleton.Common
         public WebApiInvoker(string apiBaseUrl, IEnumerable<Predicate<Type>> typeFilters)
         {
             _apiBaseUrl = apiBaseUrl;
-            _serializer = JsonSerializer.Create(SerializationUtils.CreateDataTransferSerializerSettings(typeFilters.WithHead(CommonTypes.DataObjectTypes.Contains)));
+            _serializer = JsonSerializer.Create(SerializationUtils.CreateDataTransferSerializerSettings(typeFilters.Prepend(CommonTypes.DataObjectTypes.Contains)));
         }
 
         protected virtual WebApiResult<TResponse> CreateResult<TResponse>(WebHeaderCollection headers, TResponse content)
@@ -86,7 +86,7 @@ namespace AspNetSkeleton.Common
                     memoryStream.Position = 0;
                     webRequest.ContentLength = memoryStream.Length;
 
-                    using (var requestStream = await webRequest.GetRequestStreamAsync().AsCancellable(cancellationToken).ConfigureAwait(false))
+                    using (var requestStream = await webRequest.GetRequestStreamAsync().AsCancelable(cancellationToken).ConfigureAwait(false))
                     {
                         await memoryStream.CopyToAsync(requestStream, bufferSize, cancellationToken).ConfigureAwait(false);
                         await requestStream.FlushAsync(cancellationToken).ConfigureAwait(false);
@@ -95,7 +95,7 @@ namespace AspNetSkeleton.Common
             }
 
             HttpWebResponse response;
-            try { response = (HttpWebResponse)await webRequest.GetResponseAsync().AsCancellable(cancellationToken).ConfigureAwait(false); }
+            try { response = (HttpWebResponse)await webRequest.GetResponseAsync().AsCancelable(cancellationToken).ConfigureAwait(false); }
             catch (OperationCanceledException) { throw; }
             catch (WebException ex)
             {

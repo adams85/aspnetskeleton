@@ -38,9 +38,11 @@ namespace AspNetSkeleton.AdminTools.Operations.Roles
                 OrderColumns = new[] { nameof(RoleData.RoleName) },
             });
 
-            PrintList(columnDefs, result.Rows, r => ArrayUtils.FromElements<object>(
+            PrintList(columnDefs, result.Rows, r => new object[]
+            {
                 r.RoleId,
-                r.RoleName));
+                r.RoleName
+            });
         }
     }
 }

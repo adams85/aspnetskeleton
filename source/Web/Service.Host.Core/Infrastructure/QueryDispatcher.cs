@@ -77,9 +77,9 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure
 
             try
             {
-                var task = (Task)invokeHandlerMethod.Invoke(null, ArrayUtils.FromElements<object>(queryLifetimeScope, context.Query, cancellationToken));
+                var task = (Task)invokeHandlerMethod.Invoke(null, new object[] { queryLifetimeScope, context.Query, cancellationToken });
                 await task.ConfigureAwait(false);
-                return getTaskResultMethod.Invoke(null, ArrayUtils.FromElement(task));
+                return getTaskResultMethod.Invoke(null, new[] { task });
             }
             catch (TargetInvocationException ex)
             {

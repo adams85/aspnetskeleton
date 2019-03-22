@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using Karambolo.Common;
 using Karambolo.Common.Collections;
-using Karambolo.Common.Finances;
+using Karambolo.Common.Monetary;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 

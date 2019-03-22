@@ -1,5 +1,6 @@
 ﻿using AspNetSkeleton.Common;
 using System;
+using System.Linq;
 using System.Net;
 using AspNetSkeleton.Common.DataTransfer;
 using AspNetSkeleton.Service.Contract;
@@ -15,7 +16,7 @@ namespace AspNetSkeleton.Core.Infrastructure
         readonly CoreSettings _settings;
 
         public ServiceProxyQueryDispatcher(IOptions<CoreSettings> settings) :
-            base(settings.Value.ServiceBaseUrl, EnumerableUtils.FromElement<Predicate<Type>>(ServiceContractTypes.DataObjectTypes.Contains))
+            base(settings.Value.ServiceBaseUrl, new Predicate<Type>[] { ServiceContractTypes.DataObjectTypes.Contains })
         {
             _settings = settings.Value;
         }

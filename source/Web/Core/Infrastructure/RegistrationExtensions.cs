@@ -105,7 +105,7 @@ namespace AspNetSkeleton.Core.Infrastructure
                     foreach (var decorator in decoratorsWithParams.Where(d => d.Value.Filter?.Invoke(ctx, limitType) ?? true))
                     {
                         var decoratorType = decorator.Value.Type.MakeGenericType(typeArgs);
-                        var @params = decorator.Parameters.WithHead(new TypedParameter(swt.ServiceType, service));
+                        var @params = decorator.Parameters.Prepend(new TypedParameter(swt.ServiceType, service));
                         var activator = new ReflectionActivator(decoratorType, new DefaultConstructorFinder(), new MostParametersConstructorSelector(),
                             @params, Enumerable.Empty<Parameter>());
                         service = activator.ActivateInstance(ctx, @params);

@@ -39,7 +39,7 @@ namespace AspNetSkeleton.Service.Host.Core.Handlers.Mails
             var modelType = model?.GetType();
             var templatePath = GetBodyTemplatePath(code, model);
 
-            return _razorEngine.CompileRenderAsync(templatePath, model).AsCancellable(cancellationToken);
+            return _razorEngine.CompileRenderAsync(templatePath, model).AsCancelable(cancellationToken);
         }
 
         protected abstract string GetSender(TModel model);

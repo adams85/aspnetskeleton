@@ -19,21 +19,21 @@ namespace AspNetSkeleton.Service.Contract
             DataObjectTypes = Enumerable.ToHashSet(assemblyTypes
                 .Where(t => 
                     t.IsClass && !t.IsAbstract && !t.HasAttribute<CompilerGeneratedAttribute>() && 
-                    t.Namespace.StartsWith(typeof(UserData).Namespace))).AsReadOnly();
+                    t.Namespace.StartsWith(typeof(UserData).Namespace)));
 
             QueryTypes = Enumerable.ToHashSet(assemblyTypes
                 .Where(t => 
                     t.IsClass && !t.IsAbstract && !t.HasAttribute<CompilerGeneratedAttribute>() && 
-                    t.Namespace.StartsWith(typeof(GetUserQuery).Namespace))).AsReadOnly();
+                    t.Namespace.StartsWith(typeof(GetUserQuery).Namespace)));
 
             CommandTypes = Enumerable.ToHashSet(assemblyTypes
                 .Where(
                     t => t.IsClass && !t.IsAbstract && !t.HasAttribute<CompilerGeneratedAttribute>() && 
-                    t.Namespace.StartsWith(typeof(CreateUserCommand).Namespace))).AsReadOnly();
+                    t.Namespace.StartsWith(typeof(CreateUserCommand).Namespace)));
         }
 
-        public static readonly IReadOnlySet<Type> DataObjectTypes;
-        public static readonly IReadOnlySet<Type> QueryTypes;
-        public static readonly IReadOnlySet<Type> CommandTypes;
+        public static readonly IReadOnlyCollection<Type> DataObjectTypes;
+        public static readonly IReadOnlyCollection<Type> QueryTypes;
+        public static readonly IReadOnlyCollection<Type> CommandTypes;
     }
 }

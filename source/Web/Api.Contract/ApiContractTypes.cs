@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Karambolo.Common;
-using Karambolo.Common.Collections;
 using AspNetSkeleton.Api.Contract.DataTransfer;
-using AspNetSkeleton.Common.DataTransfer;
+using Karambolo.Common;
 
 namespace AspNetSkeleton.Api.Contract
 {
@@ -16,12 +14,12 @@ namespace AspNetSkeleton.Api.Contract
             var assemblyTypes = typeof(AccountData).Assembly.GetTypes();
 
             DataObjectTypes = assemblyTypes
-                .Where(t => 
-                    t.IsClass && !t.IsAbstract && !t.HasAttribute<CompilerGeneratedAttribute>() && 
+                .Where(t =>
+                    t.IsClass && !t.IsAbstract && !t.HasAttribute<CompilerGeneratedAttribute>() &&
                     t.Namespace.StartsWith(typeof(AccountData).Namespace))
-                .ToHashSet().AsReadOnly();
+                .ToHashSet();
         }
 
-        public static readonly IReadOnlySet<Type> DataObjectTypes;
+        public static readonly IReadOnlyCollection<Type> DataObjectTypes;
     }
 }

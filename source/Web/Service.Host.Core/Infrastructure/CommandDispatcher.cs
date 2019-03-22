@@ -66,7 +66,7 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure
 
             try
             {
-                var task = (Task)invokeHandlerMethod.Invoke(null, ArrayUtils.FromElements<object>(commandLifetimeScope, context.Command, cancellationToken));
+                var task = (Task)invokeHandlerMethod.Invoke(null, new object[] { commandLifetimeScope, context.Command, cancellationToken });
                 await task.ConfigureAwait(false);
             }
             catch (TargetInvocationException ex)

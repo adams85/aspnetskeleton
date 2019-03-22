@@ -174,7 +174,7 @@ namespace AspNetSkeleton.DataAccess
 
                 blockStatements.Add(Expression.Label(returnLabel, defaultResult));
 
-                var body = Expression.Block(ArrayUtils.FromElements(entityVar, originalEntityVar), blockStatements);
+                var body = Expression.Block(new[] { entityVar, originalEntityVar }, blockStatements);
 
                 var lambda = Expression.Lambda<Func<object, object, int, int>>(body, entityParam, originalEntityParam, indexParam);
                 return lambda.Compile();

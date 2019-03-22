@@ -91,19 +91,19 @@ namespace AspNetSkeleton.Service
                 @param != null &&
                 (emptyAllowed || (paramString = @param as string) == null || paramString.Length > 0) &&
                 (emptyAllowed || (paramCollection = @param as object[]) == null || paramCollection.Count > 0),
-                QueryErrorCode.ParamNotSpecified, () => new[] { Lambda.PropertyPath(paramPath) });
+                QueryErrorCode.ParamNotSpecified, () => new[] { Lambda.MemberPath(paramPath) });
         }
 
         public static void RequireValid<TQuery, TResult, T>(this IQueryHandler<TQuery, TResult> @this, bool condition, Expression<Func<TQuery, T>> paramPath)
             where TQuery : IQuery<TResult>
         {
-            @this.Require(condition, QueryErrorCode.ParamNotValid, () => new[] { Lambda.PropertyPath(paramPath) });
+            @this.Require(condition, QueryErrorCode.ParamNotValid, () => new[] { Lambda.MemberPath(paramPath) });
         }
 
         public static void RequireExisting<TQuery, TResult, T>(this IQueryHandler<TQuery, TResult> @this, object entity, Expression<Func<TQuery, T>> paramPath)
             where TQuery : IQuery<TResult>
         {
-            @this.Require(entity != null, QueryErrorCode.EntityNotFound, () => new[] { Lambda.PropertyPath(paramPath) });
+            @this.Require(entity != null, QueryErrorCode.EntityNotFound, () => new[] { Lambda.MemberPath(paramPath) });
         }
     }
 }

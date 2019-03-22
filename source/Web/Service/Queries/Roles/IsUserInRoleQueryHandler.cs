@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Threading;
 using AspNetSkeleton.DataAccess;
 using Karambolo.Common;
+using System;
+using System.Linq.Expressions;
 
 namespace AspNetSkeleton.Service.Queries.Roles
 {
@@ -27,8 +29,11 @@ namespace AspNetSkeleton.Service.Queries.Roles
             {
                 var linq = scope.Context.Query<UserRole>();
 
-                linq = linq.Where(UserTransforms.GetFilterByNameWhere(query.UserName).Substitute((UserRole ur) => ur.User));
-                linq = linq.Where(RoleTransforms.GetFilterByNameWhere(query.RoleName).Substitute((UserRole ur) => ur.Role));
+                Expression<Func<UserRole, User>> selectUser = ur => ur.User;
+                linq = linq.Where(selectUser.Chain(UserTransforms.GetFilterByNameWhere(query.UserName)));
+
+                Expression<Func<UserRole, Role>> selectRole = ur => ur.Role;
+                linq = linq.Where(selectRole.Chain(RoleTransforms.GetFilterByNameWhere(query.RoleName)));
 
                 return await linq.AnyAsync(cancellationToken).ConfigureAwait(false);
             }

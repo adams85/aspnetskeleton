@@ -85,7 +85,7 @@ namespace AspNetSkeleton.DataAccess
             if (migrationProvider == null)
                 throw new ArgumentNullException(nameof(migrationProvider));
 
-            var contextHistory = Context.MigrationHistory.ToOrderedDictionary(Identity<string>.Func, Default<string, object>.Func, StringComparer.OrdinalIgnoreCase);
+            var contextHistory = Context.MigrationHistory.ToOrderedDictionary(Identity<string>.Func, _ => default(object), StringComparer.OrdinalIgnoreCase);
 
             var dbHistory = new OrderedDictionary<string, MigrationInfo>(StringComparer.OrdinalIgnoreCase);
             if (await HasMigrationInfoAsync(cancellationToken).ConfigureAwait(false))

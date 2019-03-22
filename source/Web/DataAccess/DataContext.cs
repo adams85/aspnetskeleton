@@ -7,9 +7,9 @@ namespace AspNetSkeleton.DataAccess
     {
         public DataContext(IDbConfigurationProvider configurationProvider) : base(configurationProvider) { }
 
-        public override IReadOnlyList<string> MigrationHistory { get; } = ArrayUtils.FromElements
-        (
+        public override IReadOnlyList<string> MigrationHistory { get; } = new[]
+        {
             "InitialCreate"
-        );
+        };
     }
 }

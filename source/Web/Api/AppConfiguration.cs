@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using AspNetSkeleton.Api.Contract;
 using AspNetSkeleton.Api.Handlers;
 using AspNetSkeleton.Base.Utils;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Karambolo.Common;
 
 namespace AspNetSkeleton.Api
 {

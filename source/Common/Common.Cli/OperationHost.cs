@@ -1,10 +1,9 @@
-﻿using AspNetSkeleton.Common.Utils;
-using Karambolo.Common;
-using Karambolo.Common.Collections;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AspNetSkeleton.Common.Utils;
+using Karambolo.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -17,7 +16,7 @@ namespace AspNetSkeleton.Common.Cli
 
     public abstract class OperationHost : IOperationHost, IOperationContext
     {
-        static readonly IReadOnlySet<string> helpArgs = new ReadOnlyEnabledHashSet<string>(StringComparer.OrdinalIgnoreCase) { "/?", "-?", "/h", "-h", "help" };
+        static readonly IReadOnlyCollection<string> helpArgs = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "/?", "-?", "/h", "-h", "help" };
 
         readonly IReadOnlyDictionary<string, OperationDescriptor> _operationDescriptors;
         readonly IOperationHostIO _io;
@@ -50,7 +49,7 @@ namespace AspNetSkeleton.Common.Cli
 
         public abstract string AppName { get; }
 
-        public virtual IReadOnlySet<string> HelpArgs => helpArgs;
+        public virtual IReadOnlyCollection<string> HelpArgs => helpArgs;
 
         protected virtual IEnumerable<string> GetInstructions()
         {

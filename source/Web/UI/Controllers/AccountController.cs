@@ -208,7 +208,7 @@ namespace AspNetSkeleton.UI.Controllers
                     // displaying success to the user when user doesn't exist to prevent testing existence of accounts
                     success =
                         ex.ErrorCode == CommandErrorCode.EntityNotFound &&
-                        ((string)ex.Args[0]) == Lambda.PropertyPath((ResetPasswordCommand c) => c.UserName);
+                        ((string)ex.Args[0]) == Lambda.MemberPath((ResetPasswordCommand c) => c.UserName);
                 }
                 return RedirectToAction(null, new { s = Convert.ToInt32(success) });
             }

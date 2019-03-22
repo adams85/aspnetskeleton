@@ -34,31 +34,31 @@ namespace AspNetSkeleton.Service
                 @param != null &&
                 (emptyAllowed || (paramString = @param as string) == null || paramString.Length > 0) &&
                 (emptyAllowed || (paramCollection = @param as object[]) == null || paramCollection.Count > 0),
-                CommandErrorCode.ParamNotSpecified, () => new[] { Lambda.PropertyPath(paramPath) });
+                CommandErrorCode.ParamNotSpecified, () => new[] { Lambda.MemberPath(paramPath) });
         }
 
         public static void RequireValid<TCommand, T>(this ICommandHandler<TCommand> @this, bool condition, Expression<Func<TCommand, T>> paramPath)
             where TCommand : ICommand
         {
-            @this.Require(condition, CommandErrorCode.ParamNotValid, () => new[] { Lambda.PropertyPath(paramPath) });
+            @this.Require(condition, CommandErrorCode.ParamNotValid, () => new[] { Lambda.MemberPath(paramPath) });
         }
 
         public static void RequireExisting<TCommand, T>(this ICommandHandler<TCommand> @this, object entity, Expression<Func<TCommand, T>> paramPath)
             where TCommand : ICommand
         {
-            @this.Require(entity != null, CommandErrorCode.EntityNotFound, () => new[] { Lambda.PropertyPath(paramPath) });
+            @this.Require(entity != null, CommandErrorCode.EntityNotFound, () => new[] { Lambda.MemberPath(paramPath) });
         }
 
         public static void RequireUnique<TCommand, T>(this ICommandHandler<TCommand> @this, bool entityExists, Expression<Func<TCommand, T>> paramPath)
             where TCommand : ICommand
         {
-            @this.Require(!entityExists, CommandErrorCode.EntityNotUnique, () => new[] { Lambda.PropertyPath(paramPath) });
+            @this.Require(!entityExists, CommandErrorCode.EntityNotUnique, () => new[] { Lambda.MemberPath(paramPath) });
         }
 
         public static void RequireIndependent<TCommand, T>(this ICommandHandler<TCommand> @this, bool entityHasDependencies, Expression<Func<TCommand, T>> paramPath)
             where TCommand : ICommand
         {
-            @this.Require(!entityHasDependencies, CommandErrorCode.EntityDependent, () => new[] { Lambda.PropertyPath(paramPath) });
+            @this.Require(!entityHasDependencies, CommandErrorCode.EntityDependent, () => new[] { Lambda.MemberPath(paramPath) });
         }
 
         public static void RaiseKeyGenerated<TCommand>(this ICommandHandler<TCommand> @this, TCommand command, object keyValue)

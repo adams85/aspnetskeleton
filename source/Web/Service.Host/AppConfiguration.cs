@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using AspNetSkeleton.Base.Utils;
 using AspNetSkeleton.Common.Utils;
 using AspNetSkeleton.Core;
@@ -6,6 +7,7 @@ using AspNetSkeleton.Service.Contract;
 using AspNetSkeleton.Service.Host.Core;
 using AspNetSkeleton.Service.Host.Handlers;
 using Autofac;
+using Karambolo.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
