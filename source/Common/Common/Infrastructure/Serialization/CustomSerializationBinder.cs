@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using Karambolo.Common;
 using Karambolo.Common.Collections;
-using Karambolo.Common.Finances;
+using Karambolo.Common.Monetary;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -71,6 +71,9 @@ namespace AspNetSkeleton.Common.Infrastructure.Serialization
 
         protected virtual string MapAssemblyName(string value, IDictionary<string, string> assemblyNameMapping)
         {
+            if (value == null)
+                return null;
+
             // stripping assembly details and mapping assembly names
             var builder = new AssemblyNameBuilder(value);
             return !assemblyNameMapping.TryGetValue(builder.Name, out value) ? builder.Name : value;
@@ -78,7 +81,9 @@ namespace AspNetSkeleton.Common.Infrastructure.Serialization
 
         protected virtual KeyValuePair<string, string> MapTypeName(string value, IDictionary<string, string> assemblyNameMapping)
         {
-            var builder = new TypeNameBuilder(value, new TypeNameParseSettings { AssemblyNameTransform = an => MapAssemblyName(an, assemblyNameMapping) });
+            var builder = new TypeNameBuilder(value)
+                .Transform(b => b.AssemblyName = MapAssemblyName(b.AssemblyName, assemblyNameMapping));
+
             return new KeyValuePair<string, string>(builder.AssemblyName, builder.GetFullName());
         }
 

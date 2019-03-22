@@ -32,7 +32,7 @@ namespace AspNetSkeleton.Service.Host.Core.Handlers.Mails
 
         protected override IEnumerable<string> GetTo(UnapprovedUserCreatedNotificationArgs model)
         {
-            return EnumerableUtils.FromElement(model.Email);
+            return new[] { model.Email };
         }
 
         protected override string GenerateSubject(UnapprovedUserCreatedNotificationArgs model)
@@ -68,7 +68,7 @@ namespace AspNetSkeleton.Service.Host.Core.Handlers.Mails
 
         protected override IEnumerable<string> GetTo(PasswordResetNotificationArgs model)
         {
-            return EnumerableUtils.FromElement(model.Email);
+            return new[] { model.Email };
         }
 
         protected override string GenerateSubject(PasswordResetNotificationArgs model)
@@ -104,7 +104,7 @@ namespace AspNetSkeleton.Service.Host.Core.Handlers.Mails
 
         protected override IEnumerable<string> GetTo(UserLockedOutNotificationArgs model)
         {
-            return EnumerableUtils.FromElement(model.Email);
+            return new[] { model.Email };
         }
 
         protected override string GenerateSubject(UserLockedOutNotificationArgs model)

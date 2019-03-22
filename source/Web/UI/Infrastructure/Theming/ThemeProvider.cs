@@ -13,7 +13,7 @@ namespace AspNetSkeleton.UI.Infrastructure.Theming
 
     public class NullThemeProvider : IThemeProvider
     {
-        public string[] Themes { get; } = ArrayUtils.FromElement(UIConstants.DefaultTheme);
+        public string[] Themes { get; } = { UIConstants.DefaultTheme };
     }
 
     public class ThemeProvider : IThemeProvider, IStartable

@@ -3,13 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Karambolo.Common;
 
 namespace AspNetSkeleton.Common.Cli
 {
     public interface IOperationContext : IOperationHostIO
     {
         string AppName { get; }
-        IReadOnlySet<string> HelpArgs { get; }
+        IReadOnlyCollection<string> HelpArgs { get; }
 
         TContext As<TContext>() where TContext : IOperationContext;
     }

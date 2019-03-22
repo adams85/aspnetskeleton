@@ -43,7 +43,7 @@ namespace AspNetSkeleton.DataAccess
                 public Task<bool> MoveNextAsync(CancellationToken cancellationToken)
                 {
                     if (cancellationToken.IsCancellationRequested)
-                        return TaskUtils.FromCancelled<bool>(cancellationToken);
+                        return Task.FromCanceled<bool>(cancellationToken);
 
                     return Task.FromResult(_enumerator.MoveNext());
                 }
@@ -80,12 +80,12 @@ namespace AspNetSkeleton.DataAccess
 
                 public Task<object> ExecuteAsync(Expression expression, CancellationToken cancellationToken)
                 {
-                    return Task.Run(() => Execute(expression), cancellationToken).AsCancellable(cancellationToken);
+                    return Task.Run(() => Execute(expression), cancellationToken).AsCancelable(cancellationToken);
                 }
 
                 public Task<TResult> ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
                 {
-                    return Task.Run(() => Execute<TResult>(expression), cancellationToken).AsCancellable(cancellationToken);
+                    return Task.Run(() => Execute<TResult>(expression), cancellationToken).AsCancelable(cancellationToken);
                 }
             }
 
@@ -226,7 +226,7 @@ namespace AspNetSkeleton.DataAccess
                 public Task<bool> MoveNextAsync(CancellationToken cancellationToken)
                 {
                     if (cancellationToken.IsCancellationRequested)
-                        return TaskUtils.FromCancelled<bool>(cancellationToken);
+                        return Task.FromCanceled<bool>(cancellationToken);
 
                     return Task.FromResult(_enumerator.MoveNext());
                 }

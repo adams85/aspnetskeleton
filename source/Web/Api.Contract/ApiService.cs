@@ -7,6 +7,7 @@ using AspNetSkeleton.Common;
 using AspNetSkeleton.Api.Contract.DataTransfer;
 using System.Collections.Generic;
 using Karambolo.Common;
+using System.Linq;
 
 namespace AspNetSkeleton.Api.Contract
 {
@@ -32,7 +33,7 @@ namespace AspNetSkeleton.Api.Contract
     public class ApiService : WebApiInvoker, IApiService
     {
         public ApiService(string apiBaseUrl, IEnumerable<Predicate<Type>> typeFilters)
-             : base(apiBaseUrl, typeFilters.WithHead(ApiContractTypes.DataObjectTypes.Contains)) { }
+             : base(apiBaseUrl, Enumerable.Prepend(typeFilters, ApiContractTypes.DataObjectTypes.Contains)) { }
 
         protected override WebApiResult<TResponse> CreateResult<TResponse>(WebHeaderCollection headers, TResponse content)
         {

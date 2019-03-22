@@ -21,7 +21,7 @@ namespace AspNetSkeleton.Common.Utils
             settings.DefaultValueHandling = DefaultValueHandling.Ignore;
 
             settings.SerializationBinder = new CustomSerializationBinder(
-                (typeFilters ?? Enumerable.Empty<Predicate<Type>>()).WithHead(CustomSerializationBinder.AllowBasicTypes).ToArray());
+                Enumerable.Prepend(typeFilters ?? Enumerable.Empty<Predicate<Type>>(), CustomSerializationBinder.AllowBasicTypes).ToArray());
 
             settings.ContractResolver = new CustomContractResolver(new Predicate<JsonProperty>[]
             {

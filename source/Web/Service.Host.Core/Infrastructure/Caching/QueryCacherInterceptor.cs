@@ -21,7 +21,7 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure.Caching
 
         public static string GetCacheScope(Type queryType, params string[] subScopes)
         {
-            return string.Join("|", subScopes.WithHead(queryType.FullName));
+            return string.Join("|", Enumerable.Prepend(subScopes, queryType.FullName));
         }
 
         public QueryCacherInterceptor(ICache cache, IQueryInterceptor target, QueryCachingOptions options)

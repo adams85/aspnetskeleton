@@ -15,7 +15,7 @@ namespace AspNetSkeleton.POTools.Operations
 
         static readonly HashSet<string> compileExtensionFilter = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".cs" };
         static readonly HashSet<string> contentExtensionFilter = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".cshtml" };
-        static readonly HashSet<string> extensionFilter = compileExtensionFilter.Concat(contentExtensionFilter).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        static readonly HashSet<string> extensionFilter = new HashSet<string>(compileExtensionFilter.Concat(contentExtensionFilter), StringComparer.OrdinalIgnoreCase);
 
         public const string Name = "scan";
         public const string Hint = "Scans for source files.";

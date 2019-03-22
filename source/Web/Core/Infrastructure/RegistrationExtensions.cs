@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using Autofac.Builder;
 using Autofac.Core;
-using Autofac.Core.Registration;
 using Autofac.Core.Activators.Delegate;
-using Autofac;
 using Autofac.Core.Activators.Reflection;
-using Karambolo.Common;
+using Autofac.Core.Registration;
 using Autofac.Features.Scanning;
+using Karambolo.Common;
 
 namespace AspNetSkeleton.Core.Infrastructure
 {
@@ -105,7 +105,7 @@ namespace AspNetSkeleton.Core.Infrastructure
                     foreach (var decorator in decoratorsWithParams.Where(d => d.Value.Filter?.Invoke(ctx, limitType) ?? true))
                     {
                         var decoratorType = decorator.Value.Type.MakeGenericType(typeArgs);
-                        var @params = decorator.Parameters.WithHead(new TypedParameter(swt.ServiceType, service));
+                        var @params = Enumerable.Prepend(decorator.Parameters, new TypedParameter(swt.ServiceType, service));
                         var activator = new ReflectionActivator(decoratorType, new DefaultConstructorFinder(), new MostParametersConstructorSelector(),
                             @params, Enumerable.Empty<Parameter>());
                         service = activator.ActivateInstance(ctx, @params);

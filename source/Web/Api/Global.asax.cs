@@ -16,6 +16,7 @@ using Karambolo.Common;
 using AspNetSkeleton.Common;
 using AspNetSkeleton.Service.Contract;
 using AspNetSkeleton.Api.Contract;
+using System.Linq;
 
 namespace AspNetSkeleton.Api
 {

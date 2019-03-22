@@ -16,27 +16,24 @@ namespace AspNetSkeleton.Service.Contract
         {
             var assemblyTypes = typeof(UserData).Assembly.GetTypes();
 
-            DataObjectTypes = assemblyTypes
+            DataObjectTypes = Enumerable.ToHashSet(assemblyTypes
                 .Where(t =>
                     t.IsClass && !t.IsAbstract && !t.HasAttribute<CompilerGeneratedAttribute>() &&
-                    t.Namespace.StartsWith(typeof(UserData).Namespace))
-                .ToHashSet().AsReadOnly();
+                    t.Namespace.StartsWith(typeof(UserData).Namespace)));
 
-            QueryTypes = assemblyTypes
+            QueryTypes = Enumerable.ToHashSet(assemblyTypes
                 .Where(t =>
                     t.IsClass && !t.IsAbstract && !t.HasAttribute<CompilerGeneratedAttribute>() &&
-                    t.Namespace.StartsWith(typeof(GetUserQuery).Namespace))
-                .ToHashSet().AsReadOnly();
+                    t.Namespace.StartsWith(typeof(GetUserQuery).Namespace)));
 
-            CommandTypes = assemblyTypes
+            CommandTypes = Enumerable.ToHashSet(assemblyTypes
                 .Where(
                     t => t.IsClass && !t.IsAbstract && !t.HasAttribute<CompilerGeneratedAttribute>() &&
-                    t.Namespace.StartsWith(typeof(CreateUserCommand).Namespace))
-                .ToHashSet().AsReadOnly();
+                    t.Namespace.StartsWith(typeof(CreateUserCommand).Namespace)));
         }
 
-        public static readonly IReadOnlySet<Type> DataObjectTypes;
-        public static readonly IReadOnlySet<Type> QueryTypes;
-        public static readonly IReadOnlySet<Type> CommandTypes;
+        public static readonly IReadOnlyCollection<Type> DataObjectTypes;
+        public static readonly IReadOnlyCollection<Type> QueryTypes;
+        public static readonly IReadOnlyCollection<Type> CommandTypes;
     }
 }

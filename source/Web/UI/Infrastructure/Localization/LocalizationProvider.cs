@@ -19,7 +19,7 @@ namespace AspNetSkeleton.UI.Infrastructure.Localization
 
     public class NullLocalizationProvider : ILocalizationProvider
     {
-        public string[] Cultures { get; } = ArrayUtils.FromElement(UIConstants.DefaultCulture.Name);
+        public string[] Cultures { get; } = new[] { UIConstants.DefaultCulture.Name };
 
         public IReadOnlyDictionary<string, POCatalog> TextCatalogs { get; } = new Dictionary<string, POCatalog>();
     }

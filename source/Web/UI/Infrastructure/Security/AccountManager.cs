@@ -93,16 +93,16 @@ namespace AspNetSkeleton.UI.Infrastructure.Security
                     case CommandErrorCode.ParamNotValid:
                         paramPath = (string)ex.Args[0];
                         status =
-                            paramPath == Lambda.PropertyPath((CreateUserCommand c) => c.UserName) ? MembershipCreateStatus.InvalidUserName :
-                            paramPath == Lambda.PropertyPath((CreateUserCommand c) => c.Email) ? MembershipCreateStatus.InvalidEmail :
-                            paramPath == Lambda.PropertyPath((CreateUserCommand c) => c.Password) ? MembershipCreateStatus.InvalidPassword :
+                            paramPath == Lambda.MemberPath((CreateUserCommand c) => c.UserName) ? MembershipCreateStatus.InvalidUserName :
+                            paramPath == Lambda.MemberPath((CreateUserCommand c) => c.Email) ? MembershipCreateStatus.InvalidEmail :
+                            paramPath == Lambda.MemberPath((CreateUserCommand c) => c.Password) ? MembershipCreateStatus.InvalidPassword :
                             MembershipCreateStatus.ProviderError;
                         break;
                     case CommandErrorCode.EntityNotUnique:
                         paramPath = (string)ex.Args[0];
                         status =
-                            paramPath == Lambda.PropertyPath((CreateUserCommand c) => c.UserName) ? MembershipCreateStatus.DuplicateUserName :
-                            paramPath == Lambda.PropertyPath((CreateUserCommand c) => c.Email) ? MembershipCreateStatus.DuplicateEmail :
+                            paramPath == Lambda.MemberPath((CreateUserCommand c) => c.UserName) ? MembershipCreateStatus.DuplicateUserName :
+                            paramPath == Lambda.MemberPath((CreateUserCommand c) => c.Email) ? MembershipCreateStatus.DuplicateEmail :
                             MembershipCreateStatus.ProviderError;
                         break;
                     default:

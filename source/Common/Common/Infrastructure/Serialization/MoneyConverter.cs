@@ -1,5 +1,5 @@
 ﻿using System;
-using Karambolo.Common.Finances;
+using Karambolo.Common.Monetary;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

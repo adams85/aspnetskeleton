@@ -1,9 +1,8 @@
-﻿using AspNetSkeleton.Common.Infrastructure;
+﻿using System.Collections.Generic;
+using AspNetSkeleton.Common.Infrastructure;
 using AspNetSkeleton.Service.Contract.DataObjects;
 using AspNetSkeleton.Service.Contract.Queries;
-using Karambolo.Common;
 using Karambolo.Common.Collections;
-using System.Collections.Generic;
 
 namespace AspNetSkeleton.AdminTools.Operations.Roles
 {
@@ -25,7 +24,7 @@ namespace AspNetSkeleton.AdminTools.Operations.Roles
         protected override IEnumerable<string> GetUsage()
         {
             yield return $"{Context.AppName} {Name} [/u=<user-name>]";
-        }        
+        }
 
         protected override void ExecuteCore()
         {
@@ -38,9 +37,11 @@ namespace AspNetSkeleton.AdminTools.Operations.Roles
                 OrderColumns = new[] { nameof(RoleData.RoleName) },
             });
 
-            PrintList(columnDefs, result.Rows, r => ArrayUtils.FromElements<object>(
+            PrintList(columnDefs, result.Rows, r => new object[]
+            {
                 r.RoleId,
-                r.RoleName));
+                r.RoleName
+            });
         }
     }
 }

@@ -6,6 +6,7 @@ using AspNetSkeleton.Service.Contract;
 using System.Threading;
 using Karambolo.Common;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace AspNetSkeleton.Core.Infrastructure
 {
@@ -14,7 +15,7 @@ namespace AspNetSkeleton.Core.Infrastructure
         readonly ICoreSettings _settings;
 
         public ServiceProxyQueryDispatcher(ICoreSettings settings) :
-            base(settings.ServiceBaseUrl, EnumerableUtils.FromElement<Predicate<Type>>(ServiceContractTypes.DataObjectTypes.Contains))
+            base(settings.ServiceBaseUrl, new Predicate<Type>[] { ServiceContractTypes.DataObjectTypes.Contains })
         {
             _settings = settings;
         }

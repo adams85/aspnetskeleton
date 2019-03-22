@@ -26,8 +26,8 @@ namespace AspNetSkeleton.AdminTools.Operations.Roles
 
             Command(new AddUsersToRolesCommand
             {
-                UserNames = ArrayUtils.FromElement(userName),
-                RoleNames = ArrayUtils.FromElement(roleName),
+                UserNames = new[] { userName },
+                RoleNames = new[] { roleName },
             });
 
             Context.Out.WriteLine($"Role granted successfully.");

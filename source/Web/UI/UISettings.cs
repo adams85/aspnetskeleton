@@ -37,7 +37,7 @@ namespace AspNetSkeleton.UI
 
         public int CurrentMajorVersion { get; } = int.Parse(WebConfigurationManager.AppSettings["CurrentMajorVersion"]);
 
-        public byte[] EncryptionKey { get; } = StringUtils.HexStringToByteArray(((MachineKeySection) ConfigurationManager.GetSection("system.web/machineKey")).DecryptionKey);
+        public byte[] EncryptionKey { get; } = StringUtils.BytesFromHexString(((MachineKeySection) ConfigurationManager.GetSection("system.web/machineKey")).DecryptionKey);
 
         public int DefaultPageSize { get; } = int.Parse(WebConfigurationManager.AppSettings["DefaultPageSize"]);
        

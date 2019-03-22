@@ -51,14 +51,16 @@ namespace AspNetSkeleton.AdminTools.Operations.Users
                 OrderColumns = new[] { nameof(UserData.UserName) },
             });
 
-            PrintList(columnDefs, result.Rows, r => ArrayUtils.FromElements<object>(
+            PrintList(columnDefs, result.Rows, r => new object[]
+            {
                 r.UserId,
                 r.UserName,
                 r.Email,
                 r.IsApproved,
                 r.IsLockedOut,
                 r.CreationDate,
-                r.LastLoginDate));
+                r.LastLoginDate
+            });
         }
     }
 }

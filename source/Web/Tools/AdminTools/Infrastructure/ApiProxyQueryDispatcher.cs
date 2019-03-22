@@ -1,11 +1,11 @@
-﻿using System.Net;
+﻿using System;
+using System.Linq;
+using System.Net;
 using System.Threading;
-using Karambolo.Common;
-using System;
-using AspNetSkeleton.Service.Contract;
 using System.Threading.Tasks;
 using AspNetSkeleton.Api.Contract;
-using System.Runtime.ExceptionServices;
+using AspNetSkeleton.Service.Contract;
+using Karambolo.Common;
 
 namespace AspNetSkeleton.AdminTools.Infrastructure
 {
@@ -14,7 +14,7 @@ namespace AspNetSkeleton.AdminTools.Infrastructure
         readonly IApiOperationContext _context;
 
         public ApiProxyQueryDispatcher(IApiOperationContext context)
-            : base(context.Settings.ApiUrl, EnumerableUtils.FromElement<Predicate<Type>>(ServiceContractTypes.DataObjectTypes.Contains))
+            : base(context.Settings.ApiUrl, new Predicate<Type>[] { ServiceContractTypes.DataObjectTypes.Contains })
         {
             _context = context;
         }

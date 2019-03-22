@@ -27,7 +27,7 @@ namespace AspNetSkeleton.Api
 
         public string[] AdminMailTo { get; } = SerializationUtils.DeserializeArray(WebConfigurationManager.AppSettings["AdminMailTo"], Identity<string>.Func);
 
-        public byte[] EncryptionKey { get; } = StringUtils.HexStringToByteArray(((MachineKeySection)ConfigurationManager.GetSection("system.web/machineKey")).DecryptionKey);
+        public byte[] EncryptionKey { get; } = StringUtils.BytesFromHexString(((MachineKeySection)ConfigurationManager.GetSection("system.web/machineKey")).DecryptionKey);
 
         public TimeSpan AuthTokenExpirationTimeSpan { get; } = TimeSpan.FromDays(int.Parse(WebConfigurationManager.AppSettings["AuthTokenExpirationDays"]));
 

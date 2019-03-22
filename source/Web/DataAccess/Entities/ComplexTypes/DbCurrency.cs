@@ -1,4 +1,4 @@
-﻿using Karambolo.Common.Finances;
+﻿using Karambolo.Common.Monetary;
 
 namespace AspNetSkeleton.DataAccess.Entities.ComplexTypes
 {

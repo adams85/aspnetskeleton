@@ -15,13 +15,12 @@ namespace AspNetSkeleton.Api.Contract
         {
             var assemblyTypes = typeof(AccountData).Assembly.GetTypes();
 
-            DataObjectTypes = assemblyTypes
-                .Where(t => 
-                    t.IsClass && !t.IsAbstract && !t.HasAttribute<CompilerGeneratedAttribute>() && 
-                    t.Namespace.StartsWith(typeof(AccountData).Namespace))
-                .ToHashSet().AsReadOnly();
+            DataObjectTypes = Enumerable.ToHashSet(assemblyTypes
+                .Where(t =>
+                    t.IsClass && !t.IsAbstract && !t.HasAttribute<CompilerGeneratedAttribute>() &&
+                    t.Namespace.StartsWith(typeof(AccountData).Namespace)));
         }
 
-        public static readonly IReadOnlySet<Type> DataObjectTypes;
+        public static readonly IReadOnlyCollection<Type> DataObjectTypes;
     }
 }

@@ -15,13 +15,12 @@ namespace AspNetSkeleton.Common
         {
             var assemblyTypes = typeof(ErrorData).Assembly.GetTypes();
 
-            DataObjectTypes = assemblyTypes
-                .Where(t => 
-                    t.IsClass && !t.IsAbstract && !t.HasAttribute<CompilerGeneratedAttribute>() && 
-                    t.Namespace.StartsWith(typeof(ErrorData).Namespace))
-                .ToHashSet().AsReadOnly();
+            DataObjectTypes = Enumerable.ToHashSet(assemblyTypes
+                .Where(t =>
+                    t.IsClass && !t.IsAbstract && !t.HasAttribute<CompilerGeneratedAttribute>() &&
+                    t.Namespace.StartsWith(typeof(ErrorData).Namespace)));
         }
 
-        public static readonly IReadOnlySet<Type> DataObjectTypes;
+        public static readonly IReadOnlyCollection<Type> DataObjectTypes;
     }
 }
