@@ -1,9 +1,10 @@
-﻿using AspNetSkeleton.Common;
-using MySql.Data.MySqlClient;
-using System;
+﻿using System;
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
+using AspNetSkeleton.Common;
+using LinqToDB.Common;
+using MySql.Data.MySqlClient;
 
 namespace AspNetSkeleton.DataAccess.MySql
 {
@@ -35,7 +36,7 @@ namespace AspNetSkeleton.DataAccess.MySql
                 command.CommandText = "SHOW DATABASES LIKE @databaseName";
 
                 var param = command.CreateParameter();
-                Context.DataProvider.SetParameter(param, "databaseName", LinqToDB.DataType.NVarChar, _databaseName);
+                Context.DataProvider.SetParameter(param, "databaseName", new DbDataType(typeof(string)), _databaseName);
                 command.Parameters.Add(param);
 
                 return (await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false)) != null;
@@ -75,7 +76,7 @@ namespace AspNetSkeleton.DataAccess.MySql
                 command.CommandText = "SHOW TABLES LIKE @tableName";
 
                 var param = command.CreateParameter();
-                Context.DataProvider.SetParameter(param, "tableName", LinqToDB.DataType.NVarChar, migrationInfoTableName);
+                Context.DataProvider.SetParameter(param, "tableName", new DbDataType(typeof(string)), migrationInfoTableName);
                 command.Parameters.Add(param);
 
                 return (await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false)) != null;

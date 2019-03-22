@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
-    <RuntimeFrameworkVersion>2.1.5</RuntimeFrameworkVersion>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <UserSecretsId>aspnet-aspnetcore-38AB7092-857C-458C-9088-B396A4ED2A9C</UserSecretsId>
     <AssemblyName>Web.UI</AssemblyName>
     <RootNamespace>AspNetSkeleton.UI</RootNamespace>
@@ -36,12 +36,12 @@
     <Architecture>Distributed</Architecture>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Karambolo.AspNetCore.Bundling.Less" Version="1.0.0" />
-    <PackageReference Include="Karambolo.AspNetCore.Bundling.WebMarkupMin" Version="1.0.0" />
+    <PackageReference Include="Karambolo.AspNetCore.Bundling.Less" Version="1.2.0" />
+    <PackageReference Include="Karambolo.AspNetCore.Bundling.WebMarkupMin" Version="1.2.0" />
     <PackageReference Include="Karambolo.PO" Version="1.4.0" />
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.5" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.1.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.5" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" PrivateAssets="All" />
     <PackageReference Include="WebMarkupMin.AspNetCore2" Version="2.5.0" />
   </ItemGroup>
   <ItemGroup>
@@ -85,4 +85,5 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+
 </Project>

@@ -1,8 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
-    <RuntimeFrameworkVersion>2.1.5</RuntimeFrameworkVersion>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <AssemblyName>Web.Service</AssemblyName>
     <RootNamespace>AspNetSkeleton.Service</RootNamespace>
     <Copyright>© 2018 Adam Simon</Copyright>

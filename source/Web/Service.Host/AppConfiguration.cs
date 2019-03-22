@@ -51,7 +51,7 @@ namespace AspNetSkeleton.Service.Host
                     ServiceContractTypes.QueryTypes.Contains,
                     ServiceContractTypes.CommandTypes.Contains,
                 }))
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             return null;
         }
