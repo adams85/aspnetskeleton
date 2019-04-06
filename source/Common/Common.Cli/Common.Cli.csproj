@@ -5,11 +5,9 @@
     <AssemblyName>Common.Cli</AssemblyName>
     <RootNamespace>AspNetSkeleton.Common.Cli</RootNamespace>
     <Copyright>© 2018 Adam Simon</Copyright>
-    <PackageId>AspNetSkeleton.Common.Cli</PackageId>
-    <Product>AspNetSkeleton.Common.Cli</Product>
-    <Company></Company>
-    <Description />
     <Authors />
+    <Company />
+    <Description />
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>

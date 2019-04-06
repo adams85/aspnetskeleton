@@ -36,8 +36,8 @@
     <Architecture>Distributed</Architecture>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Karambolo.AspNetCore.Bundling.Less" Version="1.2.0" />
-    <PackageReference Include="Karambolo.AspNetCore.Bundling.WebMarkupMin" Version="1.2.0" />
+    <PackageReference Include="Karambolo.AspNetCore.Bundling.Less" Version="2.0.0" />
+    <PackageReference Include="Karambolo.AspNetCore.Bundling.WebMarkupMin" Version="2.0.0" />
     <PackageReference Include="Karambolo.PO" Version="1.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
@@ -85,5 +85,5 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-
+  
 </Project>
