@@ -23,11 +23,6 @@ namespace AspNetSkeleton.Service
     {
         public abstract Task<TResult> HandleAsync(TQuery query, CancellationToken cancellationToken);
 
-        protected virtual IOrderedQueryable<T> ApplyColumnOrder(IQueryable<T> linq, string columnName, bool descending, bool nested)
-        {
-            return nested ? ((IOrderedQueryable<T>)linq).ThenBy(columnName, descending) : linq.OrderBy(columnName, descending);
-        }
-
         protected void Validate(TQuery query)
         {
             if (query.IsPaged)
@@ -44,10 +39,15 @@ namespace AspNetSkeleton.Service
             }
         }
 
+        protected virtual IOrderedQueryable<T> ApplyColumnOrder(IQueryable<T> linq, string columnName, bool descending, bool nested)
+        {
+            return nested ? ((IOrderedQueryable<T>)linq).ThenBy(columnName, descending) : linq.OrderBy(columnName, descending);
+        }
+
         protected IQueryable<T> Apply(TQuery query, IQueryable<T> linq)
         {
             if (query.IsOrdered)
-                linq = linq.ApplyOrdering(query.OrderColumns);
+                linq = linq.ApplyOrdering(ApplyColumnOrder, query.OrderColumns);
 
             if (query.IsPaged)
                 linq = linq.ApplyPaging(query.PageIndex.Value, query.PageSize.Value);

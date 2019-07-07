@@ -4,6 +4,8 @@ using System.Linq.Expressions;
 
 namespace AspNetSkeleton.Common.Utils
 {
+    public delegate IOrderedQueryable<T> ApplyColumnOrder<T>(IQueryable<T> source, string columnName, bool descending, bool nested);
+
     public static class QueryableUtils
     {
         static IOrderedQueryable<T> OrderByCore<T>(this IQueryable<T> source, string keyPath, bool descending, bool nested)
@@ -46,13 +48,9 @@ namespace AspNetSkeleton.Common.Utils
             return source.OrderByCore(keyPath, descending, nested: true);
         }
 
-        public static IQueryable<T> ApplyOrdering<T>(this IQueryable<T> source, params string[] orderColumns)
+        public static IQueryable<T> ApplyOrdering<T>(this IQueryable<T> source, ApplyColumnOrder<T> applyColumnOrder, params string[] orderColumns)
         {
-            if (orderColumns == null)
-                throw new ArgumentNullException(nameof(orderColumns));
-
-            var n = orderColumns.Length;
-            for (var i = 0; i < n; i++)
+            for (int i = 0, n = orderColumns.Length; i < n; i++)
             {
                 var orderColumn = orderColumns[i];
 
@@ -60,7 +58,7 @@ namespace AspNetSkeleton.Common.Utils
                     throw new ArgumentException(null, nameof(orderColumns));
 
                 var descending = ParseOrderColumn(orderColumn, out string columnName);
-                source = ApplyColumnOrder(source, columnName, descending, nested: i > 0);
+                source = applyColumnOrder(source, columnName, descending, nested: i > 0);
             }
 
             return source;
@@ -78,11 +76,6 @@ namespace AspNetSkeleton.Common.Utils
                         cn = value;
                         return false;
                 }
-            }
-
-            IOrderedQueryable<T> ApplyColumnOrder(IQueryable<T> src, string columnName, bool descending, bool nested)
-            {
-                return nested ? ((IOrderedQueryable<T>)src).ThenBy(columnName, descending) : src.OrderBy(columnName, descending);
             }
         }
 
