@@ -36,7 +36,7 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure.Caching
             _options = options;
         }
 
-        protected ICache Cache { get; }       
+        protected ICache Cache { get; }
 
         protected virtual string GetCacheKey(QueryInterceptorContext context)
         {

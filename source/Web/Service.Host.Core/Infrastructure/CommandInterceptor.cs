@@ -31,6 +31,22 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure
         Task ExecuteAsync(CommandInterceptorContext context, CancellationToken cancellationToken);
     }
 
+    public sealed class CommandInterceptorMetadata
+    {
+        Type _limitType;
+        public Type LimitType
+        {
+            get { return _limitType ?? typeof(ICommand); }
+            set
+            {
+                if (value != null && !typeof(ICommand).IsAssignableFrom(value))
+                    throw new ArgumentException(null, nameof(value));
+
+                _limitType = value;
+            }
+        }
+    }
+
     public delegate ICommandInterceptor CommandInterceptorFactory(ICommandInterceptor target);
 
     public abstract class CommandInterceptor : ICommandInterceptor

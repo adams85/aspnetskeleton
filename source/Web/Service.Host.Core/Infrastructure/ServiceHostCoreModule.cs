@@ -87,13 +87,23 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure
                 .AsClosedTypesOf(typeof(ICommandHandler<>));
             #endregion
 
+            #region Interceptors
+            // order of registrations matters:
+            // * what is registered earlier will be executed closer to the caller,
+            // * what is registered later will be executed closer to the handler
+
+            // register here other command interceptors
+
+            builder.ConfigureQueryCaching();
+
+            // register here other query interceptors
+
+            #endregion
+
             #region Caching
             builder.RegisterType<InProcessCache>()
                 .As<ICache>()
                 .SingleInstance();
-
-
-            builder.ConfigureQueryCaching();
             #endregion
 
             builder.RegisterInstance(Engine.Razor)

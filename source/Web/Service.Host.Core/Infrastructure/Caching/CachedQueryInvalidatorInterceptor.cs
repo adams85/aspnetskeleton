@@ -32,10 +32,10 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure.Caching
 
         public override async Task ExecuteAsync(CommandInterceptorContext context, CancellationToken cancellationToken)
         {
+            await Target.ExecuteAsync(context, cancellationToken).ConfigureAwait(false);
+
             var tasks = Array.ConvertAll(_queryTypes, qt => InvalidateQueryCacheAsync(context, qt, cancellationToken));
             await Task.WhenAll(tasks).ConfigureAwait(false);
-
-            await Target.ExecuteAsync(context, cancellationToken).ConfigureAwait(false);
         }
     }
 
