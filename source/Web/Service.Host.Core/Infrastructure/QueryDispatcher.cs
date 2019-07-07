@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Autofac;
+using Autofac.Features.Metadata;
 using System.Linq;
 using System.Collections.Generic;
 using AspNetSkeleton.Service.Contract;
@@ -15,12 +16,12 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure
     public class QueryDispatcher : IQueryDispatcher, IQueryInterceptor
     {
         readonly ILifetimeScope _lifetimeScope;
-        readonly IKeyedProvider<IEnumerable<QueryInterceptorFactory>> _interceptorFactoriesProvider;
+        readonly KeyValuePair<Type, QueryInterceptorFactory>[] _interceptorFactories;
 
-        public QueryDispatcher(ILifetimeScope lifetimeScope, IKeyedProvider<IEnumerable<QueryInterceptorFactory>> interceptorFactoriesProvider)
+        public QueryDispatcher(ILifetimeScope lifetimeScope, IEnumerable<Meta<QueryInterceptorFactory, QueryInterceptorMetadata>> interceptorFactories)
         {
             _lifetimeScope = lifetimeScope;
-            _interceptorFactoriesProvider = interceptorFactoriesProvider;
+            _interceptorFactories = interceptorFactories.Select(item => new KeyValuePair<Type, QueryInterceptorFactory>(item.Metadata.LimitType, item.Value)).ToArray();
         }
 
         static readonly MethodInfo invokeHandlerMethodDefinition = Lambda.Method(() => InvokeHandlerAsync<IQuery<object>, object>(null, null, default(CancellationToken))).GetGenericMethodDefinition();
@@ -48,11 +49,11 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure
             if (interfaceType == null)
                 throw new ArgumentException(null, nameof(query));
 
-            var interceptorFactories = _interceptorFactoriesProvider.ProvideFor(actualQueryType)
-                .Concat(_interceptorFactoriesProvider.ProvideFor(KeyedProvider.Default));
-
             IQueryInterceptor interceptor = this;
-            interceptor = interceptorFactories.Aggregate(interceptor, (ic, fac) => fac(ic));
+            KeyValuePair<Type, QueryInterceptorFactory> interceptorFactory;
+            for (var i = _interceptorFactories.Length - 1; i >= 0; i--)
+                if ((interceptorFactory = _interceptorFactories[i]).Key.IsAssignableFrom(actualQueryType))
+                    interceptor = interceptorFactory.Value(interceptor);
 
             var context = new QueryInterceptorContext
             {

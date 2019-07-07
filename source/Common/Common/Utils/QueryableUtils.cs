@@ -82,7 +82,7 @@ namespace AspNetSkeleton.Common.Utils
 
             IOrderedQueryable<T> ApplyColumnOrder(IQueryable<T> src, string columnName, bool descending, bool nested)
             {
-                return nested ? ((IOrderedQueryable<T>)src).ThenBy(columnName, descending) : source.OrderBy(columnName, descending);
+                return nested ? ((IOrderedQueryable<T>)src).ThenBy(columnName, descending) : src.OrderBy(columnName, descending);
             }
         }
 

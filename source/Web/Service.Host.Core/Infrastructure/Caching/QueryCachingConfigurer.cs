@@ -139,7 +139,8 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure.Caching
                 var config = configKvp.Value;
 
                 builder.RegisterType(config.QueryInterceptorType)
-                    .Keyed<IQueryInterceptor>(queryType)
+                    .As<IQueryInterceptor>()
+                    .WithMetadata<QueryInterceptorMetadata>(cfg => cfg.For(metadata => metadata.LimitType, queryType))
                     .WithParameter(TypedParameter.From<QueryCachingOptions>(config));
 
                 foreach (var invalidatorKvp in config.Invalidators)
@@ -158,7 +159,8 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure.Caching
                 var queryTypes = invalidatorDescriptorKvp.Value;
 
                 builder.RegisterType(commandInterceptorType)
-                    .Keyed<ICommandInterceptor>(commandType)
+                    .As<ICommandInterceptor>()
+                    .WithMetadata<CommandInterceptorMetadata>(cfg => cfg.For(metadata => metadata.LimitType, commandType))
                     .WithParameter(TypedParameter.From(queryTypes.ToArray()));
             }
         }

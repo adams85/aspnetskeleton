@@ -32,6 +32,22 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure
         Task<object> ExecuteAsync(QueryInterceptorContext context, CancellationToken cancellationToken);
     }
 
+    public sealed class QueryInterceptorMetadata
+    {
+        Type _limitType;
+        public Type LimitType
+        {
+            get { return _limitType ?? typeof(IQuery); }
+            set
+            {
+                if (value != null && !typeof(IQuery).IsAssignableFrom(value))
+                    throw new ArgumentException(null, nameof(value));
+
+                _limitType = value;
+            }
+        }
+    }
+
     public delegate IQueryInterceptor QueryInterceptorFactory(IQueryInterceptor target);
 
     public abstract class QueryInterceptor : IQueryInterceptor

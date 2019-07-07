@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Autofac;
+using Autofac.Features.Metadata;
 using System.Linq;
 using System.Collections.Generic;
 using AspNetSkeleton.Service.Contract;
@@ -15,12 +16,12 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure
     public class CommandDispatcher : ICommandDispatcher, ICommandInterceptor
     {
         readonly ILifetimeScope _lifetimeScope;
-        readonly IKeyedProvider<IEnumerable<CommandInterceptorFactory>> _interceptorFactoriesProvider;
+        readonly KeyValuePair<Type, CommandInterceptorFactory>[] _interceptorFactories;
 
-        public CommandDispatcher(ILifetimeScope lifetimeScope, IKeyedProvider<IEnumerable<CommandInterceptorFactory>> interceptorFactoriesProvider)
+        public CommandDispatcher(ILifetimeScope lifetimeScope, IEnumerable<Meta<CommandInterceptorFactory, CommandInterceptorMetadata>> interceptorFactories)
         {
             _lifetimeScope = lifetimeScope;
-            _interceptorFactoriesProvider = interceptorFactoriesProvider;
+            _interceptorFactories = interceptorFactories.Select(item => new KeyValuePair<Type, CommandInterceptorFactory>(item.Metadata.LimitType, item.Value)).ToArray();
         }
 
         static readonly MethodInfo invokeHandlerMethodDefinition = Lambda.Method(() => InvokeHandlerAsync<ICommand>(null, null, default(CancellationToken))).GetGenericMethodDefinition();
@@ -39,11 +40,11 @@ namespace AspNetSkeleton.Service.Host.Core.Infrastructure
 
             var actualCommandType = Command.GetActualTypeFor(command.GetType());
 
-            var interceptorFactories = _interceptorFactoriesProvider.ProvideFor(actualCommandType)
-                .Concat(_interceptorFactoriesProvider.ProvideFor(KeyedProvider.Default));
-
             ICommandInterceptor interceptor = this;
-            interceptor = interceptorFactories.Aggregate(interceptor, (ic, fac) => fac(ic));
+            KeyValuePair<Type, CommandInterceptorFactory> interceptorFactory;
+            for (var i = _interceptorFactories.Length - 1; i >= 0; i--)
+                if ((interceptorFactory = _interceptorFactories[i]).Key.IsAssignableFrom(actualCommandType))
+                    interceptor = interceptorFactory.Value(interceptor);
 
             var context = new CommandInterceptorContext
             {
